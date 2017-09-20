@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package chatproto;
+
+message ReqChatText {
+  string Content = 1;
+  int32 Channel = 2;
+}
+
+message ReqChatHistory {
+  int32 Channel = 1;
+}
+
+// ===========S2C=========
+message S2C_ChatText {
+  string Content = 1;
+  int32 Channel = 2;
+  int64 RoleId = 3;
+  fixed32 Date = 4;
+}
+
+message S2C_ChatHistory {
+  int32 channel = 1;
+  S2C_ChatText history = 2;
+}
