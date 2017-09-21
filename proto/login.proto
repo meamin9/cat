@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package loginproto;
+
+message CSCheck {
+  string token = 1;
+}
+
+message CSLogin {
+  string account = 1;
+  string pwd = 2;
+}
+
+message CSLoginRole {
+  int64 roleId = 1;
+}

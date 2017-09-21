@@ -2,24 +2,24 @@ syntax = "proto3";
 
 package chatproto;
 
-message ReqChatText {
+message CSChatText {
   string Content = 1;
   int32 Channel = 2;
 }
 
-message ReqChatHistory {
+message CSChatHistory {
   int32 Channel = 1;
 }
 
 // ===========S2C=========
-message S2C_ChatText {
+message SCChatText {
   string Content = 1;
   int32 Channel = 2;
   int64 RoleId = 3;
   fixed32 Date = 4;
 }
 
-message S2C_ChatHistory {
+message SCChatHistory {
   int32 channel = 1;
-  S2C_ChatText history = 2;
+  SCChatText history = 2;
 }
