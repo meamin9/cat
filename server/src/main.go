@@ -1,14 +1,10 @@
 package main
 
 import (
-	"fmt"
+	_ "chat"
+	"network"
 )
 
-func initialize() {
-	//	net.Initialize()
-}
-
 func main() {
-	initialize()
-	fmt.Println("hello cat")
+	network.Host.Queue().Wait()
 }

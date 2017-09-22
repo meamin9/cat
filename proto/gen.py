@@ -14,6 +14,7 @@ protoc_gen_msg = 'protoc-gen-msg'
 def proto_cmd():
     global protoc, protoc_gen_go, protoc_gen_msg
     gopath = os.environ.get('GOPATH')
+    print('gopath =', gopath)
     sysstr = platform.system()
     if sysstr == 'Windows':
         protoc += '.exe'
@@ -22,7 +23,6 @@ def proto_cmd():
         paths = gopath.split(';')
     else:
         paths = gopath.split(':')
-    print('gopath=', gopath, paths)
     for p in paths:
         path = os.path.join(p, 'bin', protoc_gen_go)
         if os.path.exists(path):
@@ -32,9 +32,12 @@ def proto_cmd():
             genmsg = path
     protoc_gen_go = gengo
     protoc_gen_msg = genmsg
-    print(protoc_gen_go, protoc_gen_msg)
+    print('protoc = ', protoc)
+    print('protoc_gen_go = ', protoc_gen_go)
+    print('protoc_gen_msg = ', protoc_gen_msg)
 
 def gen_go_proto(filename):
+    print('file: ', filename)
     name, ext = os.path.splitext(filename)
     pname = name + ext[1:]
     out = os.path.join(goprotopath, pname)
@@ -44,8 +47,8 @@ def gen_go_proto(filename):
              '--proto_path=' + workpath, filename]
     msgcmd = [protoc, '--plugin=' + protoc_gen_msg, '--msg_out=msgid.go:' + out,
              '--proto_path=' + workpath, filename]
-    subprocess.Popen(gocmd)
-    subprocess.Popen(msgcmd)
+    subprocess.call(gocmd)
+    subprocess.call(msgcmd)
 
 def walkdir(path):
     for name in os.listdir(path):
