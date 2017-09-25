@@ -1,8 +1,8 @@
 package network
 
 import (
-	"github.com/davyxu/cellnet"
-	"github.com/davyxu/cellnet/socket"
+	"cellnet"
+	"cellnet/socket"
 )
 
 var Host cellnet.Peer

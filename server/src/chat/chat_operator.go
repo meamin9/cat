@@ -1,18 +1,15 @@
 package chat
 
-func getRoomId(channel ChannelType) RoomId {
-	return RoomId(channel)
-}
+import (
+	"base"
+	"fmt"
+)
 
 // getRoomid Friend channel chat room id
-func getRoomId(fromid, toid MemberIdType) RoomId {
-	if fromid < toid {
-		return RoomId(fromid) + RoomId(toid)
+func getRoomId(channel Channel, to, from base.RoleId) string {
+	if to >= from {
+		return fmt.Sprintf("%s_%s_%s", channel, to, from)
 	} else {
-		return RoomId(toid) + RoomId(fromid)
+		return fmt.Sprintf("%s_%s_%s", channel, to, from)
 	}
-}
-
-func addNewTextMsg(role, content, channel) {
-
 }

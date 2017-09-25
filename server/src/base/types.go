@@ -1,3 +1,3 @@
-package main
+package base
 
 type RoleId int64
