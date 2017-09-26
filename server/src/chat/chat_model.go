@@ -5,7 +5,8 @@ import (
 )
 
 type ChannelType byte
-type MemberIdType int64
+type MemberIdType RoleIdType
+type RoomId string
 
 const (
 	Channel_World ChannelType = iota
@@ -16,7 +17,7 @@ const (
 
 type ChatMsg struct {
 	text    string
-	time    time.Time
+	date    time.Time
 	from    MemberIdType
 	to      MemberIdType
 	channel ChannelType
@@ -30,6 +31,13 @@ type Model struct {
 	rooms map[int]Room
 }
 
-func (self *Model) addNewMsg(mid MemberIdType) {
+func (self *Model) enterChannel(cid ChannelType, mid MemberIdType) {
+
+}
+func (self *Model) joinRoom(roomid int, memid MemberIdType) {
+
+}
+
+func (self *Model) addNewMsg(roomid int, msg ChatMsg) {
 
 }
