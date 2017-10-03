@@ -1,9 +1,11 @@
 syntax = "proto3";
 
+import "role.proto";
+
 package loginproto;
 
-message CSCheck {
-  string token = 1;
+message SCCheck {
+  string publicKey = 1;
 }
 
 message CSLogin {
@@ -11,6 +13,21 @@ message CSLogin {
   string pwd = 2;
 }
 
+message SCLogin {
+  int32 error = 1;
+}
+
+message CSRoleList {
+}
+
+message SCRoleList {
+  repeated roleproto.RoleBase roles = 1;
+}
+
 message CSLoginRole {
-  int64 roleId = 1;
+  int64 id = 1;
+}
+
+message SCLoginRole {
+  int32 error = 1;
 }

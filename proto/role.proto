@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package roleproto;
+
+message RoleBase {
+  int64 id = 1;
+  int32 level = 2;
+  int32 sex = 3;
+  string name = 4;
+}

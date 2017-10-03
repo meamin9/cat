@@ -1,6 +1,10 @@
 package role
 
-type IdType int64
+import (
+	"base"
+	"network"
+)
+
 type SexType byte
 
 const (
@@ -8,17 +12,33 @@ const (
 	Male
 )
 
-type RoleBaseInfo struct {
-	Id    IdType
-	Name  string
-	Level int16
-	Sex   SexType
+type RoleFixedProp struct {
+	id   base.RoleId
+	name string
+	sex  SexType
 }
 
-type RoleProfile struct {
-	RoleBaseInfo
+type RoleBaseProp struct {
+	level int
 }
 
 type Role struct {
-	RoleProfile
+	RoleFixedProp
+	RoleBaseProp
+	sid int64
+}
+
+func (self *Role) Id() base.RoleId {
+	return self.id
+}
+
+func (self *Role) Name() string {
+	return self.name
+}
+
+func (self *Role) Send(data interface{}) {
+	session := network.Host.GetSession(self.sid)
+	if session != nil {
+		session.Send(data)
+	}
 }

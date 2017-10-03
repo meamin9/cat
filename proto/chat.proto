@@ -3,12 +3,13 @@ syntax = "proto3";
 package chatproto;
 
 message CSChatText {
-  string Content = 1;
-  int32 Channel = 2;
+  string content = 1;
+  int32 channel = 2;
+  int64 to = 3;
 }
 
 message CSChatHistory {
-  int32 Channel = 1;
+  int32 channel = 1;
 }
 
 // ===========S2C=========

@@ -16,16 +16,15 @@ const (
 	Channel_Friend
 )
 
-type ChatMsg struct {
-	text    string
+type chatMsg struct {
+	content string
 	date    time.Time
 	from    base.RoleId
-	to      base.RoleId
 	channel Channel
 }
 type room struct {
 	memberSet map[base.RoleId]bool
-	msgs      []*ChatMsg
+	msgs      []*chatMsg
 	msgBegin  int
 }
 
@@ -35,13 +34,16 @@ var model = struct {
 	make(map[string]room),
 }
 
+func createRoom(cahnnel Channel, to, from base.RoleId) {
+
+}
 func joinRoom(roomid string, members ...base.RoleId) {
 	var r room
 	var ok bool
 	if r, ok = model.rooms[roomid]; !ok {
 		r = room{
 			make(map[base.RoleId]bool, 2),
-			make([]*ChatMsg, 10),
+			make([]*chatMsg, 10),
 			0,
 		}
 		model.rooms[roomid] = r
@@ -63,13 +65,13 @@ func deleteRoom(roomid string) {
 	delete(model.rooms, roomid)
 }
 
-func addNewMsg(roomid string, msg *ChatMsg) {
+func addNewMsg(roomid string, msg *chatMsg) {
 	if r, ok := model.rooms[roomid]; ok {
 		if len(r.msgs) == Max_Msgs {
 			r.msgs[r.msgBegin] = msg
 			r.msgBegin = (r.msgBegin + 1) % Max_Msgs
 			if cap(r.msgs) > Max_Msgs {
-				msgs := make([]*ChatMsg, Max_Msgs)
+				msgs := make([]*chatMsg, Max_Msgs)
 				copy(msgs, r.msgs)
 				r.msgs = msgs
 			}
