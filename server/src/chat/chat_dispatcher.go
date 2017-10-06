@@ -1,8 +1,8 @@
 package chat
 
 import (
+	"cellnet"
 	"fmt"
-	"github.com/davyxu/cellnet"
 	"network"
 	_ "proto/chatproto"
 	"role"

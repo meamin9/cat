@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "chat"
+	"db/mdb"
 	"network"
 )
 

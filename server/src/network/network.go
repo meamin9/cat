@@ -10,7 +10,7 @@ var Queue cellnet.EventQueue
 
 func init() {
 	Queue = cellnet.NewEventQueue()
-	Peer = socket.NewAcceptor(queue).Start("127.0.0.1:7200")
+	Peer = socket.NewAcceptor(Queue).Start("127.0.0.1:7200")
 }
 
 func RegisterProto(protoName string, userCallback func(*cellnet.Event)) {
