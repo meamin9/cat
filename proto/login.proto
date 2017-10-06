@@ -1,11 +1,14 @@
 syntax = "proto3";
 
-import "role.proto";
+import "proto/structs.proto";
 
 package loginproto;
 
-message SCCheck {
-  string publicKey = 1;
+message CSToken {
+}
+
+message SCToken {
+  string token = 1;
 }
 
 message CSLogin {
@@ -21,7 +24,7 @@ message CSRoleList {
 }
 
 message SCRoleList {
-  repeated roleproto.RoleBase roles = 1;
+  repeated proto.RoleBase roles = 1;
 }
 
 message CSLoginRole {

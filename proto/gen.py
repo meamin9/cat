@@ -43,18 +43,29 @@ def gen_go_proto(filename):
     out = os.path.join(goprotopath, pname)
     if not os.path.exists(out):
         os.makedirs(out)
-    gocmd = [protoc, '--plugin=' + protoc_gen_go, '--go_out=' + out,
+    gocmd = [protoc, '--plugin=protoc-gen-go=' + protoc_gen_go, '--go_out=' + out,
              '--proto_path=' + workpath, filename]
-    msgcmd = [protoc, '--plugin=' + protoc_gen_msg, '--msg_out=msgid.go:' + out,
+    msgcmd = [protoc, '--plugin=protoc-gen-msg=' + protoc_gen_msg, '--msg_out=msgid.go:' + out,
              '--proto_path=' + workpath, filename]
     subprocess.call(gocmd)
     subprocess.call(msgcmd)
 
+def gen_go_dir(dirname, dirpath):
+    out = goprotopath
+    for name in os.listdir(dirpath):
+        if name.endswith('.proto'):
+            gocmd = [protoc, '--plugin=protoc-gen-go=' + protoc_gen_go, '--go_out=' + out,
+                     '--proto_path=' + dirpath, name]
+            subprocess.call(gocmd)
+
 def walkdir(path):
     for name in os.listdir(path):
+        fullpath = os.path.join(path, name)
         _, ext = os.path.splitext(name)
         if ext == '.proto':
             gen_go_proto(name)
+        elif os.path.isdir(fullpath):
+            gen_go_dir(name, fullpath)
 
 def main():
     proto_cmd()

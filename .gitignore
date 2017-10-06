@@ -6,6 +6,10 @@
 
 *.projectile
 *.DS_Store
+
+server/bin/
+server/pkg/
+
 # Test binary, build with `go test -c`
 *.test
 
