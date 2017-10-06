@@ -1,10 +1,10 @@
 package main
 
 import (
-	"db/mdb"
+	_ "db/mdb"
 	"network"
 )
 
 func main() {
-	network.Host.Queue().Wait()
+	network.Peer.Queue().Wait()
 }
