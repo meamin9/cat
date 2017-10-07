@@ -12,7 +12,7 @@ message SCToken {
 }
 
 message CSLogin {
-  string account = 1;
+  string id = 1;
   string pwd = 2;
 }
 

@@ -2,8 +2,9 @@ package login
 
 import (
 	"cellnet"
+	"db"
 	"network"
-	_ "proto/loginproto"
+	"proto/loginproto"
 )
 
 func init() {
@@ -20,6 +21,15 @@ func dispatchToken(ev *cellner.Event) {
 
 func dispatchLogin(ev *cellnet.Event) {
 	msg := ev.Msg.(loginproto.CSLogin)
+	id := msg.Id
+	conn := db.Pool.Get()
+	account := db.QuerryAccount(conn, id)
+	if account == nil {
+		return
+	}
+	if account.Pwd != msg.Pwd {
+		return
+	}
 
 }
 
