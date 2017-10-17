@@ -6,13 +6,16 @@ import platform
 
 workpath = sys.path[0]
 goprotopath = os.path.join(workpath, '..', 'server', 'src', 'proto')
+csharppath = os.path.join(workpath, '..', 'client', 'Assets', 'Scripts', 'proto')
 
 protoc = 'protoc'
 protoc_gen_go = 'protoc-gen-go'
 protoc_gen_msg = 'protoc-gen-msg'
 
+protoc_gen_csharp = 'protoc-gen-sharpnet'
+
 def proto_cmd():
-    global protoc, protoc_gen_go, protoc_gen_msg
+    global protoc, protoc_gen_go, protoc_gen_msg, protoc_gen_csharp
     gopath = os.environ.get('GOPATH')
     print('gopath =', gopath)
     sysstr = platform.system()
@@ -30,11 +33,16 @@ def proto_cmd():
         path = os.path.join(p, 'bin', protoc_gen_msg)
         if os.path.exists(path):
             genmsg = path
+        path = os.path.join(p, 'bin', protoc_gen_csharp)
+        if os.path.exists(path):
+            gensharp = path
     protoc_gen_go = gengo
     protoc_gen_msg = genmsg
+    protoc_gen_csharp = gensharp
     print('protoc = ', protoc)
     print('protoc_gen_go = ', protoc_gen_go)
     print('protoc_gen_msg = ', protoc_gen_msg)
+    print('protoc_gen_csharp = ', protoc_gen_csharp)
 
 def gen_go_proto(filename):
     print('file: ', filename)
@@ -49,6 +57,12 @@ def gen_go_proto(filename):
              '--proto_path=' + workpath, filename]
     subprocess.call(gocmd)
     subprocess.call(msgcmd)
+    out = csharppath # os.path.join(csharppath, pname)
+    if not os.path.exists(out):
+        os.makedirs(out)
+    csharpcmd = [protoc, '--plugin=protoc-gen-sharpnet=' + protoc_gen_csharp, '--sharpnet_out=' + out,
+                 '--proto_path=' + workpath, filename]
+    subprocess.call(csharpcmd)
 
 def gen_go_dir(dirname, dirpath):
     out = goprotopath
