@@ -9,8 +9,8 @@ var log *golog.Logger = golog.New("collections")
 
 func printResult(data interface{}, rc db.RetCode) {
 	if rc == db.CodeSuccess {
-		log.Debugln("quest succeed")
+		log.Debugln("quest succeed", data)
 	} else {
-		log.Debugln("quest failed")
+		log.Debugln("quest failed", data)
 	}
 }

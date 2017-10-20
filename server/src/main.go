@@ -1,17 +1,9 @@
 package main
 
 import (
-	"db"
-	"network"
+	"game"
 )
 
 func main() {
-	network.Peer.Queue().Wait()
-}
-
-func mainLoop() {
-	for {
-		network.Queue().Poll()
-		db.Queue().Poll()
-	}
+	game.Run()
 }

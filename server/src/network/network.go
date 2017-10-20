@@ -5,22 +5,26 @@ import (
 	"cellnet/socket"
 )
 
-var Peer cellnet.Peer
+var peer cellnet.Peer
 var queue cellnet.EventQueue
 
 func init() {
 	queue = cellnet.NewEventQueue()
-	Peer = socket.NewAcceptor(queue).Start("127.0.0.1:7200")
+	peer = socket.NewAcceptor(queue)
 }
 
 func RegisterProto(protoName string, userCallback func(*cellnet.Event)) {
-	cellnet.RegisterMessage(Peer, protoName, userCallback)
+	cellnet.RegisterMessage(peer, protoName, userCallback)
 }
 
 func RegisterMessage(protoName string, userCallback func(*cellnet.Event)) {
-	cellnet.RegisterMessage(Peer, protoName, userCallback)
+	cellnet.RegisterMessage(peer, protoName, userCallback)
 }
 
 func Queue() cellnet.EventQueue {
 	return queue
+}
+
+func Start() {
+	peer.Start("127.0.0.1:7200")
 }
