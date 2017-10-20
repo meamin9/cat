@@ -7,9 +7,10 @@ import (
 
 var log *golog.Logger = golog.New("collections")
 
-func toRetCode(err error) db.RetCode {
-	if err == nil {
-		return db.CodeFailed
+func printResult(data interface{}, rc db.RetCode) {
+	if rc == db.CodeSuccess {
+		log.Debugln("quest succeed")
+	} else {
+		log.Debugln("quest failed")
 	}
-	return db.CodeSuccess
 }

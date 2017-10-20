@@ -11,6 +11,13 @@ const (
 	CodeExit
 )
 
+func ToRetCode(err error) RetCode {
+	if err == nil {
+		return CodeSuccess
+	}
+	return CodeFailed
+}
+
 type ISender interface {
 	Send(*Request)
 	Start()
@@ -19,8 +26,8 @@ type ISender interface {
 }
 
 type Request struct {
-	query  func() (retdata interface{}, retcode RetCode)
-	result func(interface{}, RetCode)
+	Quest  func() (retdata interface{}, retcode RetCode)
+	Result func(interface{}, RetCode)
 }
 
 type Response func()
@@ -46,16 +53,16 @@ func (q *queue) Send(req *Request) {
 func (q *queue) waitRequest() {
 	for {
 		req := <-q.requests
-		retdata, retcode := req.query()
+		retdata, retcode := req.Quest()
 		if retcode == CodeError {
 			log.Errorln("Db Request error")
 		} else if retcode == CodeExit {
 			q.exitSignal <- true
 			break
 		}
-		if req.result != nil {
+		if req.Result != nil {
 			var response Response = func() {
-				req.result(retdata, retcode)
+				req.Result(retdata, retcode)
 			}
 			q.responses <- &response
 		}

@@ -2,33 +2,46 @@ package db
 
 import (
 	"fmt"
+	"gopkg.in/mgo.v2/bson"
 	"testing"
 	"time"
 )
 
-func Test_Account(t *testing.T) {
-	for i := 0; i < 5; i += 1 {
+func Test_Db(t *testing.T) {
+	InstallTest()
+	for i := 0; i < 1; i += 1 {
 		j := i
-		Send(func() {
-			ac := Account{
-				Name:    fmt.Sprintf("test%02d", j),
-				Pwd:     "123456",
-				RegDate: time.Now().String(),
-			}
-			err := AccountRegister(&ac)
-			fmt.Println("result err ", err)
+		Queue().Send(&Request{
+			Quest: func() (interface{}, RetCode) {
+				ac := bson.M{
+					"_id":  fmt.Sprintf("test%02d", j),
+					"key":  214,
+					"date": time.Now(),
+				}
+				err := DB().C("test").Insert(ac)
+				return nil, ToRetCode(err)
+			},
+			Result: func(data interface{}, rc RetCode) {
+				fmt.Println("result code:", rc)
+				if rc == CodeSuccess {
+					Queue().Send(&Request{
+						Quest: func() (interface{}, RetCode) {
+							r := struct{ Key int64 }{}
+							err := DB().C("test").Find(bson.M{
+								"_id": fmt.Sprintf("test%02d", j),
+							}).One(&r)
+							return r, ToRetCode(err)
+						},
+						Result: func(data interface{}, rc RetCode) {
+							d := data.(struct{ Key int64 })
+							if d.Key != 214 {
+								t.Error("insert find failed", d, data)
+							}
+						},
+					})
+				}
+			},
 		})
 	}
-	for i := 0; i < 6; i += 1 {
-		j := i
-		Send(func() {
-			ac, err := AccountLogin(fmt.Sprintf("test%02d", j), "123456")
-			fmt.Println(ac, err)
-			if err != nil {
-				fmt.Println("err ", err)
-			}
-		})
-	}
-	Finish()
-	//time.Sleep(5 * time.Second)
+	StopTest()
 }

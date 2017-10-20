@@ -2,6 +2,7 @@ package collections
 
 import (
 	"db"
+	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"time"
 )
@@ -11,29 +12,33 @@ import (
 type Account struct {
 	//Id      int64  `bson:"id"`
 	//Email   string `bson:"eml"`
-	Name    string  `bson:"_id"`
-	Pwd     string  `bson:"pwd"`
-	RegDate string  `bson:"reg"`
-	Roles   []int64 `bson:"rls"`
+	Name    string    `bson:"_id"`
+	Pwd     string    `bson:"pwd"`
+	RegDate time.Time `bson:"reg"`
+	Roles   []int64   `bson:"rls"`
+}
+
+func accountC() *mgo.Collection {
+	return db.DB().C("accounts")
 }
 
 func AccountRegister(name, pwd string) (result interface{}, rc db.RetCode) {
 	account := Account{
 		Name:    name,
 		Pwd:     pwd,
-		RegDate: time.Now().String(),
+		RegDate: time.Now(),
 	}
-	err := db.DB().C("accounts").Insert(&account)
-	return nil, toRetCode(err)
+	err := accountC().Insert(&account)
+	return &account, db.ToRetCode(err)
 }
 
 func AccountLogin(name, pwd string) (data interface{}, rc db.RetCode) {
-	account := &Account{}
-	err := db.DB().C("accounts").Find(bson.M{"_id": name, "pwd": pwd}).One(account)
-	return account, toRetCode(err)
+	account := Account{}
+	err := accountC().Find(bson.M{"_id": name, "pwd": pwd}).One(&account)
+	return &account, db.ToRetCode(err)
 }
 
 func AccountRoles(name string, roles []int64) (data interface{}, rc db.RetCode) {
-	err := db.DB().C("account").UpdateId(name, bson.M{"rls": roles})
-	return nil, toRetCode(err)
+	err := accountC().UpdateId(name, bson.M{"$set": bson.M{"rls": roles}})
+	return nil, db.ToRetCode(err)
 }
