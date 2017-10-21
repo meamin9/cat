@@ -1,3 +1,0 @@
-[submodule "server/src/cellnet"]
-	path = server/src/cellnet
-	url = git://github.com/meamin9/cellnet
