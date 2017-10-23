@@ -8,6 +8,13 @@
 
 server/bin/
 server/pkg/
+server/src/proto/
+client/Assets/Scripts/proto/
+bin/
+obj/
+
+*.meta
+*.suo
 
 # Test binary, build with `go test -c`
 *.test

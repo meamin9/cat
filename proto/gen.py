@@ -23,6 +23,7 @@ def proto_cmd():
         protoc += '.exe'
         protoc_gen_go += '.exe'
         protoc_gen_msg += '.exe'
+        protoc_gen_csharp += '.exe'
         paths = gopath.split(';')
     else:
         paths = gopath.split(':')
