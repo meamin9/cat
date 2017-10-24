@@ -15,6 +15,7 @@ type EventQueue interface {
 	// 投递事件, 通过队列到达消费者端
 	Post(callback func())
 	Poll()
+	C() chan func()
 }
 
 type evQueue struct {

@@ -9,11 +9,13 @@ import (
 
 var exit chan int
 
+const fps = 60
+
 func Run() {
 	exit = make(chan int, 1)
 	db.Queue().Start() // 开启数据库协程
 	network.Start()    // 注册完所有协议后开始监听网络（模块初始化时自动注册协议）
-	tick := time.NewTicker(1.0 / time.Second)
+	tick := time.NewTicker(time.Second / fps)
 MainLoop:
 	for {
 		select {
@@ -33,6 +35,6 @@ MainLoop:
 	db.Queue().Stop()      // 阻塞到所有数据库请求已经完成，后面的请求将被忽略
 }
 
-func StopGame(int i) {
+func StopGame(i int) {
 	exit <- i
 }
