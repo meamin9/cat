@@ -80,6 +80,10 @@ Loop:
 	}
 }
 
+func (self *evQueue) C() chan func() {
+	return self.queue
+}
+
 func (self *evQueue) Wait() int {
 	return <-self.exitSignal
 }

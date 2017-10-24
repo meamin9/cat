@@ -21,6 +21,10 @@ func RegisterMessage(protoName string, userCallback func(*cellnet.Event)) {
 	cellnet.RegisterMessage(peer, protoName, userCallback)
 }
 
+func Peer() cellnet.Peer {
+	return peer
+}
+
 func Queue() cellnet.EventQueue {
 	return queue
 }

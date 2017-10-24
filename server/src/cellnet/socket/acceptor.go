@@ -111,6 +111,9 @@ func (self *socketAcceptor) Stop() {
 
 	// 等待线程结束
 	self.waitStopFinished()
+
+	// 再次断开一次，close掉在等待过程中Accept的连接
+	self.CloseAllSession()
 }
 
 func NewAcceptor(q cellnet.EventQueue) cellnet.Peer {

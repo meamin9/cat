@@ -7,6 +7,7 @@ import platform
 workpath = sys.path[0]
 goprotopath = os.path.join(workpath, '..', 'server', 'src', 'proto')
 csharppath = os.path.join(workpath, '..', 'client', 'Assets', 'Scripts', 'proto')
+toolspath = os.path.join(workpath, '..', 'tools')
 
 protoc = 'protoc'
 protoc_gen_go = 'protoc-gen-go'
@@ -18,6 +19,7 @@ def proto_cmd():
     global protoc, protoc_gen_go, protoc_gen_msg, protoc_gen_csharp
     gopath = os.environ.get('GOPATH')
     print('gopath =', gopath)
+    print('toolspath =', toolspath)
     sysstr = platform.system()
     if sysstr == 'Windows':
         protoc += '.exe'
@@ -27,6 +29,7 @@ def proto_cmd():
         paths = gopath.split(';')
     else:
         paths = gopath.split(':')
+    paths.append(toolspath)
     for p in paths:
         path = os.path.join(p, 'bin', protoc_gen_go)
         if os.path.exists(path):

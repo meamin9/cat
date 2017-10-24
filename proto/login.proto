@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-import "proto/structs.proto";
-
 package loginproto;
+
+import "proto/structs.proto";
 
 message CSToken {
 }

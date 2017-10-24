@@ -34,7 +34,7 @@ type Response func()
 
 type queue struct {
 	requests   chan *Request
-	responses  chan *Response
+	responses  chan Response
 	exitSignal chan bool
 }
 
@@ -61,10 +61,9 @@ func (q *queue) waitRequest() {
 			break
 		}
 		if req.Result != nil {
-			var response Response = func() {
+			q.responses <- func() {
 				req.Result(retdata, retcode)
 			}
-			q.responses <- &response
 		}
 	}
 }
@@ -90,17 +89,21 @@ Loop:
 	for {
 		select {
 		case res := <-q.responses:
-			(*res)()
+			res()
 		default:
 			break Loop
 		}
 	}
 }
 
+func (q *queue) C() chan Response {
+	return q.responses
+}
+
 func NewQueue() *queue {
 	return &queue{
 		make(chan *Request, 100),
-		make(chan *Response, 100),
+		make(chan Response, 100),
 		make(chan bool, 0),
 	}
 }
