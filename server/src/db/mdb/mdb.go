@@ -8,6 +8,7 @@ import (
 )
 
 const dburl = "cat:123456@localhost:27017/cat"
+const dbname = "cat"
 
 var log *golog.Logger = golog.New("mdb")
 
@@ -17,6 +18,7 @@ var mdb = struct {
 	w       *sync.WaitGroup
 }{}
 
+// 连接db，如果连接失败会阻塞，并每秒尝试重连，直到连接成功
 func connect() {
 	mdb.m.Lock()
 	defer mdb.m.Unlock()
@@ -37,6 +39,17 @@ func GetSession() *mgo.Session {
 		connect()
 	}
 	return mdb.session.Clone()
+}
+
+func GetDb() *mgo.Database {
+	return GetRawSession().DB(dbname)
+}
+
+func GetRawSession() *mgo.Session {
+	if mdb.session == nil {
+		connect()
+	}
+	return mdb.session
 }
 
 func Send(run func()) {

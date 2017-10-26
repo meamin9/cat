@@ -5,8 +5,6 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-const dbname = "cat"
-
 // Collection : Account 账户，一个账户可以创建多个角色
 
 type Account struct {
