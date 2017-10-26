@@ -4,6 +4,7 @@ import (
 	"db"
 	_ "login"
 	"network"
+	"schedule"
 	"time"
 )
 
@@ -23,7 +24,8 @@ MainLoop:
 			r()
 		case r := <-db.Queue().C():
 			r()
-		case <-tick.C:
+		case t := <-tick.C:
+			schedule.Time().Update(t)
 		case <-exit:
 			break MainLoop
 		}

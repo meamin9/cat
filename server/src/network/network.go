@@ -3,6 +3,7 @@ package network
 import (
 	"cellnet"
 	"cellnet/socket"
+	"time"
 )
 
 var peer cellnet.Peer
