@@ -6,11 +6,11 @@ import (
 )
 
 var Peer cellnet.Peer
-var Queue cellnet.EventQueue
+var queue cellnet.EventQueue
 
 func init() {
-	Queue = cellnet.NewEventQueue()
-	Peer = socket.NewAcceptor(Queue).Start("127.0.0.1:7200")
+	queue = cellnet.NewEventQueue()
+	Peer = socket.NewAcceptor(queue).Start("127.0.0.1:7200")
 }
 
 func RegisterProto(protoName string, userCallback func(*cellnet.Event)) {
@@ -19,4 +19,8 @@ func RegisterProto(protoName string, userCallback func(*cellnet.Event)) {
 
 func RegisterMessage(protoName string, userCallback func(*cellnet.Event)) {
 	cellnet.RegisterMessage(Peer, protoName, userCallback)
+}
+
+func Queue() cellnet.EventQueue {
+	return queue
 }

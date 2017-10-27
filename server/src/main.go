@@ -1,10 +1,17 @@
 package main
 
 import (
-	_ "db/mdb"
+	"db"
 	"network"
 )
 
 func main() {
 	network.Peer.Queue().Wait()
+}
+
+func mainLoop() {
+	for {
+		network.Queue().Poll()
+		db.Queue().Poll()
+	}
 }
