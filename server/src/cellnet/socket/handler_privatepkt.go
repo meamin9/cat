@@ -2,8 +2,8 @@ package socket
 
 import (
 	"bytes"
-	"encoding/binary"
 	"cellnet"
+	"encoding/binary"
 	"io"
 	"sync"
 )
@@ -15,7 +15,6 @@ type PrivatePacketReader struct {
 func (self *PrivatePacketReader) Call(ev *cellnet.Event) {
 
 	headReader := bytes.NewReader(ev.Data)
-
 	// 读取序号
 	var ser uint16
 	if err := binary.Read(headReader, binary.LittleEndian, &ser); err != nil {
@@ -37,6 +36,7 @@ func (self *PrivatePacketReader) Call(ev *cellnet.Event) {
 	}
 
 	maxPacketSize := ev.Ses.FromPeer().(SocketOptions).MaxPacketSize()
+	log.Debugln("head", ser, ev.MsgID, bodySize, self.recvser, maxPacketSize)
 	// 封包太大
 	if maxPacketSize > 0 && int(bodySize) > maxPacketSize {
 		ev.SetResult(cellnet.Result_PackageCrack)
@@ -59,6 +59,7 @@ func (self *PrivatePacketReader) Call(ev *cellnet.Event) {
 		ev.SetResult(cellnet.Result_PackageCrack)
 		return
 	}
+	log.Debugln("end")
 
 	ev.Data = dataBuffer
 

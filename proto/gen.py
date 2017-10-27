@@ -48,25 +48,25 @@ def proto_cmd():
     print('protoc_gen_msg = ', protoc_gen_msg)
     print('protoc_gen_csharp = ', protoc_gen_csharp)
 
+# a = 0
 def gen_go_proto(filename):
+    # global a
     print('file: ', filename)
     name, ext = os.path.splitext(filename)
     pname = name + ext[1:]
-    out = os.path.join(goprotopath, pname)
+    out = goprotopath #os.path.join(goprotopath, pname)
     if not os.path.exists(out):
         os.makedirs(out)
-    gocmd = [protoc, '--plugin=protoc-gen-go=' + protoc_gen_go, '--go_out=' + out,
+    # gocmd = [protoc, '--plugin=protoc-gen-go=' + protoc_gen_go, '--go_out=' + out,
+    #          '--proto_path=' + workpath, '*.proto']
+    # if a == 0:
+    #     subprocess.call(gocmd)
+    #     a += 1
+    if name not in ['struct']:
+        msgcmd = [protoc, '--plugin=protoc-gen-msg=' + protoc_gen_msg, '--msg_out=' + name + '.msgid.go:' + out,
              '--proto_path=' + workpath, filename]
-    msgcmd = [protoc, '--plugin=protoc-gen-msg=' + protoc_gen_msg, '--msg_out=msgid.go:' + out,
-             '--proto_path=' + workpath, filename]
-    subprocess.call(gocmd)
-    subprocess.call(msgcmd)
-    out = csharppath # os.path.join(csharppath, pname)
-    if not os.path.exists(out):
-        os.makedirs(out)
-    csharpcmd = [protoc, '--plugin=protoc-gen-sharpnet=' + protoc_gen_csharp, '--sharpnet_out=' + out,
-                 '--proto_path=' + workpath, filename]
-    subprocess.call(csharpcmd)
+        subprocess.call(msgcmd)
+
 
 def gen_go_dir(dirname, dirpath):
     out = goprotopath
@@ -77,6 +77,21 @@ def gen_go_dir(dirname, dirpath):
             subprocess.call(gocmd)
 
 def walkdir(path):
+    # csharp protobuf
+    out = csharppath # os.path.join(csharppath, pname)
+    if not os.path.exists(out):
+        os.makedirs(out)
+    csharpcmd = [protoc, '--plugin=protoc-gen-sharpnet=' + protoc_gen_csharp, '--sharpnet_out=' + out,
+                 '--proto_path=' + workpath, '*.proto']
+    subprocess.call(csharpcmd)
+    # go protobuf
+    out = goprotopath #os.path.join(goprotopath, pname)
+    if not os.path.exists(out):
+        os.makedirs(out)
+    gocmd = [protoc, '--plugin=protoc-gen-go=' + protoc_gen_go, '--go_out=' + out,
+             '--proto_path=' + workpath, '*.proto']
+    subprocess.call(gocmd)
+
     for name in os.listdir(path):
         fullpath = os.path.join(path, name)
         _, ext = os.path.splitext(name)

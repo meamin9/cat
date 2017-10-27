@@ -86,7 +86,6 @@ func (self *socketSession) RawSend(ev *cellnet.Event) {
 func (self *socketSession) recvThread() {
 
 	for {
-
 		ev := cellnet.NewEvent(cellnet.Event_Recv, self)
 
 		read, _ := self.FromPeer().(SocketOptions).SocketDeadline()
@@ -94,9 +93,7 @@ func (self *socketSession) recvThread() {
 		if read != 0 {
 			self.conn.SetReadDeadline(time.Now().Add(read))
 		}
-
 		self.readChain.Call(ev)
-
 		if ev.Result() != cellnet.Result_OK {
 			goto onClose
 		}

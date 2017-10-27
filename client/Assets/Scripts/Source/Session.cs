@@ -89,7 +89,7 @@ namespace Cellnet
 
             if ( header.Valid)
             {
-                var size = (Int32)(header.TotalSize - PacketHeader.HeaderSize);
+                var size = header.DataSize;
 
                 // 还有包体
                 if (size > 0)
@@ -205,7 +205,7 @@ namespace Cellnet
             var header = new PacketHeader();
             header.Tag = GenSendTag();
             header.MsgID = msgID;
-            header.TotalSize = (UInt16)(PacketHeader.HeaderSize + payload.Length);
+            header.DataSize = payload.Length;
 
             var ps = PacketSerializer.WriteFull(header, payload);
 
@@ -229,6 +229,7 @@ namespace Cellnet
 
         void SendStream(PacketStream ps)
         {
+            Console.WriteLine("begin send");
             _socket.BeginSend(ps.Buff,
                 ps.Offset,
                 ps.BytesToOperate,
@@ -248,7 +249,8 @@ namespace Cellnet
                 if ( !ps.OperateDone(sendSize) )
                 {
                     SendStream(ps);
-                }                
+                }
+                Console.WriteLine("send " + sendSize);
             }
             catch( Exception ex)
             {                

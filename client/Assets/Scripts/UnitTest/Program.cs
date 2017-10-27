@@ -18,22 +18,24 @@ namespace UnitTest
 
             var codec = new ProtobufCodec();
 
-            var peer = new Connector(ed.Queue, codec).Start("127.0.0.1:7010");
+            var peer = new Connector(ed.Queue, codec).Start("127.0.0.1:7200");
             //var peer = new Connector(ed.Queue, codec).Start("192.168.0.138:8000");
             Subscribe.RegisterMessage<gamedef.SessionConnected>(ed, (msg, ses) =>
             {
                 Console.WriteLine("SessionConnected");
 
-                var ack = new gamedef.TestEchoACK();
-                ack.Content = "client";
-                ses.Send(ack);
+                var ack = new proto.Echo();
+                ack.content = "client";
+                bool r = ses.Send(ack);
+                Console.WriteLine("send------");
+                Console.WriteLine(r);
             });
 
-            
-            Subscribe.RegisterMessage<gamedef.TestEchoACK>(ed, (msg, ses) =>
+
+            Subscribe.RegisterMessage<proto.Echo>(ed, (msg, ses) =>
             {                
-                var ack = new gamedef.TestEchoACK();
-                ack.Content = "hello";
+                var ack = new proto.Echo();
+                ack.content = "hello";
                 ses.Send(ack);
 
             });
@@ -62,11 +64,12 @@ namespace UnitTest
                 Console.WriteLine("qps: {0}", qps);
             });
 
-            Subscribe.RegisterMessage<gamedef.TestEchoACK>(ed, (msg, ses) =>
+            Subscribe.RegisterMessage<proto.Echo>(ed, (msg, ses) =>
             {               
                 meter.Acc();
 
                 ses.Send(msg);
+
             });
 
             ed.Start();
@@ -76,10 +79,10 @@ namespace UnitTest
 
         static void Main(string[] args)
         {
-            MessageMetaSet.StaticInit(Assembly.GetExecutingAssembly(), "gamedef");
+            MessageMetaSet.StaticInit(Assembly.GetExecutingAssembly(), "proto");
 
 
-            if ( args.Length > 0 && args[0] == "c")
+            if ( true || args.Length > 0 && args[0] == "c")
             {
                 Client();
             }

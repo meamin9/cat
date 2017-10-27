@@ -32,6 +32,7 @@ namespace Cellnet
 
             foreach (Type t in assembly.GetTypes())
             {
+                Console.WriteLine(t.Namespace);
                 if (t.Namespace == NameSpace && t.IsClass)
                 {
                     Register(t);

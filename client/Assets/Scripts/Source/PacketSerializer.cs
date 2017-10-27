@@ -12,19 +12,19 @@ namespace Cellnet
             {
                 header.Tag = reader.ReadUInt16();
                 header.MsgID = reader.ReadUInt32();
-                header.TotalSize = reader.ReadUInt16();
+                header.DataSize = (Int32)(reader.ReadUInt32());
             }
             return header;
         }
 
         public static PacketStream WriteFull(PacketHeader header, byte[] data) 
         {
-            PacketStream ps = new PacketStream(header.TotalSize, null, null);
+            PacketStream ps = new PacketStream(header.DataSize + PacketHeader.HeaderSize, null, null);
             using (BinaryWriter writer = new BinaryWriter(ps.ToStream()))
             {
                 writer.Write(header.Tag);
                 writer.Write(header.MsgID);
-                writer.Write(header.TotalSize);
+                writer.Write(header.DataSize);
                 writer.Write(data);
                 writer.Flush();
             }

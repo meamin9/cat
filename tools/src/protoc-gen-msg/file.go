@@ -20,9 +20,9 @@ package {{.PackageName}}
 
 {{if gt .TotalMessages 0}}
 import (
-	"github.com/davyxu/cellnet"
+	"cellnet"
 	"reflect"
-	_ "github.com/davyxu/cellnet/codec/pb"
+	_ "cellnet/codec/pb"
 )
 {{end}}
 

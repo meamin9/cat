@@ -2,6 +2,7 @@ package game
 
 import (
 	"db"
+	"github.com/davyxu/golog"
 	_ "login"
 	"network"
 	"schedule"
@@ -9,6 +10,7 @@ import (
 )
 
 var exit chan int
+var log *golog.Logger = golog.New("game")
 
 const fps = 60
 

@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package loginproto;
+package proto;
 
-import "proto/structs.proto";
+import "struct.proto";
 
 message CSToken {
 }
@@ -24,7 +24,7 @@ message CSRoleList {
 }
 
 message SCRoleList {
-  repeated proto.RoleBase roles = 1;
+  repeated RoleBase roles = 1;
 }
 
 message CSLoginRole {

@@ -14,9 +14,7 @@ func (self *FixedLengthFrameReader) Call(ev *Event) {
 	reader := ev.Ses.(interface {
 		DataSource() io.ReadWriter
 	}).DataSource()
-
 	_, err := io.ReadFull(reader, self.headerBuffer)
-
 	if err != nil {
 		ev.SetResult(Result_SocketError)
 		return
