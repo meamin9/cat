@@ -82,23 +82,25 @@ def walkdir(path):
     if not os.path.exists(out):
         os.makedirs(out)
     csharpcmd = [protoc, '--plugin=protoc-gen-sharpnet=' + protoc_gen_csharp, '--sharpnet_out=' + out,
-                 '--proto_path=' + workpath, '*.proto']
-    subprocess.call(csharpcmd)
+                 '--proto_path=' + workpath]
     # go protobuf
     out = goprotopath #os.path.join(goprotopath, pname)
     if not os.path.exists(out):
         os.makedirs(out)
     gocmd = [protoc, '--plugin=protoc-gen-go=' + protoc_gen_go, '--go_out=' + out,
-             '--proto_path=' + workpath, '*.proto']
-    subprocess.call(gocmd)
-
+             '--proto_path=' + workpath]
     for name in os.listdir(path):
         fullpath = os.path.join(path, name)
         _, ext = os.path.splitext(name)
         if ext == '.proto':
             gen_go_proto(name)
+            csharpcmd.append(name)
+            gocmd.append(name)
         elif os.path.isdir(fullpath):
             gen_go_dir(name, fullpath)
+
+    subprocess.call(csharpcmd)
+    subprocess.call(gocmd)
 
 def main():
     proto_cmd()
