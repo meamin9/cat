@@ -79,14 +79,23 @@ namespace Cellnet
 		public void Poll() 
 		{
 			EventData[] evs;
-			lock (_msgQueueGuard) { // TODO: 主线程中不要阻塞
+            bool lockTaken = false;
+            try {
+                Monitor.TryEnter(_msgQueueGuard, ref lockTaken);
+                if (lockTaken == false) {
+                    return
+                }
 				if (_msgQueue.Count == 0) {
 					return;
 				}
-				UnityEngine.Debug.Log ("Count =" + _msgQueue.Count);
+//				UnityEngine.Debug.Log ("Count =" + _msgQueue.Count);
 				evs = _msgQueue.ToArray();
 				_msgQueue.Clear();
-			}
+			} finally {
+                if (lockTaken) {
+                    Monitor.Exit(_msgQueueGuard);
+                }
+            }
 			if (OnEvent == null) {
 				return;
 			}

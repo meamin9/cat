@@ -2,7 +2,6 @@
 using System;
 
 namespace Game {
-	
 	public class Net {
 		static readonly Net _instance = new Net();
 		public static Net Instance {
@@ -19,10 +18,10 @@ namespace Game {
 			_peer = new Connector(_protod.Queue, codec);
 		}
 
-		public void Connect() {
-			var codec = new ProtobufCodec();
-			_peer = new Connector(_protod.Queue, codec); // 直接新建一个connect
-		}
+		// public void Connect() {
+		// 	var codec = new ProtobufCodec();
+		// 	_peer = new Connector(_protod.Queue, codec); // 直接新建一个connect
+		// }
 
 		public Peer P {
 			get {
@@ -37,9 +36,5 @@ namespace Game {
 		public void Poll() {
 			P.Queue.Poll();
 		}
-		
-		
-
-
 	}
 }//namespace Game

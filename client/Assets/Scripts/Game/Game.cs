@@ -2,13 +2,20 @@
 using System.Reflection;
 
 namespace Game {
-	public class G
+	public class Moudle
 	{
+        static bool inited = false;
+
+        public static void Initialize() {
+            if (inited) {
+                return;
+            }
+            InitProto();
+        }
+
 		public static void InitProto() {
-			var c = Cellnet.SessionEvent.Connected;
-			if (c == null) {
-			}
-			//Cellnet.MessageMetaSet.StaticInit(Assembly.GetExecutingAssembly(), "gamedef");
+			Cellnet.SessionEvent.Init(); // Session事件注册
+			Cellnet.MessageMetaSet.StaticInit(Assembly.GetExecutingAssembly(), "proto");
 		}
 	}
 }
