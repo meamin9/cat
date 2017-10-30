@@ -1,16 +1,28 @@
+/// <summary>
+/// 作为组件添加到prefab上，提供ui prefab基本参数设定
+/// </summary>
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Game;
 
 public class UIBase: MonoBehaviour {
-    public UIMode Mode;
+    public UIDefine Define;
+	public string Name;
     List<GameObject> _subUIs;
+
     public void AddSubUI(GameObject ui) {
         _subUIs.Add(ui);
     }
 
-    public void OnShow() {
+	public void Refresh() {
+	}
 
-    }
+    public void OnShow() {
+	}
+
+	public void OnHide(){
+	}
+
+	public void onDestroy(){
+	}
 }

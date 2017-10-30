@@ -83,7 +83,7 @@ namespace Cellnet
             try {
                 Monitor.TryEnter(_msgQueueGuard, ref lockTaken);
                 if (lockTaken == false) {
-                    return
+					return;
                 }
 				if (_msgQueue.Count == 0) {
 					return;

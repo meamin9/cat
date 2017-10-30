@@ -65,8 +65,13 @@
      <Compile Include="Assets\Scripts\Cellnet\Subscribe.cs" />
      <Compile Include="Assets\Scripts\Game\Game.cs" />
      <Compile Include="Assets\Scripts\Game\Net.cs" />
+     <Compile Include="Assets\Scripts\UI\GameCtrl.cs" />
      <Compile Include="Assets\Scripts\UI\NetControl.cs" />
+     <Compile Include="Assets\Scripts\UI\Start\LoginUI.cs" />
      <Compile Include="Assets\Scripts\UI\Start\StartCtrl.cs" />
+     <Compile Include="Assets\Scripts\UIBase.cs" />
+     <Compile Include="Assets\Scripts\UIConfig.cs" />
+     <Compile Include="Assets\Scripts\UIManager.cs" />
      <Compile Include="Assets\Scripts\proto\chat.cs" />
      <Compile Include="Assets\Scripts\proto\game.cs" />
      <Compile Include="Assets\Scripts\proto\login.cs" />
