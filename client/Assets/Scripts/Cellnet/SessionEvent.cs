@@ -58,7 +58,7 @@ namespace Cellnet
         public readonly static uint Accepted = MessageMetaSet.Register(typeof(gamedef.SessionAccepted)).id;
         public readonly static uint ListenError = MessageMetaSet.Register(typeof(gamedef.SessionListenError)).id;
 
-        public void Init() {}
+        public static void Init() {}
         public uint ID;
         public Session Ses;
         public PacketStream Stream;

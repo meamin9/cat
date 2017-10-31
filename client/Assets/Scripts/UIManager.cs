@@ -2,34 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum UIShowLayer {
-    Moudle, // 游戏模块界面
-    Popup, // 弹框
-}
-
-public enum UIShowMode {
-    HideOther, // 隐藏掉其他UI，自身关闭后恢复其他UI
-    CloseOther, // Close其他UI，自身关闭后也不会恢复
-    Default, //
-}
-
-public class UIDefine {
-    public string PrefabPath;
-    public bool Single = true; // 只存在一个实例, 不是单例
-    public UIShowMode ShowModel = UIShowMode.Default;
-    public UIShowLayer ShowLayer = UIShowLayer.Moudle;
-    public bool SwallowTouch = true;
-    public bool ShadowMask = true;
-    public bool HideKill = true;
-    public int Id = 0;
-}
-
-public interface IUICom {
-    UIDefine Define { get; }
-    UIDefine Get();
-}
-
+/// <summary>
+/// UIManager 挂在canvas上，跨场景管理所有ui显示
+/// </summary>
 public class UIManager: MonoBehaviour {
+	// ui id 生成器， 每一个ui实例都有唯一id
 	static int idSeed = 100;
     public static int GenUIID() {
         return idSeed++;
@@ -54,116 +31,63 @@ public class UIManager: MonoBehaviour {
         }
     }
 
-    public GameObject UIRoot;
-    List<UICom> _uiList;
-    Dictionary<string, GameObject> _uiCache;
+    public GameObject UIRoot; // UI Root node
+	public GameObject Mask; // 全屏遮罩
+	Dictionary<int, UICom> _uiShows;
+    Dictionary<int, UICom> _uiCache;
+	int index = 0;
 
 
-    public GameObject Show<T>(UIDefine define) where T: IUICom {
-        GameObject ui;
+    public UICom Show<T>(UIDefine define) where T: UICom 
+	{
         var id = define.Id;
-        if (define.Single) {
-
-        }
-        switch (define.ShowModel) {
-            case UIShowMode.CloseOther:
-                HideAllUI();
-                break;
-            case UIShowMode.HideOther:
-                break;
-        }
-
-        if (_uiShows.TryGetValue (uiname, out ui)) {
-            UIBase com = ui.GetComponent<UIBase> ();
-            if (com.Define.Singleton) {
-                com.Refresh ();
-                return ui;
-            } else { // 可以同时存在多个的ui,使用这个ui的conf
-                define = com.Define;
-            }
-        } else if (_uiCache.TryGetValue(uiname, out ui)) {
-            _uiCache.Remove (uiname);
-            _uiShows.Add (uiname);
-            ui.SetActive (true);
-            return;
-        }
-        if (define == null) {
-            define = UIConfig.Find (uiname);
-        }
-
-
+		UICom com;
+		if (_uiShows.TryGetValue(id, out com)) {
+			com.gameObject.transform.SetSiblingIndex(index++);
+		} else if (_uiCache.TryGetValue(id, out com)) {
+			com.gameObject.SetActive(true);
+			com.gameObject.transform.SetSiblingIndex(index++);
+		} else { // create ui
+			GameObject obj = Instantiate(Resources.Load(define.PrefabPath, typeof(GameObject))) as GameObject;
+			com = obj.AddComponent<T>();
+			_uiShows.Add(id, com);
+			obj.SetActive(true);
+		}
+		return com;
     }
 
-    public GameObject CreateUI<T>() where T:IUICom {
-        var define = T.Define;
-        // TODO: 是否需要使用异步加载
-        var asset = Resources.Load(define.PrefabPath, typeof(GameObject));
-        Debug.Assert(asset != null, "load assets failed" + define.PrefabPath);
-        GameObject ui = Instantiate(asset) as GameObject;
-        if (ui == null) {
-            Debug.LogError("create prafab failed.", define.PrefabPath);
-            return;
-        }
-        switch (define.ShowModel) {
-            case UIShowMode.TempHideOther:
-                foreach (var u in _uiList) {
-                    u:SetActive(false);
-                }
-                break;
-            case UIShowMode.HideOther:
-                HideAllUI();
-                break;
-        }
-        _uiList.Add(ui);
-        if (define.ShadowMask) {
-
-        }
-
-    }
-
-    void showMode(UIDefine conf) {
-        switch (conf.ShowModel) {
-        case UIShowMode.CloseOther:
-
-            break;
-        }
-        if (conf.ShowModel == UIShowMode.CloseOther) {
-        }
-    }
+	public void Hide(UIDefine define) {
+		var id = define.Id;
+		UICom com;
+		if (_uiShows.TryGetValue (id, out com)) {
+			_uiShows.Remove(id);
+			if (define.HideKill) {
+				Destroy(com.gameObject);
+				com = null;
+				Resources.UnloadUnusedAssets();
+			} else {
+				_uiCache.Add(id, com);
+				com.gameObject.SetActive(false);
+			}
+		}
+	}
 
     // TIP: 在OnEnable和OnDistroy新建ui会产生未定义的行为
     public void HideAllUI() {
         bool hasDestory = false;
-        foreach(var ui in _uiShows.Values) {
-            UIBase com = ui.GetComponent<UIBase> ();
+        foreach(var com in _uiShows.Values) {
             if (com.Define.HideKill) {
-                ui.Destroy ();
+				Destroy(com.gameObject);
                 hasDestory = true;
             } else {
-                ui.SetActive (false);
-                _uiCache.Add (com.Name, ui);
+				com.gameObject.SetActive(false);
+				_uiCache.Add(com.Define.Id, com);
             }
         }
-        _uiShows.Clear ();
+        _uiShows.Clear();
         if (hasDestory) {
-            Resources.UnloadUnusedAssets ();
+            Resources.UnloadUnusedAssets();
         }
     }
 
-    public void HideUI(string uiname) {
-        GameObject ui;
-        if (_uiShows.TryGetValue (uiname, out ui)) {
-            _uiShows.Remove (uiname);
-            UIBase com = ui.GetComponent<UIBase> ();
-            if (com.Define.HideKill) {
-                ui.Destroy ();
-                ui = null; // 释放引用
-                com = null;
-                Resources.UnloadUnusedAssets ();
-            } else {
-                _uiCache.Add (com.Name, ui);
-                ui.SetActive (false);
-            }
-        }
-    }
 }

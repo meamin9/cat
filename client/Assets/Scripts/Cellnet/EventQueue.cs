@@ -81,7 +81,7 @@ namespace Cellnet
 			EventData[] evs;
             bool lockTaken = false;
             try {
-                Monitor.TryEnter(_msgQueueGuard, ref lockTaken);
+				lockTaken = Monitor.TryEnter(_msgQueueGuard);
                 if (lockTaken == false) {
 					return;
                 }

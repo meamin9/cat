@@ -6,7 +6,7 @@ public class StartCtrl : MonoBehaviour {
 	public GameObject startBtn;
 
 	void Start () {
-		Game.Net.Instance.RegisterProto<gamedef.SessionConnected> ((msg, ses) => {
+		Net.Instance.RegisterProto<gamedef.SessionConnected> ((msg, ses) => {
 			startBtn.SetActive(true);
 			Debug.Log("Connected");
 		});

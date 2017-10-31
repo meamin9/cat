@@ -1,8 +1,19 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\UIManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/UICom.cs">
     <Files>
-      <File FileName="Assets\Scripts\UIManager.cs" Line="40" Column="14" />
+      <File FileName="Assets/Scripts/UIManager.cs" Line="51" Column="1" />
+      <File FileName="Assets/Scripts/UICom.cs" Line="17" Column="22" />
+      <File FileName="Assets/Scripts/UIConfig.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/Cellnet/EventQueue.cs" Line="85" Column="21" />
+      <File FileName="Assets/Scripts/protobuf-net/Meta/RuntimeTypeModel.cs" Line="1712" Column="25" />
+      <File FileName="Assets/Scripts/Game/Game.cs" Line="28" Column="25" />
+      <File FileName="Assets/Scripts/Game/Net.cs" Line="3" Column="1" />
+      <File FileName="Assets/Scripts/UI/NetControl.cs" Line="8" Column="16" />
+      <File FileName="Assets/Scripts/UI/Start/LoginUI.cs" Line="11" Column="78" />
+      <File FileName="Assets/Scripts/UI/Start/StartCtrl.cs" Line="9" Column="3" />
+      <File FileName="Assets/Scripts/Cellnet/SessionEvent.cs" Line="61" Column="23" />
+      <File FileName="Assets/Scripts/Cellnet/Subscribe.cs" Line="14" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

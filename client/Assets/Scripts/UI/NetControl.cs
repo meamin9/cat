@@ -6,7 +6,6 @@ using Game;
 public class NetControl : MonoBehaviour {
 
 	void Awake() {
-		Game.G.InitProto ();
 	}
 	// Use this for initialization
 	void Start () {
