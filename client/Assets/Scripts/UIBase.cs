@@ -5,24 +5,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class UIBase: MonoBehaviour {
-    public UIDefine Define;
-	public string Name;
-    List<GameObject> _subUIs;
-
-    public void AddSubUI(GameObject ui) {
-        _subUIs.Add(ui);
+public class UICom: MonoBehaviour {
+    UIDefine _define;
+    UIDefine Define 
+    {
+        get { return _define; }
     }
 
-	public void Refresh() {
-	}
-
-    public void OnShow() {
-	}
-
-	public void OnHide(){
-	}
-
-	public void onDestroy(){
-	}
+    public override int GetHashCode()
+    {
+        return _define.Id;
+    }
 }

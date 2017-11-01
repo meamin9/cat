@@ -15,7 +15,12 @@ client/Assets/Scripts/proto/
 client/obj/
 client/Temp/
 client/UnitTest/
-client/Library
+client/Library/
+client/Assets/Scripts/protobuf-net/bin*
+client/Assets/Scripts/protobuf-net/obj*
+client/Assets/Scripts/protobuf-net/Web*
+client/Assets/Scripts/UnitTest*
+client/Assets/Scripts/Source*
 main
 bin/
 obj/

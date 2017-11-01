@@ -13,6 +13,15 @@ public class Moudle
             return;
         }
         InitProto();
+        UIManager.Init();
+    }
+
+    public static void Start() {
+        Net.Instance.P.Start("127.0.0.1:7200");
+    }
+
+    public static void Update () {
+        Net.Instance.Poll();
     }
 
 	public static void InitProto() {
