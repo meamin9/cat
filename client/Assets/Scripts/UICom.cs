@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UIDefine 
 {
-	public string PrefabPath;
+	public string PrefabPath = "UI/LoginUI";
 	public bool HideKill = true;
 	public int Id = 0;
 }

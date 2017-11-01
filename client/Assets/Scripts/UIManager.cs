@@ -23,10 +23,11 @@ public class UIManager: MonoBehaviour {
     // 在游戏游戏初始化时Init
     public static void Init() {
         if (_instance == null) {
-            GameObject uim = Instantiate(Resources.Load("UIFrame", typeof(GameObject))) as GameObject;
+            GameObject uim = Instantiate(Resources.Load("UI/Canvas", typeof(GameObject))) as GameObject;
+			DontDestroyOnLoad(uim);
             _instance = uim.GetComponent<UIManager>();
             if (_instance == null) {
-                Debug.LogError("UIFrame not fond UIManager Component");
+                Debug.LogError("Canvas not fond UIManager Component");
             }
         }
     }
@@ -41,7 +42,7 @@ public class UIManager: MonoBehaviour {
     public UICom Show<T>(UIDefine define) where T: UICom 
 	{
         var id = define.Id;
-		UICom com;
+		UICom com = new UICom();
 		if (_uiShows.TryGetValue(id, out com)) {
 			com.gameObject.transform.SetSiblingIndex(index++);
 		} else if (_uiCache.TryGetValue(id, out com)) {

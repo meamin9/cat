@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StartUI: UICom {
-	public GameObject startBtn;
-
+public class StartCtrl: MonoBehaviour {
 	void Start () {
         Moudle.PlayerReset();
         Net.Instance.EventConnected += () => {
             Debug.Log("connected");
         };
+		UIManager.I.Show<LoginUI>(LoginUI.Define);
 	}
 
     public void autoLogin() {
