@@ -90,4 +90,8 @@ public class UIManager: MonoBehaviour {
         }
     }
 
+    void Start() {
+        Mask.SetActive(false);
+    }
+
 }

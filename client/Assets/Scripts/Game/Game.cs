@@ -12,19 +12,16 @@ public class Moudle
         if (inited) {
             return;
         }
-        InitProto();
+        initProto();
         UIManager.Init();
     }
 
-    public static void Start() {
-        Net.Instance.P.Start("127.0.0.1:7200");
+    // 角色重置（重等）清掉player相关数据
+    public static void PlayerReset() {
+
     }
 
-    public static void Update () {
-        Net.Instance.Poll();
-    }
-
-	public static void InitProto() {
+    static void initProto() {
 		Cellnet.SessionEvent.Init(); // Session事件注册
 		Cellnet.MessageMetaSet.StaticInit(Assembly.GetExecutingAssembly(), "proto");
 	}

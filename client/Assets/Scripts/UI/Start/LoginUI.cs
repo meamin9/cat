@@ -8,9 +8,6 @@ public class LoginUI: MonoBehaviour {
     public GameObject PwdInput;
 
     void Start () {
-        Net.Instance.RegisterProto<gamedef.SessionConnected> ((msg, ses) => {
-            Debug.Log("Connected");
-        });
     }
 
     public void onClickStartBtn() {

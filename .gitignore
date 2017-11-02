@@ -26,6 +26,7 @@ bin/
 obj/
 
 *.suo
+*.suo.*
 
 # Test binary, build with `go test -c`
 *.test

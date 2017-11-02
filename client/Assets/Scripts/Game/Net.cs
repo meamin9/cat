@@ -1,30 +1,40 @@
 ﻿using Cellnet;
 using System;
 
-
 public class Net {
-	static readonly Net _instance = new Net();
-	public static Net Instance {
-		get {
-			return _instance;
-		}
-	}
-	Peer _peer;
+    #region Singleton
+    static readonly Net _instance = new Net();
+	public static Net Instance { get { return _instance; } }
+    #endregion
+
+    #region Event
+    public event Action EventConnected;
+    public event Action EventConnectError;
+    #endregion
+
+    Peer _peer;
 	EventDispatcher _protod;
 
 	public Net() {
 		_protod = new EventDispatcher();
 		var codec = new ProtobufCodec();
 		_peer = new Connector(_protod.Queue, codec);
+        // 注册Session事件
+        RegisterProto<gamedef.SessionConnected>((msg, ses) => {
+            if (EventConnected != null) {
+                EventConnected.Invoke();
+            }
+        });
+        RegisterProto<gamedef.SessionConnectError>((msg, ses) => {
+            if (EventConnectError != null) {
+                EventConnectError.Invoke();
+            }
+        });
 	}
 
-	// public void Connect() {
-	// 	var codec = new ProtobufCodec();
-	// 	_peer = new Connector(_protod.Queue, codec); // 直接新建一个connect
-	// }
 
-	public Peer P {
-		get {
+	public Peer P { 
+        get {
 			return _peer;
 		}
 	}
