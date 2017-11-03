@@ -34,15 +34,15 @@ public class UIManager: MonoBehaviour {
 
     public GameObject UIRoot; // UI Root node
 	public GameObject Mask; // 全屏遮罩
-	Dictionary<int, UICom> _uiShows;
-    Dictionary<int, UICom> _uiCache;
+	Dictionary<int, UICom> _uiShows = new Dictionary<int, UICom>();
+    Dictionary<int, UICom> _uiCache = new Dictionary<int, UICom>();
 	int index = 0;
 
 
     public UICom Show<T>(UIDefine define) where T: UICom 
 	{
         var id = define.Id;
-		UICom com = new UICom();
+		UICom com;
 		if (_uiShows.TryGetValue(id, out com)) {
 			com.gameObject.transform.SetSiblingIndex(index++);
 		} else if (_uiCache.TryGetValue(id, out com)) {

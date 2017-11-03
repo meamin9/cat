@@ -14,6 +14,7 @@ public class Moudle
         }
         initProto();
         UIManager.Init();
+        inited = true;
     }
 
     // 角色重置（重等）清掉player相关数据
