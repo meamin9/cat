@@ -12,7 +12,7 @@ public class Net {
     public event Action EventConnectError;
     #endregion
 
-    Peer _peer;
+    Connector _peer;
 	EventDispatcher _protod;
 
 	public Net() {
@@ -33,7 +33,7 @@ public class Net {
 	}
 
 
-	public Peer P { 
+    public Connector P { 
         get {
 			return _peer;
 		}
@@ -46,5 +46,9 @@ public class Net {
 	public void Poll() {
 		P.Queue.Poll();
 	}
+
+    public bool Send<T>(T msg) where T : class {
+        return P.Ses.Send<T>(msg);
+    }
 }
 

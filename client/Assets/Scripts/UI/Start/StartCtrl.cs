@@ -5,11 +5,20 @@ using UnityEngine;
 public class StartCtrl: MonoBehaviour {
 	void Start () {
         Moudle.PlayerReset();
-        Net.Instance.EventConnected += () => {
-            Debug.Log("connected");
-        };
 		UIManager.I.Show<LoginUI>(LoginUI.Define);
 	}
+
+    void OnEnable() {
+        Net.Instance.EventConnected += handleConnected;
+    }
+
+    void OnDisable() {
+        Net.Instance.EventConnected -= handleConnected;
+    }
+
+    static void handleConnected() {
+        Debug.Log("connected");
+    }
 
     public void autoLogin() {
 

@@ -8,29 +8,38 @@ message CSToken {
 }
 
 message SCToken {
-  string token = 1;
+  string Token = 1;
 }
 
-message CSLogin {
-  string id = 1;
-  string pwd = 2;
+message CSAccountLogin {
+  string Id = 1;
+  string Pwd = 2;
 }
 
-message SCLogin {
-  int32 error = 1;
+message SCAccountLogin {
+  int32 Error = 1;
+}
+
+message CSAccountCreate {
+  string Id = 1;
+  string Pwd = 2;
+}
+
+message SCError {
+  uint32 Error = 1;
 }
 
 message CSRoleList {
 }
 
 message SCRoleList {
-  repeated RoleBase roles = 1;
+  repeated RoleBase Roles = 1;
 }
 
 message CSLoginRole {
-  int64 id = 1;
+  int64 Id = 1;
 }
 
 message SCLoginRole {
-  int32 error = 1;
+  int32 Error = 1;
 }

@@ -9,6 +9,10 @@ namespace Cellnet
         Socket _socket;        
         Session _session;
 
+        public Session Ses {
+            get { return _session; }
+        }
+
         public int AutoReconnectSec
         {
             get;
