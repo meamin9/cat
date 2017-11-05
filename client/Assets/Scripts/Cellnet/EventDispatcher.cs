@@ -7,6 +7,10 @@ namespace Cellnet
     public struct SeriesCallback {
         public UInt16 Series;
         public Action<SessionEvent> Cb;
+		public SeriesCallback(UInt16 sid, Action<SessionEvent> cb) {
+			Series = sid;
+			Cb = cb;
+		}
     }
     public class EventDispatcher
     {
@@ -32,6 +36,14 @@ namespace Cellnet
         {
             _queue.OnEvent += Invoke;
         }        
+
+		public void AddSid(UInt16 sid, Action<SessionEvent> cb) {
+			if (sid == 0) {
+				UnityEngine.Debug.LogError("sid cannot be 0");
+				return;
+			}
+			_seriesCallbacks.Enqueue(new SeriesCallback(sid, cb));
+		}
 
         public void Add(uint msgid, Action<object> callback)
         {
@@ -68,13 +80,13 @@ namespace Cellnet
                 var ev = (SessionEvent)msg;
 
                 Action<object> callbacks;
-                if (ev.Series > 0 & _seriesCallbacks.Count > 0) {
+				UnityEngine.Debug.Log("ccc: " + ev.Series + " " + _seriesCallbacks.Count);
+                if (ev.Series > 0 && _seriesCallbacks.Count > 0) {
                     var handle = _seriesCallbacks.Peek();
+					UnityEngine.Debug.Log("series:" + handle.Series + " " + ev.Series);
                     if (handle.Series == ev.Series) {
+						_seriesCallbacks.Dequeue();
                         handle.Cb.Invoke(ev);
-                    }
-                    else if (handle.Series < ev.Series) {
-
                     }
                 }
                 if (!_msgCallbacks.TryGetValue(ev.ID, out callbacks))

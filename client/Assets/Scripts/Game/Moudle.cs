@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Reflection;
+using UnityEngine;
 
-namespace Game {
-}
+namespace Game {}
 
 public class Moudle
 {
@@ -12,8 +12,14 @@ public class Moudle
         if (inited) {
             return;
         }
-        initProto();
-        UIManager.Init();
+
+		Debug.Log("init Proto message");
+		Net.Instance.Init();
+		Debug.Log("init Proto finished");
+
+		Debug.Log("init UIManager");
+        UIManager.Create();
+
         inited = true;
     }
 

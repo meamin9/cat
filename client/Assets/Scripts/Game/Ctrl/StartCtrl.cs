@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Start ctrl.进入开始界面
+/// </summary>
 public class StartCtrl: MonoBehaviour {
 	void Start () {
         Moudle.PlayerReset();
-		UIManager.I.Show<LoginUI>(LoginUI.Define);
+		UIManager.Instance.Show<LoginUI>(LoginUI.Define);
 	}
 
     void OnEnable() {
@@ -18,6 +21,12 @@ public class StartCtrl: MonoBehaviour {
 
     static void handleConnected() {
         Debug.Log("connected");
+		var msg = new proto.Echo();
+		msg.content = "hello";
+		var sid = Net.Instance.Send<proto.Echo>(msg);
+		Net.Instance.RegisterResponse(sid, (ev) => {
+			Debug.Log("send Echo Resturn");
+		});
     }
 
     public void autoLogin() {

@@ -184,22 +184,22 @@ namespace Cellnet
             }            
         }
 
-        public int Send<T>( T msg ) where T:class
+        public UInt16 Send<T>( T msg ) where T:class
         {
             MemoryStream stream = null;
             MessageMeta meta = MessageMeta.Empty;
             if (!_peer.Codec.Encode<T>(msg, out meta, out stream))
-                return -1;
+                return 0;
 
             return RawSend(meta.id, stream.ToArray());
         }
         
 
-        public int RawSend(UInt32 msgID, byte[] payload)
+		public UInt16 RawSend(UInt32 msgID, byte[] payload)
         {
             if (_socket == null || !_socket.Connected || payload == null)
             {
-                return -1;
+                return 0;
             }
 
             var header = new PacketHeader();
@@ -221,7 +221,7 @@ namespace Cellnet
             catch (Exception ex )
             {                
                 PostError(SessionEvent.SendError, ex);
-                return -1;
+                return 0;
             }
 
             return header.Tag;
@@ -265,6 +265,10 @@ namespace Cellnet
             lock (_sendTagGuard)
             {
                 var tag = _sendTag;
+				++_sendTag;
+				if (_sendTag == 0) {
+					++_sendTag;
+				}
                 return tag;
             }
         }

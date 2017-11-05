@@ -62,6 +62,7 @@ func (self *PrivatePacketReader) Call(ev *cellnet.Event) {
 	log.Debugln("end")
 
 	ev.Data = dataBuffer
+	ev.Series = ser
 
 	// 增加序列号值
 	self.recvser++

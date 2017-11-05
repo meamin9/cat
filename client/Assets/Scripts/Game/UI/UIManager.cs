@@ -14,18 +14,22 @@ public class UIManager: MonoBehaviour {
 
     // 单栗
     static UIManager _instance;
-    public static UIManager I {
+    public static UIManager Instance {
         get {
             return _instance;
         }
     }
 
     // 在游戏游戏初始化时Init
-    public static void Init() {
+    public static void Create() {
         if (_instance == null) {
-            GameObject uim = Instantiate(Resources.Load("UI/Canvas", typeof(GameObject))) as GameObject;
-			DontDestroyOnLoad(uim);
-            _instance = uim.GetComponent<UIManager>();
+			GameObject canvas;
+			canvas = GameObject.Find("Canvas");
+			if (canvas == null) {
+				canvas = Instantiate(Resources.Load("UI/Canvas", typeof(GameObject))) as GameObject;
+			}
+			DontDestroyOnLoad(canvas);
+            _instance = canvas.GetComponent<UIManager>();
             if (_instance == null) {
                 Debug.LogError("Canvas not fond UIManager Component");
             }
@@ -53,6 +57,8 @@ public class UIManager: MonoBehaviour {
 			com = obj.AddComponent<T>();
 			_uiShows.Add(id, com);
 			obj.SetActive(true);
+			obj.transform.SetParent(this.gameObject.transform);
+			obj.transform.localPosition = Vector3.zero;
 		}
 		return com;
     }

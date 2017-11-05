@@ -14,6 +14,6 @@ func init() {
 		ack := proto.Echo{
 			Content: msg.Content,
 		}
-		ev.Ses.Send(&ack)
+		ev.Send(&ack)
 	})
 }
