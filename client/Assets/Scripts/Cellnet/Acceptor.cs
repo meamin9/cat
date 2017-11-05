@@ -49,7 +49,7 @@ namespace Cellnet
 
         void PostEvent(uint msgid)
         {
-            _queue.Post(new SessionEvent(null, msgid, null));
+            _queue.Post(new SessionEvent(null, msgid, null, 0));
         }
 
 
@@ -77,7 +77,7 @@ namespace Cellnet
 
                 ses.ReadHeader();
 
-                _queue.Post(new SessionEvent(ses, SessionEvent.Accepted, null));            
+                _queue.Post(new SessionEvent(ses, SessionEvent.Accepted, null, 0));            
             }
             catch (Exception)
             {

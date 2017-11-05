@@ -5,3 +5,7 @@ package proto;
 message Echo {
   string content = 1;
 }
+
+message SCNotice {
+  int32 Index = 1;
+}

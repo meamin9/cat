@@ -1,4 +1,5 @@
-﻿
+﻿using System;
+
 namespace gamedef
 {
     
@@ -62,12 +63,14 @@ namespace Cellnet
         public uint ID;
         public Session Ses;
         public PacketStream Stream;
+        public UInt16 Series;
 
-        public SessionEvent(Session s, uint id, PacketStream stream)
+        public SessionEvent(Session s, uint id, PacketStream stream, UInt16 series)
         {
             ID = id;
             Ses = s;
             Stream = stream;
+            Series = series;
         }
     }
 }

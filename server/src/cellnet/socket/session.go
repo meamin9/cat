@@ -59,8 +59,18 @@ func (self *socketSession) Close() {
 	self.sendList.Add(nil)
 }
 
-func (self *socketSession) Send(data interface{}) {
+func (self *socketSession) Response(data interface{}, series uint16) {
+	ev := cellnet.NewEvent(cellnet.Event_Send, self)
+	ev.Msg = data
+	ev.Series = series
 
+	if ev.ChainSend == nil {
+		ev.ChainSend = self.p.ChainSend()
+	}
+	self.RawSend(ev)
+}
+
+func (self *socketSession) Send(data interface{}) {
 	ev := cellnet.NewEvent(cellnet.Event_Send, self)
 	ev.Msg = data
 

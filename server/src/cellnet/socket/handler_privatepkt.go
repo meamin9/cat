@@ -65,6 +65,9 @@ func (self *PrivatePacketReader) Call(ev *cellnet.Event) {
 
 	// 增加序列号值
 	self.recvser++
+	if self.recvser == 0 {
+		self.recvser++
+	}
 }
 
 func NewPrivatePacketReader() cellnet.EventHandler {
@@ -87,7 +90,8 @@ func (self *PrivatePacketWriter) Call(ev *cellnet.Event) {
 	var outputHeadBuffer bytes.Buffer
 
 	// 写序号
-	if err := binary.Write(&outputHeadBuffer, binary.LittleEndian, self.sendser); err != nil {
+	// series 用客户端发过来的，如果没有就直接用默认值
+	if err := binary.Write(&outputHeadBuffer, binary.LittleEndian, ev.Series); err != nil {
 		ev.SetResult(cellnet.Result_PackageCrack)
 		return
 	}

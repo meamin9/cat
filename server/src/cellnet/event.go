@@ -59,9 +59,10 @@ type Event struct {
 
 	Type EventType // 事件类型
 
-	MsgID uint32      // 消息ID
-	Msg   interface{} // 消息对象
-	Data  []byte      // 消息序列化后的数据
+	Series uint16      // 消息序列号, 标识服务器主动
+	MsgID  uint32      // 消息ID
+	Msg    interface{} // 消息对象
+	Data   []byte      // 消息序列化后的数据
 
 	Tag         interface{} // 事件的连接, 一个处理流程后被Reset
 	TransmitTag interface{} // 接收过程可以传递到发送过程, 不会被清空
@@ -76,6 +77,7 @@ type Event struct {
 
 func (self *Event) Clone() *Event {
 	c := &Event{
+		Series:      self.Series,
 		UID:         self.UID,
 		Type:        self.Type,
 		MsgID:       self.MsgID,
@@ -110,6 +112,7 @@ func (self *Event) Send(data interface{}) {
 	ev := NewEvent(Event_Send, self.Ses)
 	ev.Msg = data
 	ev.TransmitTag = self.TransmitTag
+	ev.Series = self.Series
 
 	if self.ChainSend != nil {
 		// 由接收方提供的发送链继续传递

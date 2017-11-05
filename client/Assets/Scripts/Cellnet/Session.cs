@@ -124,7 +124,7 @@ namespace Cellnet
 
         void PostPacket(PacketHeader header, PacketStream stream)
         {            
-            _queue.Post( new SessionEvent(this, header.MsgID, stream));
+            _queue.Post( new SessionEvent(this, header.MsgID, stream, header.Tag));
 
             lock (_recvTagGuard)
             {
@@ -135,12 +135,12 @@ namespace Cellnet
 
         internal void PostEvent(uint msgid)
         {
-            _queue.Post(new SessionEvent(this, msgid, null));
+            _queue.Post(new SessionEvent(this, msgid, null, 0));
         }
 
         internal void PostError(uint msgid, Exception ex)
         {
-            _queue.Post(new SessionEvent(this, msgid, null));
+            _queue.Post(new SessionEvent(this, msgid, null, 0));
         }
 
         void ReadPacket(PacketStream ps)
@@ -184,22 +184,22 @@ namespace Cellnet
             }            
         }
 
-        public bool Send<T>( T msg ) where T:class
+        public int Send<T>( T msg ) where T:class
         {
             MemoryStream stream = null;
             MessageMeta meta = MessageMeta.Empty;
             if (!_peer.Codec.Encode<T>(msg, out meta, out stream))
-                return false;
+                return -1;
 
             return RawSend(meta.id, stream.ToArray());
         }
         
 
-        public bool RawSend(UInt32 msgID, byte[] payload)
+        public int RawSend(UInt32 msgID, byte[] payload)
         {
             if (_socket == null || !_socket.Connected || payload == null)
             {
-                return false;
+                return -1;
             }
 
             var header = new PacketHeader();
@@ -221,10 +221,10 @@ namespace Cellnet
             catch (Exception ex )
             {                
                 PostError(SessionEvent.SendError, ex);
-                return false;
+                return -1;
             }
 
-            return true;
+            return header.Tag;
         }
 
         void SendStream(PacketStream ps)
@@ -265,7 +265,6 @@ namespace Cellnet
             lock (_sendTagGuard)
             {
                 var tag = _sendTag;
-                _sendTag++;
                 return tag;
             }
         }

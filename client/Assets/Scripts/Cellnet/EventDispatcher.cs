@@ -4,9 +4,14 @@ using System.Threading;
 
 namespace Cellnet
 {
+    public struct SeriesCallback {
+        public UInt16 Series;
+        public Action<SessionEvent> Cb;
+    }
     public class EventDispatcher
     {
         Dictionary<uint, Action<object>> _msgCallbacks = new Dictionary<uint, Action<object>>();
+        Queue<SeriesCallback> _seriesCallbacks = new Queue<SeriesCallback>();
 
         EventQueue _queue = new EventQueue();
 
@@ -63,6 +68,15 @@ namespace Cellnet
                 var ev = (SessionEvent)msg;
 
                 Action<object> callbacks;
+                if (ev.Series > 0 & _seriesCallbacks.Count > 0) {
+                    var handle = _seriesCallbacks.Peek();
+                    if (handle.Series == ev.Series) {
+                        handle.Cb.Invoke(ev);
+                    }
+                    else if (handle.Series < ev.Series) {
+
+                    }
+                }
                 if (!_msgCallbacks.TryGetValue(ev.ID, out callbacks))
                 {
                     return;

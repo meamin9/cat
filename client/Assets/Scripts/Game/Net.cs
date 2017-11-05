@@ -47,8 +47,12 @@ public class Net {
 		P.Queue.Poll();
 	}
 
-    public bool Send<T>(T msg) where T : class {
-        return P.Ses.Send<T>(msg);
+    public int Send<T>(T msg) where T : class {
+        var ret = P.Ses.Send<T>(msg);
+        if (ret < 0) {
+            UnityEngine.Debug.LogError("send net message error" + msg);
+        }
+        return ret;
     }
 }
 
