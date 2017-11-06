@@ -4,7 +4,6 @@ import os,sys
 import xml.etree.ElementTree as ET
 
 def genNotice():
-    print "genNotice"
     tree = ET.parse('notice_zh_cn.xml')
     root = tree.getroot()
     gofmt = \
@@ -17,7 +16,7 @@ const (
 '''
     csfmt = \
 '''// 此文件是代码自动生成，不要手动修改
-public enum Notice {
+public enum NoticeKey {
 %s
 }
 '''

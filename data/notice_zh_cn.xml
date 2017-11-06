@@ -4,4 +4,12 @@
     <name>NoticeLoginWrongKey</name>
     <content>帐号或密码不匹配</content>
   </notice>
+  <notice>
+    <name>NoticeLoginWrongNameLength</name>
+    <content>账号名长度在%d和%d之间</content>
+  </notice>
+  <notice>
+    <name>NoticeLoginWrongPwdLength</name>
+    <content>密码长度在%d和%d之间</content>
+  </notice>
 </notice_root>

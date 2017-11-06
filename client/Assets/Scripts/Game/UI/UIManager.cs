@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// UIManager 挂在canvas上，跨场景管理所有ui显示
@@ -36,7 +37,8 @@ public class UIManager: MonoBehaviour {
         }
     }
 
-    public GameObject UIRoot; // UI Root node
+	public GameObject UIRoot; // UI Root node
+	public GameObject PopLayer;
 	public GameObject Mask; // 全屏遮罩
 	Dictionary<int, UICom> _uiShows = new Dictionary<int, UICom>();
     Dictionary<int, UICom> _uiCache = new Dictionary<int, UICom>();
@@ -54,7 +56,7 @@ public class UIManager: MonoBehaviour {
 			com.gameObject.transform.SetSiblingIndex(index++);
 		} else { // create ui
 			GameObject obj = Instantiate(Resources.Load(define.PrefabPath, typeof(GameObject))) as GameObject;
-			com = obj.AddComponent<T>();
+			com = obj.GetComponent<T>();
 			_uiShows.Add(id, com);
 			obj.SetActive(true);
 			obj.transform.SetParent(this.gameObject.transform);

@@ -20,12 +20,12 @@ class LoginOP {
     public static bool CheckAccountKeyValid(string name, string pwd) {
         var len = name.Length;
         if (len < minKeyLength || len > maxNameLength) {
-            NoticeOP.ShowText(Lang.Instance.Notice(Lang.Key.AccountNameLengthInvalid));
+			NoticeOP.ShowText(Lang.Instance.Notice(NoticeKey.NoticeLoginWrongNameLength));
             return false;
         }
         len = pwd.Length;
         if (len < minKeyLength || len > maxPwdLength) {
-            NoticeOP.ShowText(Lang.Instance.Notice(Lang.Key.AccountPwdLengthInvalid));
+			NoticeOP.ShowText(Lang.Instance.Notice(NoticeKey.NoticeLoginWrongPwdLength));
             return false;
         }
         return true;

@@ -3,4 +3,6 @@ package keys
 
 const (
     NoticeLoginWrongKey int32 = iota  // 帐号或密码不匹配
+    NoticeLoginWrongNameLength  // 账号名长度在%d和%d之间
+    NoticeLoginWrongPwdLength  // 密码长度在%d和%d之间
 )
