@@ -32,10 +32,14 @@ func AccountRegister(name, pwd string) (result interface{}, rc db.RetCode) {
 	return &account, db.ToRetCode(err)
 }
 
+// 如果登录成功，返回该账号的所有角色基本信息列表（可能为空）
 func AccountLogin(name, pwd string) (data interface{}, rc db.RetCode) {
 	account := Account{}
 	err := accountC().Find(bson.M{"_id": name, "pwd": pwd}).One(&account)
-	return &account, db.ToRetCode(err)
+	if err != nil {
+		return nil, db.ToRetCode(err)
+	}
+	return RoleBaseQuery(account.Roles)
 }
 
 func AccountRoles(name string, roles []int64) (data interface{}, rc db.RetCode) {

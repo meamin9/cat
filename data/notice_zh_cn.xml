@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<notice_root>
+  <notice>
+    <name>NoticeLoginWrongKey</name>
+    <content>帐号或密码不匹配</content>
+  </notice>
+</notice_root>
