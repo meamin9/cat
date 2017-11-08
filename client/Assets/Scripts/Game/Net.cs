@@ -48,9 +48,26 @@ public class Net {
 		return Subscribe.RegisterMessage<T>(_protod, cb);
 	}
 
-	public void RegisterResponse(UInt16 tag, Action<SessionEvent> cb) {
-		_protod.AddSid(tag, cb);
+	public void AddResponse<T>(UInt16 series, Action<T, Session> cb) where T:class {
+        var meta = MessageMetaSet.GetByType<T>();
+        if (meta.Equals(MessageMeta.Empty)) {
+            throw new Exception("Register message failed: " + typeof(T).FullName);
+        }
+        _protod.AddSeriesCb(series, (ev) => {
+            if (ev.Stream != null) {
+                T msg;
+                if (ev.Ses.Peer.Codec.Decode<T>(meta, ev.Stream.ToStream(), out msg)) {
+                    cb(msg, ev.Ses);
+                }
+            }
+            else {
+                cb(null, ev.Ses);
+            }
+        });
 	}
+    public void AddResponse(UInt16 series, Action<SessionEvent> cb) {
+        _protod.AddSeriesCb(series, cb);
+    }
 
 	public void Poll() {
 		P.Queue.Poll();

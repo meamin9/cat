@@ -76,6 +76,7 @@ func updateTimer(now time.Time, heap *utils.MinHeap) {
 		} else {
 			elapsed := now.Sub(t.next) + t.interval
 			if t.class == TimerLoop {
+				// fixme: 这里应该避免一帧内多次触发定时器
 				t.next = t.next.Add(t.interval)
 				heap.ShiftDown(0)
 			} else {

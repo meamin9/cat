@@ -2,10 +2,20 @@ syntax = "proto3";
 
 package proto;
 
+// 测试Echo
 message Echo {
   string content = 1;
 }
 
 message SCNotice {
   int32 Index = 1;
+}
+
+// 默认响应
+message SCResponse {
+}
+
+// 错误，0是无错误
+message SCError {
+  uint32 Error = 1;
 }

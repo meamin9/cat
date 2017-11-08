@@ -4,42 +4,54 @@ package proto;
 
 import "struct.proto";
 
-message CSToken {
+message CSTokenLogin {
+  string Token = 1;
 }
 
 message SCToken {
   string Token = 1;
 }
 
+// 帐号登录，成功返回SCRoleList
 message CSAccountLogin {
   string Id = 1;
   string Pwd = 2;
 }
 
-message SCAccountLogin {
-  int32 Error = 1;
-}
-
+// 帐号注册，成功返回SCRoleList
 message CSAccountCreate {
   string Id = 1;
   string Pwd = 2;
-}
-
-message SCError {
-  uint32 Error = 1;
-}
-
-message CSRoleList {
 }
 
 message SCRoleList {
   repeated RoleBase Roles = 1;
 }
 
-message CSLoginRole {
+enum GenderType {
+  Male = 0;
+  Female = 1;
+}
+
+enum JobType {
+  None = 0;
+}
+
+message CSRoleCreate {
+  string Name = 1;
+  GenderType Gender = 2;
+  JobType Job = 3;
+}
+
+// 删除角色，返回错误码
+message CSRoleDelete {
   int64 Id = 1;
 }
 
-message SCLoginRole {
-  int32 Error = 1;
+message SCRoleCreate {
+  RoleBase Role = 1;
+}
+
+message CSRoleLogin {
+  int64 Id = 1;
 }

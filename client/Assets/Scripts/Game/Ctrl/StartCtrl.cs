@@ -24,7 +24,7 @@ public class StartCtrl: MonoBehaviour {
 		var msg = new proto.Echo();
 		msg.content = "hello";
 		var sid = Net.Instance.Send<proto.Echo>(msg);
-		Net.Instance.RegisterResponse(sid, (ev) => {
+        Net.Instance.AddResponse<proto.SCResponse>(sid, (_, ev) => {
 			Debug.Log("send Echo Resturn");
 		});
     }

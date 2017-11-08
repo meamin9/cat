@@ -12,4 +12,8 @@
     <name>NoticeLoginWrongPwdLength</name>
     <content>密码长度在%d和%d之间</content>
   </notice>
+  <notice>
+    <name>NoticeNameWrongLength</name>
+    <content>名字长度在%d个字符到%d个字符之间</content>
+  </notice>
 </notice_root>

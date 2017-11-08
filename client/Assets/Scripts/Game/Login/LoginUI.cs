@@ -13,6 +13,9 @@ public class LoginUI: UICom {
     void Start () {
 		//LoginBtn.onClick.AddListener(Login);
     }
+    void OnEnable() {
+        LoginM.Instance.Ev
+    }
 
     public void Login() {
         var name = AccountInput.text.Trim();

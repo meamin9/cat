@@ -34,3 +34,14 @@ public class Moudle
 	}
 }
 
+enum GenderType {
+    Male = 0,
+    Female = 1,
+}
+
+enum JobType {
+    None = 0,
+}
+
+
+
