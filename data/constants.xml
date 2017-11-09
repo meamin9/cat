@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<contants_root>
+  <MinAccountLength type="int" desc="最小帐号名字和密码长度">6</MinAccountLength>
+  <MaxAccountLength type="int" desc="最大帐号名字和密码长度">32</MaxAccountLength>
+  <MinNameLen type="int" desc="最小名字字符长度">6</MinNameLen>
+  <MaxNameLen type="int" desc="最小名字字符长度">14</MaxNameLen>
+</contants_root>

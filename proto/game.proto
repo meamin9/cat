@@ -9,6 +9,7 @@ message Echo {
 
 message SCNotice {
   int32 Index = 1;
+  repeated string Args = 2;
 }
 
 // 默认响应

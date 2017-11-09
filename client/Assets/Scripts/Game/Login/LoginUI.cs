@@ -14,7 +14,15 @@ public class LoginUI: UICom {
 		//LoginBtn.onClick.AddListener(Login);
     }
     void OnEnable() {
-        LoginM.Instance.Ev
+        LoginM.Instance.EventRoleChanges += RefreshRoles;
+    }
+
+    void OnDisable() {
+        LoginM.Instance.EventRoleChanges -= RefreshRoles;
+    }
+
+    void RefreshRoles() {
+        Debug.Log("role bases changed");
     }
 
     public void Login() {

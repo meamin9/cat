@@ -2,29 +2,28 @@ package login
 
 import (
 	"cellnet"
+	"common"
+	"data"
 	"db"
 	"db/collections"
 	"keys"
 	"network"
 	"proto"
+	"role"
 )
 
 func init() {
 	// TODO: 改成io线程并发
-	network.RegisterProto("proto.CSAccountlogin", dispatchLogin)
-	// var queue cellnet.EventQueue
-	// cellnet.RegisterMessageToQueue(network.Peer, queue, "loginproto.CSToken", dispatchToken)
-	// cellnet.RegisterMessageToQueue(network.Peer, queue, "loginproto.CSLogin", dispatchLogin)
-	// cellnet.RegisterMessageToQueue(network.Peer, queue, "loginproto.CSRoleList", dispatchRoleList)
-	// cellnet.RegisterMessageToQueue(network.Peer, queue, "loginproto.CSLoginRole", dispatchLoginRole)
+	network.RegisterProto("proto.CSAccountlogin", dispatchAccountLogin)
+	network.RegisterProto("proto.CSAccountCreate", dispatchAccountCreate)
 }
 
 func dispatchToken(ev *cellnet.Event) {
 
 }
 
-func dispatchLogin(ev *cellnet.Event) {
-	msg := ev.Msg.(proto.CSAccountLogin)
+func dispatchAccountLogin(ev *cellnet.Event) {
+	msg := ev.Msg.(*proto.CSAccountLogin)
 	db.Queue().Send(&db.Request{
 		Quest: func() (interface{}, db.RetCode) {
 			return collections.AccountLogin(msg.Id, msg.Pwd)
@@ -32,8 +31,9 @@ func dispatchLogin(ev *cellnet.Event) {
 		Result: func(data interface{}, code db.RetCode) {
 			if code == db.CodeSuccess {
 				dbroles := data.([]collections.RoleBase)
-				msg := proto.SCRoleList{}
+				ack := proto.SCRoleList{}
 				roles := make([]*proto.RoleBase, len(dbroles))
+				ids := make([]int64, len(dbroles))
 				for i, r := range roles {
 					roles[i] = &proto.RoleBase{
 						Id:     r.Id,
@@ -41,18 +41,64 @@ func dispatchLogin(ev *cellnet.Event) {
 						Gender: r.Gender,
 						Level:  r.Level,
 					}
+					ids[i] = r.Id
 				}
-				msg.Roles = roles
-				ev.Send(&roles)
+				ack.Roles = roles
+				ev.Send(&ack)
+				AccountMgr().Add(ev.Ses.ID(), NewAccount(msg.Id, ids))
 				return
 			}
-			ev.Send(&proto.SCNotice{Index: keys.NoticeLoginWrongKey})
+			ev.Send(common.NewNoticeMsg(keys.NoticeLoginWrongKey))
 		},
 	})
 }
 
-func dispatchRoleList(ev *cellnet.Event) {
+func dispatchAccountCreate(ev *cellnet.Event) {
+	msg := ev.Msg.(*proto.CSAccountCreate)
+	l := len(msg.Id)
+	if l < data.ConstMinAccountLength || l > data.ConstMaxAccountLength {
+		ev.Send(common.NewNoticeMsg(keys.NoticeLoginWrongNameLength,
+			string(data.ConstMinAccountLength), string(data.ConstMaxAccountLength)))
+		return
+	}
+	l = len(msg.Pwd)
+	if l < data.ConstMinAccountLength || l > data.ConstMaxAccountLength {
+		ev.Send(common.NewNoticeMsg(keys.NoticeLoginWrongPwdLength,
+			string(data.ConstMinAccountLength), string(data.ConstMaxAccountLength)))
+		return
+	}
+	db.Queue().Send(&db.Request{
+		Quest: func() (interface{}, db.RetCode) {
+			return collections.AccountRegister(msg.Id, msg.Pwd)
+		},
+		Result: func(data interface{}, code db.RetCode) {
+			if code != db.CodeSuccess {
+				ev.Send(common.NewNoticeMsg(keys.NoticeRegisterExist))
+				return
+			}
+			AccountMgr().Add(ev.Ses.ID(), NewAccount(msg.Id, make([]int64, 1)))
+			ack := proto.SCRoleList{}
+			ack.Roles = make([]*proto.RoleBase, 0)
+			ev.Send(ack)
+		},
+	})
 }
 
-func dispatchLoginRole(ev *cellnet.Event) {
+func dispatchRoleCreate(ev *cellnet.Event) {
+	msg := ev.Msg.(*proto.CSRoleCreate)
+	db.Queue().Send(&Request{
+		Quest: func() (interface{}, db.RetCode) {
+			return collections.RoleCreate(role.RoleMgr().NextId(), msg.Name, byte(msg.Gender, byte(msg.Job)))
+		},
+		Result: func(data interface{}, code db.RetCode) {
+			if code != db.CodeSuccess {
+				ev.Send(common.NewNoticeMsg(keys.NRoleNameExist))
+				return
+			}
+			dbrole := data.(collections.Role)
+			ac, _ := AccountMgr().Get(ev.Ses.ID())
+			ac.Add(dbrole.Id)
+		},
+	})
+
 }

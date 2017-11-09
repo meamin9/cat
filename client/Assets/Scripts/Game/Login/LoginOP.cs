@@ -31,18 +31,14 @@ static class LoginOP {
     #endregion
 
     #region 帐号创建
-    static readonly int minKeyLength = 6;
-    static readonly int maxKeyLength = 32;
-    static readonly int maxNameLength = 32;
-    static readonly int maxPwdLength = 32;
     public static bool CheckAccountKeyValid(string name, string pwd) {
         var len = name.Length;
-        if (len < minKeyLength || len > maxNameLength) {
+        if (len < data.Constants.MinAccountLength || len > data.Constants.MaxAccountLength) {
 			NoticeOP.ShowText(Lang.Instance.Notice(NoticeKey.NoticeLoginWrongNameLength));
             return false;
         }
         len = pwd.Length;
-        if (len < minKeyLength || len > maxPwdLength) {
+        if (len < data.Constants.MinAccountLength || len > data.Constants.MaxAccountLength) {
 			NoticeOP.ShowText(Lang.Instance.Notice(NoticeKey.NoticeLoginWrongPwdLength));
             return false;
         }
@@ -70,7 +66,8 @@ static class LoginOP {
 
     public static void CreateRole(string name, JobType job, GenderType gender) {
         name = name.Trim();
-        if (name.Length < minKeyLength || name.Length > maxKeyLength) {
+        if (name.Length < data.Constants.MinAccountLength 
+            || name.Length > data.Constants.MaxAccountLength) {
             NoticeOP.ShowText(Lang.Instance.Notice(NoticeKey.NoticeNameWrongLength));
             return;
         }

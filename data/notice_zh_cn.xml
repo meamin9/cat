@@ -6,14 +6,26 @@
   </notice>
   <notice>
     <name>NoticeLoginWrongNameLength</name>
-    <content>账号名长度在%d和%d之间</content>
+    <content>账号名长度在%s和%s之间</content>
   </notice>
   <notice>
     <name>NoticeLoginWrongPwdLength</name>
-    <content>密码长度在%d和%d之间</content>
+    <content>密码长度在%s和%s之间</content>
   </notice>
   <notice>
     <name>NoticeNameWrongLength</name>
-    <content>名字长度在%d个字符到%d个字符之间</content>
+    <content>名字长度在%s个字符到%s个字符之间</content>
+  </notice>
+  <notice>
+    <name>NoticeRegisterExist</name>
+    <content>帐号已存在</content>
+  </notice>
+  <notice>
+    <name>NRoleNameExist</name>
+    <content>角色名字已存在</content>
+  </notice>
+  <notice>
+    <name>NNameLenRange</name>
+    <content>名字长度在%s个字符到%s个字符之间</content>
   </notice>
 </notice_root>
