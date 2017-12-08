@@ -4,14 +4,7 @@ import (
 	"errors"
 )
 
-type RetCode int
-
-type ISender interface {
-	Send(*Request)
-	Start()
-	Stop()
-	Poll()
-}
+var ErrExit = errors.New("exit")
 
 type Request struct {
 	Quest  func() (retdata interface{}, err error)

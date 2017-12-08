@@ -7,6 +7,7 @@ import (
 	"db"
 	"db/collections"
 	"keys"
+	"log"
 	"network"
 	"proto"
 	"role"
@@ -24,14 +25,15 @@ func dispatchToken(ev *cellnet.Event) {
 
 func dispatchAccountLogin(ev *cellnet.Event) {
 	msg := ev.Msg.(*proto.CSAccountLogin)
-	account, ok := AccountMgr().Account(msg.Id)
+	account, ok := Mgr().Account(msg.Id)
 	if ok == true {
 		if account.pwd != msg.Pwd {
 			ev.Send(common.NewNoticeMsg(keys.NoticeLoginWrongKey))
 			return
 		}
-		// 顶号
-
+		account.addSid(ev.Ses.ID())
+		ev.Ses.SetAccountId(msg.Id)
+		ev.Send(account.data())
 		return
 	}
 	db.Queue().Send(&db.Request{
@@ -44,21 +46,11 @@ func dispatchAccountLogin(ev *cellnet.Event) {
 				return
 			}
 			datas := data.([]map[string]interface{})
-			account := NewAccount(ev.Ses.ID(), msg.Id, msg.Pwd)
-			account.unpackRoleInfo(datas)
-			AccountMgr().Add(account)
-			ack := proto.SCRoleList{}
-			roles := make([]*proto.RoleBase, len(dbroles))
-			for i, r := range roles {
-				roles[i] = &proto.RoleBase{
-					Id:     r.Id,
-					Name:   r.Name,
-					Gender: r.Gender,
-					Level:  r.Level,
-				}
-			}
-			ack.Roles = roles
-			ev.Send(&ack)
+			account := newAccount(ev.Ses.ID(), msg.Id, msg.Pwd)
+			account.unpackRoles(datas)
+			Mgr().Add(account)
+			ev.Ses.SetAccountId(msg.Id)
+			ev.Send(account.data())
 		},
 	})
 }
@@ -78,36 +70,51 @@ func dispatchAccountCreate(ev *cellnet.Event) {
 		return
 	}
 	db.Queue().Send(&db.Request{
-		Quest: func() (interface{}, db.RetCode) {
+		Quest: func() (interface{}, error) {
 			return collections.AccountRegister(msg.Id, msg.Pwd)
 		},
-		Result: func(data interface{}, code db.RetCode) {
-			if code != db.CodeSuccess {
+		Result: func(data interface{}, err error) {
+			if err != nil {
 				ev.Send(common.NewNoticeMsg(keys.NoticeRegisterExist))
 				return
 			}
-			AccountMgr().Add(ev.Ses.ID(), NewAccount(msg.Id, make([]int64, 1)))
-			ack := proto.SCRoleList{}
-			ack.Roles = make([]*proto.RoleBase, 0)
-			ev.Send(ack)
+			acc := newAccount(ev.Ses.ID(), msg.Id, msg.Pwd)
+			Mgr().Add(acc)
+			ev.Ses.SetAccountId(msg.Id)
+			ev.Send(acc.data())
 		},
 	})
 }
 
 func dispatchRoleCreate(ev *cellnet.Event) {
 	msg := ev.Msg.(*proto.CSRoleCreate)
-	db.Queue().Send(&Request{
-		Quest: func() (interface{}, db.RetCode) {
-			return collections.RoleCreate(role.RoleMgr().NextId(), msg.Name, byte(msg.Gender, byte(msg.Job)))
+	aid := ev.Ses.AccountId()
+	acc, ok := Mgr().Account(aid)
+	if !ok {
+		log.Panicln("invaild account", aid)
+	}
+	if len(acc.roles) >= 3 {
+		log.Print("create roles reach max count", acc)
+		return
+	}
+	role := role.Mgr().CreateRole(msg.Name)
+	db.Queue().Send(&db.Request{
+		Quest: func() (interface{}, error) {
+			return collections.RoleCreate(role.Pack())
 		},
-		Result: func(data interface{}, code db.RetCode) {
-			if code != db.CodeSuccess {
+		Result: func(data interface{}, err error) {
+			if err != nil {
 				ev.Send(common.NewNoticeMsg(keys.NRoleNameExist))
 				return
 			}
-			dbrole := data.(collections.Role)
-			ac, _ := AccountMgr().Get(ev.Ses.ID())
-			ac.Add(dbrole.Id)
+			acc.addRole(&roleinfo{
+				id:    role.Id(),
+				name:  role.Name(),
+				level: role.Level(),
+			})
+			db.Queue().Send(db.NewRequest(func() (interface{}, error) {
+				return collections.AccountUpdateRoles(acc.packRoles())
+			}, nil))
 		},
 	})
 

@@ -29,6 +29,25 @@ type socketSession struct {
 	readChain *cellnet.HandlerChain
 
 	writeChain *cellnet.HandlerChain
+
+	accountId string
+	roleId    int64
+}
+
+func (self *socketSession) RoleId() int64 {
+	return self.roleId
+}
+
+func (self *socketSession) SetRoleId(id int64) {
+	self.roleId = id
+}
+
+func (self *socketSession) AccountId() string {
+	return self.accountId
+}
+
+func (self *socketSession) SetAccountId(id string) {
+	self.accountId = id
 }
 
 func (self *socketSession) Tag() interface{} {

@@ -16,5 +16,8 @@ func init() {
 		}
 		ev.Send(&ack)
 	})
+	network.RegisterProto("coredef.SessionClosed", func(ev *cellnet.Event) {
+
+	})
 
 }

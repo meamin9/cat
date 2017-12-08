@@ -1,6 +1,7 @@
 package role
 
 import (
+	"common/class"
 	"db/collections"
 )
 
@@ -9,20 +10,16 @@ type mgr struct {
 	id    int64
 }
 
-func newmgr() *mgr {
-	return &mgr{
+var _instance *mgr
+
+func init() {
+	_instance = &mgr{
 		roles: make(map[int64]Role),
 		id:    10000,
 	}
 }
 
-var _instance *mgr
-
-func init() {
-	_instance = newmgr()
-}
-
-func RoleMgr() *mgr {
+func Mgr() *mgr {
 	return _instance
 }
 
@@ -45,4 +42,13 @@ func (self *mgr) LoadRole(id int64) {
 			}
 		},
 	})
+}
+
+func (self *mgr) CreateRole(name string) *Role {
+	role := newRole()
+	role.id = self.NextId()
+	role.birth = time.Now()
+	role.name = name
+	role.gender = class.Unmale
+	return role
 }

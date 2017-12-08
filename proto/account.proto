@@ -28,30 +28,16 @@ message SCRoleList {
   repeated RoleBase Roles = 1;
 }
 
-enum GenderType {
-  Male = 0;
-  Female = 1;
-}
-
-enum JobType {
-  None = 0;
-}
-
 message CSRoleCreate {
   string Name = 1;
-  GenderType Gender = 2;
-  JobType Job = 3;
-}
-
-// 删除角色，返回错误码
-message CSRoleDelete {
-  int64 Id = 1;
+  int32 Gender = 2;
 }
 
 message SCRoleCreate {
   RoleBase Role = 1;
 }
 
-message CSRoleLogin {
+message CSRoleDelete {
   int64 Id = 1;
 }
+

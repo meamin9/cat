@@ -8,5 +8,5 @@ type Gender byte
 const (
 	Female Gender = iota
 	Male
-	Unknown
+	Unmale
 )

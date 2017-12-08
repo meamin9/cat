@@ -21,6 +21,12 @@ type Session interface {
 	SetTag(tag interface{})
 
 	Tag() interface{}
+
+	AccountId() string
+	SetAccountId(id string)
+
+	RoleId() int64
+	SetRoleId(id int64)
 }
 
 // 端, Connector或Acceptor
