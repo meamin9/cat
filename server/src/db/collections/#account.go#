@@ -39,7 +39,8 @@ func AccountLogin(name, pwd string) (data interface{}, rc error) {
 	if err != nil {
 		return nil, err
 	}
-	return RoleBaseQuery(account.Roles)
+	roles, err := RoleBaseQuery(account.Roles)
+	if err 
 }
 
 func AccountRoles(name string, roles []int64) (data interface{}, rc error) {

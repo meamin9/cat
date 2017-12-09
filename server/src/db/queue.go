@@ -1,22 +1,10 @@
 package db
 
-type RetCode int
-
-const (
-	CodeSuccess RetCode = iota
-	CodeFailed
-	CodeAlreadyExist
-	CodeNotFound
-	CodeError
-	CodeExit
+import (
+	"errors"
 )
 
-func ToRetCode(err error) RetCode {
-	if err == nil {
-		return CodeSuccess
-	}
-	return CodeFailed
-}
+type RetCode int
 
 type ISender interface {
 	Send(*Request)
@@ -26,8 +14,12 @@ type ISender interface {
 }
 
 type Request struct {
-	Quest  func() (retdata interface{}, retcode RetCode)
-	Result func(interface{}, RetCode)
+	Quest  func() (retdata interface{}, err error)
+	Result func(interface{}, error)
+}
+
+func NewRequest(quest func() (interface{}, error), result func(interface{}, error)) *Request {
+	return &Request{quest, result}
 }
 
 type Response func()
@@ -50,19 +42,24 @@ func (q *queue) Send(req *Request) {
 	}
 }
 
+func (q *queue) Push(quest func() (interface{}, error), result func(interface{}, error)) {
+	q.Send(&Request{quest, result})
+}
+
 func (q *queue) waitRequest() {
 	for {
 		req := <-q.requests
-		retdata, retcode := req.Quest()
-		if retcode == CodeError {
-			log.Errorln("Db Request error")
-		} else if retcode == CodeExit {
+		retdata, err := req.Quest()
+		if err != nil {
+			log.Errorln(err)
+		}
+		if err == ErrExit {
 			q.exitSignal <- true
 			break
 		}
 		if req.Result != nil {
 			q.responses <- func() {
-				req.Result(retdata, retcode)
+				req.Result(retdata, err)
 			}
 		}
 	}
@@ -76,8 +73,8 @@ func (q *queue) Start() {
 
 func (q *queue) Stop() {
 	q.Send(&Request{
-		func() (interface{}, RetCode) {
-			return nil, CodeExit
+		func() (interface{}, error) {
+			return nil, ErrExit
 		},
 		nil,
 	})

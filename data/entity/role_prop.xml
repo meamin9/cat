@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<role_prop>
+  <type>
+    <int go="int" />
+    <int16 go="int16" />
+    <int32 go="int32" />
+    <int64 go="int64" />
+    <string go="string" />
+    <genderType go="common.class.Gender"/>
+    <jobType go="int" />
+  </type>
+  <prop>
+    <name type="string" default="" reset="" sync="true"/>
+    <level type="int16" />
+    <gender type="genderType" />
+    <job type="jobType" />
+  </prop>
+</role_prop>

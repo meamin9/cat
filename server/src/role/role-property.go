@@ -4,7 +4,7 @@ const (
 	Prop_Base_Begin int = iota
 	Prop_Name
 	Prop_Job
-	Prop_Sex
+	Prop_Gender
 	Prop_Level
 	Prop_Base_End
 
@@ -22,3 +22,5 @@ const (
 	Prop_Weekly_Begin
 	Prop_Weekly_End
 )
+
+type

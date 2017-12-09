@@ -23,10 +23,10 @@ func init() {
 	idC().Upsert(bson.M{}, bson.M{"setOnInsert": &seed})
 }
 
-func IdLoad() (interface{}, db.RetCode) {
+func IdLoad() (interface{}, error) {
 	ids := IdSeeds{}
 	err := idC().Find(nil).One(&ids)
-	return &ids, db.ToRetCode(err)
+	return &ids, err
 }
 
 func genId(name string, result interface{}) {

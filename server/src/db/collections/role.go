@@ -4,75 +4,57 @@ import (
 	"db"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"time"
 )
 
 func roleC() *mgo.Collection {
 	return db.DB().C("roles")
 }
 
-type RoleBase struct {
-	Id     int64     `bson:"_id"`
-	Name   string    `bson:"nam"`
-	Gender byte      `bson:"gen"`
-	Job    byte      `bson:"job"`
-	Level  int16     `bson:"lev"`
-	Birth  time.Time `bson:"bir"`
-}
-
 // 用来查询角色基本信息
-var roleBaseSelector bson.M = bson.M{
-	"_id": 1,
-	"nam": 1,
-	"gen": 1,
-	"job": 1,
-	"lev": 1,
-	"bir": 1,
+var roleBaseSelector = bson.M{
+	"_id":    1,
+	"name":   1,
+	"gender": 1,
+	"job":    1,
+	"level":  1,
+	"birth":  1,
 }
 
-type Role struct {
-	Id     int64     `bson:"_id"`
-	Name   string    `bson:"nam"`
-	Gender byte      `bson:"gen"`
-	Job    byte      `bson:"job"`
-	Level  int16     `bson:"lev"`
-	Birth  time.Time `bson:"bir"`
+func RoleCreate(data map[string]interface{}) (result interface{}, err error) {
+	err = roleC().Insert(data)
+	return data, err
 }
 
-func RoleCreate(id int64, name string, gender, job byte) (result interface{}, rc db.RetCode) {
-	role := Role{
-		Id:     id,
-		Name:   name,
-		Gender: gender,
-		Job:    job,
-		Level:  0,
-		Birth:  time.Now(),
-	}
-	info, err := roleC().Upsert(bson.M{"nam": name}, bson.M{"$setOnInsert": &role})
-	if err != nil {
-		rc = db.CodeError
-	} else if info.Matched >= 0 {
-		rc = db.CodeAlreadyExist
-	} else {
-		rc = db.CodeSuccess
-	}
-	return &role, rc
+func RoleDelete(id int64) (interface{}, error) {
+	err := roleC().RemoveId(id)
+	return nil, err
 }
 
-func RoleBaseQuery(id []int64) (result interface{}, ret db.RetCode) {
+func RoleBaseQuery(id []int64) (result interface{}, ret error) {
 	req := bson.M{"_id": bson.M{"$in": id}}
-	var data []RoleBase = make([]RoleBase, 0)
+	data := make([]map[string]interface{}, len(id))
 	err := roleC().Find(req).Select(roleBaseSelector).All(data)
-	return data, db.ToRetCode(err)
+	return data, err
 }
 
-func init() {
+func RoleLoad(id int64) (interface{}, error) {
+	data := make(map[string]interface{}, 10)
+	err := roleC().FindId(id).One(data)
+	return data, err
+}
+
+func InitIndexes() {
 	index := mgo.Index{
-		Key:        []string{"nam"},
+		Key:        []string{"name"},
 		Unique:     true,
-		DropDups:   true,
+		DropDups:   false,
 		Background: true,
 		Sparse:     true,
 	}
+	roleC().DropIndex("level")
 	roleC().EnsureIndex(index)
+}
+
+func init() {
+	InitIndexes()
 }

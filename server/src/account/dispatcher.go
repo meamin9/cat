@@ -1,4 +1,4 @@
-package login
+package account
 
 import (
 	"cellnet"
@@ -14,7 +14,7 @@ import (
 
 func init() {
 	// TODO: 改成io线程并发
-	network.RegisterProto("proto.CSAccountlogin", dispatchAccountLogin)
+	network.RegisterProto("proto.CSAccountLogin", dispatchAccountLogin)
 	network.RegisterProto("proto.CSAccountCreate", dispatchAccountCreate)
 }
 
@@ -25,12 +25,12 @@ func dispatchToken(ev *cellnet.Event) {
 func dispatchAccountLogin(ev *cellnet.Event) {
 	msg := ev.Msg.(*proto.CSAccountLogin)
 	db.Queue().Send(&db.Request{
-		Quest: func() (interface{}, db.RetCode) {
+		Quest: func() (interface{}, error) {
 			return collections.AccountLogin(msg.Id, msg.Pwd)
 		},
-		Result: func(data interface{}, code db.RetCode) {
-			if code == db.CodeSuccess {
-				dbroles := data.([]collections.RoleBase)
+		Result: func(data interface{}, err error) {
+			if err == nil {
+				datas := data.([]map[string]interface{})
 				ack := proto.SCRoleList{}
 				roles := make([]*proto.RoleBase, len(dbroles))
 				ids := make([]int64, len(dbroles))

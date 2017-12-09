@@ -1,4 +1,4 @@
-package login
+package account
 
 //正在登录的还没有进入游戏的帐号
 // 单例
@@ -15,6 +15,8 @@ func (me *account) Add(rid int64) {
 func NewAccount(name string, roles []int64) *account {
 	return &account{name, roles}
 }
+
+// === accountmgr ===
 
 type mgr struct {
 	accounts map[int64]*account

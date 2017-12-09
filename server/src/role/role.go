@@ -1,34 +1,20 @@
 package role
 
 import (
-	"base"
-	"network"
+	"common/class"
+	"time"
 )
-
-type SexType byte
-
-const (
-	Female SexType = iota
-	Male
-)
-
-type RoleFixedProp struct {
-	id   base.RoleId
-	name string
-	sex  SexType
-}
-
-type RoleBaseProp struct {
-	level int
-}
 
 type Role struct {
-	RoleFixedProp
-	RoleBaseProp
-	sid int64
+	sid    int64
+	id     int64
+	name   string
+	gender class.Gender
+	level  int16
+	birth  time.Date
 }
 
-func (self *Role) Id() base.RoleId {
+func (self *Role) Id() int64 {
 	return self.id
 }
 
@@ -37,8 +23,26 @@ func (self *Role) Name() string {
 }
 
 func (self *Role) Send(data interface{}) {
-	session := network.Host.GetSession(self.sid)
-	if session != nil {
-		session.Send(data)
-	}
+}
+
+func (me *Role) Pack() map[string]interface{} {
+	m := make(map[string]interface{}, 10)
+	m["_id"] = me.id
+	m["name"] = me.name
+	m["gender"] = me.gender
+	m["level"] = me.level
+	m["birth"] = me.birth
+	return m
+}
+
+func (me *Role) Unpack(m map[string]interface{}) {
+	me.id = m["_id"]
+	me.name = m["name"]
+	me.gender = m["gender"]
+	me.level = m["level"]
+	me.birth = m["birth"]
+}
+
+func newRole() *Role {
+	return &Role{}
 }
