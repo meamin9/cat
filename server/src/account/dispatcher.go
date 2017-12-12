@@ -24,31 +24,41 @@ func dispatchToken(ev *cellnet.Event) {
 
 func dispatchAccountLogin(ev *cellnet.Event) {
 	msg := ev.Msg.(*proto.CSAccountLogin)
+	account, ok := AccountMgr().Account(msg.Id)
+	if ok == true {
+		if account.pwd != msg.Pwd {
+			ev.Send(common.NewNoticeMsg(keys.NoticeLoginWrongKey))
+			return
+		}
+		// 顶号
+
+		return
+	}
 	db.Queue().Send(&db.Request{
 		Quest: func() (interface{}, error) {
 			return collections.AccountLogin(msg.Id, msg.Pwd)
 		},
 		Result: func(data interface{}, err error) {
-			if err == nil {
-				datas := data.([]map[string]interface{})
-				ack := proto.SCRoleList{}
-				roles := make([]*proto.RoleBase, len(dbroles))
-				ids := make([]int64, len(dbroles))
-				for i, r := range roles {
-					roles[i] = &proto.RoleBase{
-						Id:     r.Id,
-						Name:   r.Name,
-						Gender: r.Gender,
-						Level:  r.Level,
-					}
-					ids[i] = r.Id
-				}
-				ack.Roles = roles
-				ev.Send(&ack)
-				AccountMgr().Add(ev.Ses.ID(), NewAccount(msg.Id, ids))
+			if err != nil {
+				ev.Send(common.NewNoticeMsg(keys.NoticeLoginWrongKey))
 				return
 			}
-			ev.Send(common.NewNoticeMsg(keys.NoticeLoginWrongKey))
+			datas := data.([]map[string]interface{})
+			account := NewAccount(ev.Ses.ID(), msg.Id, msg.Pwd)
+			account.unpackRoleInfo(datas)
+			AccountMgr().Add(account)
+			ack := proto.SCRoleList{}
+			roles := make([]*proto.RoleBase, len(dbroles))
+			for i, r := range roles {
+				roles[i] = &proto.RoleBase{
+					Id:     r.Id,
+					Name:   r.Name,
+					Gender: r.Gender,
+					Level:  r.Level,
+				}
+			}
+			ack.Roles = roles
+			ev.Send(&ack)
 		},
 	})
 }

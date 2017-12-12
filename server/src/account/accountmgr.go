@@ -3,17 +3,40 @@ package account
 //正在登录的还没有进入游戏的帐号
 // 单例
 
-type account struct {
+type roleinfo struct {
+	id    int64
 	name  string
-	roles []int64
+	level int16
+}
+
+type account struct {
+	sid   int64
+	name  string
+	pwd   string
+	roles []*roleinfo
 }
 
 func (me *account) Add(rid int64) {
 	me.roles = append(me.roles, rid)
 }
 
-func NewAccount(name string, roles []int64) *account {
-	return &account{name, roles}
+func (self *account) unpackRoleInfo(datas []map[string]interface{}) {
+	self.roles = make([]*roleinfo, len(datas))
+	for i, d := range datas {
+		self.roles[i] = &roleinfo{
+			d["id"],
+			d["name"],
+			d["level"],
+		}
+	}
+}
+
+func NewAccount(sid int64, name, pwd string) *account {
+	return &account{sid, name, pwd, make([]*roleinfo, 0)}
+}
+
+func NewAccountFromPack(name, pwd string, roles map[string]interface{}) {
+
 }
 
 // === accountmgr ===
@@ -38,15 +61,15 @@ func AccountMgr() *mgr {
 	return _instance
 }
 
-func (me *mgr) Add(sid int64, a *account) {
-	me.accounts[sid] = a
+func (me *mgr) Add(a *account) {
+	me.accounts[a.id] = a
 }
 
-func (me *mgr) Remove(sid int64) {
-	delete(me.accounts, sid)
+func (me *mgr) Remove(id int64) {
+	delete(me.accounts, id)
 }
 
-func (me *mgr) Get(sid int64) (a *account, ok bool) {
+func (me *mgr) Account(id int64) (a *account, ok bool) {
 	a, ok = me.accounts[sid]
 	return
 }
