@@ -1,8 +1,8 @@
 le# Binaries for programs and plugins
-*.exe
-*.dll
-*.so
-*.dylib
+# *.exe
+# *.dll
+# *.so
+# *.dylib
 
 *.DS_Store
 
@@ -13,6 +13,7 @@ tools/pkg/
 server/src/proto/
 client/Assets/Scripts/proto/
 client/obj/
+client/.vs/
 client/Temp/
 client/UnitTest/
 client/Library/

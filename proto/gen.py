@@ -6,7 +6,7 @@ import platform
 
 workpath = sys.path[0]
 goprotopath = os.path.join(workpath, '..', 'server', 'src', 'proto')
-csharppath = os.path.join(workpath, '..', 'client', 'Assets', 'Scripts', 'proto')
+csharppath = os.path.join(workpath, '..', 'client', 'Assets', 'Scripts', 'Proto')
 toolspath = os.path.join(workpath, '..', 'tools')
 
 protoc = 'protoc'
