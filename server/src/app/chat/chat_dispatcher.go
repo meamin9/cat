@@ -3,9 +3,9 @@ package chat
 import (
 	"cellnet"
 	"fmt"
-	"network"
+	"app/network"
 	_ "proto/chatproto"
-	"role"
+	"app/role"
 	"time"
 )
 

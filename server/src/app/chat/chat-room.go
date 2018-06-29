@@ -2,7 +2,7 @@ package chat
 
 import (
 	"base"
-	"role"
+	"app/role"
 )
 
 type iroom interface {

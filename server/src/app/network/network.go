@@ -3,7 +3,24 @@ package network
 import (
 	"cellnet"
 	"cellnet/socket"
+	"app/service"
 )
+
+
+type Network struct {
+	service.ServiceBase
+}
+
+func NewNetWork() service.IService {
+	return &Network{
+		ServiceBase: service.NewServiceBase("NewNetWork"),
+	}
+}
+
+func (self *Network) Install() {
+	self.ServiceBase.Install()
+
+}
 
 var peer cellnet.Peer
 var queue cellnet.EventQueue

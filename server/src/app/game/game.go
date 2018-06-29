@@ -4,8 +4,8 @@ import (
 	"db"
 	"github.com/davyxu/golog"
 	_ "login"
-	"network"
-	"schedule"
+	"app/network"
+	"app/schedule"
 	"time"
 )
 

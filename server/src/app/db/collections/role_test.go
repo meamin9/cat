@@ -1,7 +1,7 @@
 package collections
 
 import (
-	"db"
+	"app/db"
 	"testing"
 	"time"
 )

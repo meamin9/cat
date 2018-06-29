@@ -1,7 +1,7 @@
 package common
 
 import (
-	"proto"
+	"app/proto"
 )
 
 func NewNoticeMsg(index int32, args ...string) *proto.SCNotice {

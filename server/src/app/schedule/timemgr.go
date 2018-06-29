@@ -2,7 +2,7 @@ package schedule
 
 import (
 	"time"
-	"utils"
+	"app/utils"
 )
 
 type TimerType byte
