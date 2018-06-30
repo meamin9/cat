@@ -8,6 +8,7 @@ const (
 	Working
 	Stoping
 	WillStop
+	Error
 )
 
 type EServiceType int
@@ -22,6 +23,7 @@ type IService interface {
 	Uninstall()
 	Name() string // 唯一标示
 	Status() EServiceStatus
+	SetStatus(status EServiceStatus)
 	WillStop()
 	Type() EServiceType
 }
@@ -46,6 +48,10 @@ func (self *ServiceBase) Name() string {
 
 func (self *ServiceBase) Status() EServiceStatus {
 	return self.status
+}
+
+func (self *ServiceBase) SetStatus(status EServiceStatus) {
+	self.status = status
 }
 
 func (self *ServiceBase) WillStop() {

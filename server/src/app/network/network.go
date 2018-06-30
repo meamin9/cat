@@ -9,17 +9,20 @@ import (
 
 type Network struct {
 	service.ServiceBase
+	host cellnet.Peer
 }
 
 func NewNetWork() service.IService {
 	return &Network{
 		ServiceBase: service.NewServiceBase("NewNetWork"),
+
 	}
 }
 
 func (self *Network) Install() {
 	self.ServiceBase.Install()
-
+	self.host = socket.NewAcceptor(cellnet.NewEventQueue())
+	self.host.Start("127.0.0.1:7200")
 }
 
 var peer cellnet.Peer
