@@ -4,4 +4,4 @@ import (
 	"github.com/davyxu/golog"
 )
 
-var log *golog.Logger = golog.New("rpc")
+var log = golog.New("rpc")

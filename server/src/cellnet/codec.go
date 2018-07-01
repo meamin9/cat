@@ -1,30 +1,14 @@
 package cellnet
 
 type Codec interface {
-	Encode(interface{}) ([]byte, error)
+	// 将数据转换为字节数组
+	Encode(msgObj interface{}, ctx ContextSet) (data interface{}, err error)
 
-	Decode([]byte, interface{}) error
+	// 将字节数组转换为数据
+	Decode(data interface{}, msgObj interface{}) error
 
+	// 编码器的名字
 	Name() string
-}
 
-var codecByName = map[string]Codec{}
-
-func RegisterCodec(name string, c Codec) {
-
-	if _, ok := codecByName[name]; ok {
-		panic("duplicate codec: " + name)
-	}
-
-	//log.Infof("registere codec '%s'!", name)
-
-	codecByName[name] = c
-}
-
-func FetchCodec(name string) Codec {
-	if v, ok := codecByName[name]; ok {
-		return v
-	}
-
-	return nil
+	MimeType() string
 }

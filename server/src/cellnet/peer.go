@@ -1,50 +1,56 @@
 package cellnet
 
-// 会话
-type Session interface {
+// 端, 可通过接口查询获得更多接口支持,如PeerProperty,ContextSet, SessionAccessor
+type Peer interface {
+	// 开启端，传入地址
+	Start() Peer
 
-	// 发包
-	Send(interface{})
+	// 停止通讯端
+	Stop()
 
-	// 直接发送封包
-	RawSend(*Event)
-
-	// 断开
-	Close()
-
-	// 标示ID
-	ID() int64
-
-	// 归属端
-	FromPeer() Peer
-
-	SetTag(tag interface{})
-
-	Tag() interface{}
-
-	AccountId() string
-	SetAccountId(id string)
-
-	RoleId() int64
-	SetRoleId(id int64)
+	// Peer的类型(protocol.type)，例如tcp.Connector/udp.Acceptor
+	TypeName() string
 }
 
-// 端, Connector或Acceptor
-type Peer interface {
+// Peer基础属性
+type PeerProperty interface {
+	Name() string
 
-	// 开启/关闭
-	Start(address string) Peer
-
-	Stop()
+	Address() string
 
 	Queue() EventQueue
 
-	// 基础信息
-	PeerProfile
+	// 设置名称（可选）
+	SetName(v string)
 
-	// 定制处理链
-	HandlerChainManager
+	// 设置Peer地址
+	SetAddress(v string)
 
-	// 会话管理
-	SessionAccessor
+	// 设置Peer挂接队列（可选）
+	SetQueue(v EventQueue)
+}
+
+// 设置和获取自定义属性
+type ContextSet interface {
+	GetContext(key, valuePtr interface{}) bool
+
+	SetContext(key interface{}, v interface{})
+
+	RawGetContext(key interface{}) (interface{}, bool)
+}
+
+// 会话访问
+type SessionAccessor interface {
+
+	// 获取一个连接
+	GetSession(int64) Session
+
+	// 遍历连接
+	VisitSession(func(Session) bool)
+
+	// 连接数量
+	SessionCount() int
+
+	// 关闭所有连接
+	CloseAllSession()
 }

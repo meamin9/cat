@@ -3,7 +3,7 @@ package game
 import (
 	"cellnet"
 	"app/network"
-	"app/proto"
+	"proto"
 )
 
 func init() {

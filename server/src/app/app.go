@@ -1,24 +1,35 @@
 package app
 
-import "app/service"
+import "app/network"
 
 var _app = struct {
-	serviceMgr *service.ServiceMgr
+	sermgr *ServiceMgr
+	netsrc *network.NetSvc
 }{}
 
 func main() {
-	_app.serviceMgr = service.NewServiceMgr().(*service.ServiceMgr)
-	_app.serviceMgr.Install();
+	_app.sermgr = NewServiceMgr().(*ServiceMgr)
+	_app.sermgr.Install()
+}
+
+func run() {
+	_app.sermgr.RunAllService()
+	for {
+		select {
+
+		}
+	}
 }
 
 func installService() {
 	//_app.serviceMgr.InstallService()
 
 }
-func Service(serviceName string) service.IService {
-	return _app.serviceMgr.Get(serviceName)
+func Service(serviceName string) IService {
+	return _app.sermgr.Get(serviceName)
 }
+//var NetSvc = network.NewNetSvc()
 
-func ServiceMgr() *service.ServiceMgr {
-	return _app.serviceMgr
+func NetSvc() *network.NetSvc {
+	return _app.netsrc
 }

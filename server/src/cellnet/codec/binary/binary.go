@@ -2,6 +2,7 @@ package binary
 
 import (
 	"cellnet"
+	"cellnet/codec"
 	"github.com/davyxu/goobjfmt"
 )
 
@@ -12,18 +13,22 @@ func (self *binaryCodec) Name() string {
 	return "binary"
 }
 
-func (self *binaryCodec) Encode(msgObj interface{}) ([]byte, error) {
+func (self *binaryCodec) MimeType() string {
+	return "application/binary"
+}
+
+func (self *binaryCodec) Encode(msgObj interface{}, ctx cellnet.ContextSet) (data interface{}, err error) {
 
 	return goobjfmt.BinaryWrite(msgObj)
 
 }
 
-func (self *binaryCodec) Decode(data []byte, msgObj interface{}) error {
+func (self *binaryCodec) Decode(data interface{}, msgObj interface{}) error {
 
-	return goobjfmt.BinaryRead(data, msgObj)
+	return goobjfmt.BinaryRead(data.([]byte), msgObj)
 }
 
 func init() {
 
-	cellnet.RegisterCodec("binary", new(binaryCodec))
+	codec.RegisterCodec(new(binaryCodec))
 }

@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package proto;
 
-import "struct.proto";
 
 message CSTokenLogin {
   string Token = 1;
@@ -25,7 +24,6 @@ message CSAccountCreate {
 }
 
 message SCRoleList {
-  repeated RoleBase Roles = 1;
 }
 
 message CSRoleCreate {
@@ -34,7 +32,6 @@ message CSRoleCreate {
 }
 
 message SCRoleCreate {
-  RoleBase Role = 1;
 }
 
 message CSRoleDelete {
