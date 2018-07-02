@@ -1,4 +1,4 @@
-package collections
+package account
 
 import (
 	"app/db"

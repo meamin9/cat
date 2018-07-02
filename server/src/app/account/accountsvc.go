@@ -14,51 +14,36 @@ import (
 
 type AccountSvc struct {
 	app.ServiceBase
+	*Cfg
 }
 
-func Install() {
-	app.NetSvc().RegProto(proto.CodeCSAccountCreate, csAccountCreate)
-	network.RegisterProto("proto.CSAccountLogin", dispatchAccountLogin)
-	network.RegisterProto("proto.CSAccountCreate", dispatchAccountCreate)
+func (self *AccountSvc) Start() {
+	network.Svc.RegProto(proto.CodeCSAccountCreate, self.csAccountCreate)
+	network.Svc.RegProto(proto.CodeCSAccountLogin, self.csAccountLogin)
 }
 
-func dispatchToken(ev *cellnet.Event) {
-
-}
-
-func dispatchAccountLogin(ev *cellnet.Event) {
-	msg := ev.Msg.(*proto.CSAccountLogin)
-	account, ok := Mgr().Account(msg.Id)
-	if ok == true {
-		if account.pwd != msg.Pwd {
-			ev.Send(common.NewNoticeMsg(keys.NoticeLoginWrongKey))
-			return
-		}
-		account.addSid(ev.Ses.ID())
-		ev.Ses.SetAccountId(msg.Id)
-		ev.Send(account.data())
+func (self *AccountSvc) csAccountLogin(ses network.Session, imsg interface{}) {
+	msg := imsg.(*proto.CSAccountLogin)
+	namelen := len(msg.Id)
+	if namelen < self.Cfg.NameLenRange[0] || namelen > self.Cfg.NameLenRange[1] {
 		return
 	}
-	db.Queue().Send(&db.Request{
-		Quest: func() (interface{}, error) {
-			return collections.AccountLogin(msg.Id, msg.Pwd)
-		},
-		Result: func(data interface{}, err error) {
+	pwdlen := len(msg.Pwd)
+	if pwdlen < self.Cfg.PwdLenRange[0] || pwdlen > self.Cfg.PwdLenRange[1] {
+		return
+	}
+	db.Svc.Send(&db.Mail{
+		Sql: &dbAccountRegister{msg.Id, msg.Pwd},
+		Cb: func(data interface{}, err error) {
 			if err != nil {
-				ev.Send(common.NewNoticeMsg(keys.NoticeLoginWrongKey))
+				ses.Send(common.NewNoticeMsg(keys.NoticeLoginWrongKey))
 				return
 			}
-			datas := data.([]map[string]interface{})
-			account := newAccount(ev.Ses.ID(), msg.Id, msg.Pwd)
-			account.unpackRoles(datas)
-			Mgr().Add(account)
-			ev.Ses.SetAccountId(msg.Id)
-			ev.Send(account.data())
 		},
 	})
 }
 
-func csAccountCreate(ses network.Session, imsg interface{}) {
+func (self *AccountSvc) csAccountCreate(ses network.Session, imsg interface{}) {
 	msg := imsg.(*proto.CSAccountCreate)
 	l := len(msg.Id)
 	if l < data.ConstMinAccountLength || l > data.ConstMaxAccountLength {

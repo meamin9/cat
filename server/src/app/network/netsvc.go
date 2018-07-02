@@ -5,7 +5,6 @@ import (
 	"cellnet/peer"
 	"app"
 	"cellnet/proc"
-	"sync"
 )
 
 type Session cellnet.Session
@@ -14,17 +13,22 @@ type NetSvc struct {
 	app.ServiceBase
 	host cellnet.Peer
 	addr string
-	queue cellnet.EventQueue
-	exitSync sync.WaitGroup
 
-	dispatcher
+	handlerQue  chan func()
+	HandlerById map[int]func(Session, interface{})
 }
 
 func (self *NetSvc) Init() {
-	self.queue = cellnet.NewEventQueue()
-	self.host = peer.NewGenericPeer("tcp.Acceptor", "server-cat", self.addr, self.queue)
-	proc.BindProcessorHandler(self.host, "tcp.ltv", func(ev cellnet.Event) {
-		self.ProcProto(ev)
+	self.handlerQue = make(chan func(), 100)
+	self.host = peer.NewGenericPeer("tcp.Acceptor", "server-cat", self.addr, nil)
+	proc.BindProcessorHandler(self.host, "tcp.ltv", func(event cellnet.Event) {
+		ses := event.Session().(Session)
+		msg := event.Message()
+		if handler, ok := self.HandlerById[cellnet.MessageToID(msg)]; ok {
+			self.handlerQue <- func() {
+				handler(ses, msg)
+			}
+		}
 	})
 }
 
@@ -38,12 +42,31 @@ func (self *NetSvc) Stop() {
 	//self.exitSync.Add(n)
 }
 
-func (self *NetSvc) Pull() {
-
+func (self *NetSvc) RegProto(msgId int, cb func(Session, interface{})) {
+	if _, ok := self.HandlerById[msgId]; ok {
+		panic("proto is register repeated")
+	}
+	self.HandlerById[msgId] = cb
 }
 
-var svc * NetSvc
+func (self *NetSvc) UnregProto(key int) {
+	delete(self.HandlerById, key)
+}
+
+
+func (self *NetSvc) Pull() {
+	for {
+		select {
+		case handler := <- self.handlerQue:
+			handler()
+		default:
+			break
+		}
+	}
+}
+
+var Svc * NetSvc
 func init() {
-	svc = &NetSvc{}
-	app.Master.RegService(svc, "network", app.PriorBase)
+	Svc = &NetSvc{}
+	app.Master.RegService(Svc, "network", app.PriorBase)
 }

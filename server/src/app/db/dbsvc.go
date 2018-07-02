@@ -18,19 +18,14 @@ type Mail struct {
 type DbSvc struct {
 	app.ServiceBase
 
-	DbCfg
+	*DbCfg
 	session *mgo.Session
 	queue   chan *Mail
 	cbqueue chan func()
-	waitExit sync.WaitGroup
+	exitSync sync.WaitGroup
 }
 
-func NewDbSrv() *DbSvc {
-	return &DbSvc{}
-}
-
-func (self *DbSvc) Install() {
-	self.LoadCfg()
+func (self *DbSvc) Init() {
 	var err error
 	self.session, err = mgo.Dial(self.url)
 	if err != nil { // 数据库
@@ -38,7 +33,6 @@ func (self *DbSvc) Install() {
 	}
 	self.queue = make(chan *Mail, 64)
 	self.cbqueue = make(chan func(), 64)
-	self.SetStatus(app.Working)
 }
 
 func (self *DbSvc) Send(mail *Mail) {
@@ -52,38 +46,36 @@ func (self *DbSvc) Send(mail *Mail) {
 	}
 }
 
-func (self *DbSvc) Run() {
-	go self.ProcMail()
-}
-
-// 阻塞直到db操作完成，db返回队列依然可用
-func (self *DbSvc) Stop() {
-	self.waitExit.Add(1)
-	close(self.queue)
-	self.waitExit.Wait()
-}
-
-func (self *DbSvc) ProcMail() {
-	for {
-		if mail, ok := <- self.queue; ok {
-			//TODO: panic恢复
-			ret, err := mail.Sql.Exec()
-			if err != nil {
-				self.Log.Errorf("sql error %v", err)
-			}
-			if mail.Cb != nil {
-				self.cbqueue <- func() {
-					mail.Cb(ret, err)
+func (self *DbSvc) Start() {
+	self.exitSync.Add(1)
+	go func() {
+		for {
+			if mail, ok := <- self.queue; ok {
+				//TODO: panic恢复
+				ret, err := mail.Sql.Exec()
+				if err != nil {
+					self.Log.Errorf("sql error %v", err)
 				}
+				if mail.Cb != nil {
+					self.cbqueue <- func() {
+						mail.Cb(ret, err)
+					}
+				}
+			} else {
+				self.exitSync.Done()
+				break
 			}
-		} else {
-			self.waitExit.Done()
-			break
 		}
-	}
+	}()
 }
 
-func (self *DbSvc) ProcMailResponse() {
+// 阻塞直到db操作完成，db返回队列依然可用,但此时应该没有pull了
+func (self *DbSvc) Stop() {
+	close(self.queue)
+	self.exitSync.Wait()
+}
+
+func (self *DbSvc) Pull() {
 	for {
 		select {
 		case cb := <- self.cbqueue: // 这里会频繁的加锁解锁，考虑不用chan队列做
@@ -109,8 +101,8 @@ func (self *DbSvc) DB() *mgo.Database {
 	return self.Session().DB(self.dbname)
 }
 
-var svc * DbSvc
+var Svc * DbSvc
 func init() {
-	svc = &DbSvc{}
-	app.Master.RegService(svc, "db", app.PriorBase)
+	Svc = &DbSvc{}
+	app.Master.RegService(Svc, "db", app.PriorBase)
 }

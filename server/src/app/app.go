@@ -2,8 +2,8 @@ package app
 
 // 所有服务在import这里导入（无序），自身的init里注册Cfg和Svc
 import (
-	_ "app/network"
-	_ "app/db"
+	"app/network"
+	"app/db"
 )
 
 type ICfg interface {
@@ -12,7 +12,6 @@ type ICfg interface {
 
 type App struct {
 	*ServiceMgr
-	cfgs []ICfg
 	exit chan bool
 }
 
@@ -20,7 +19,6 @@ var Master *App
 
 func newapp() *App {
 	return &App{
-		cfgs: make([]ICfg, 0),
 		ServiceMgr: NewServiceMgr(),
 		exit: make(chan bool),
 	}
@@ -35,15 +33,21 @@ func newapp() *App {
 // 关闭其他模块
 // 关闭db
 func (self *App) Start() {
-	for _, cfg := range self.cfgs {
-		cfg.LoadCfg()
-	}
+	self.VisitService(func(s IService) {
+		if cfg, ok := s.(ICfg); ok {
+			cfg.LoadCfg()
+		}
+	})
 	self.VisitService(func(s IService) {
 		s.Init()
 	})
 	self.VisitService(func(s IService) {
 		s.Start()
 	})
+	for {
+		network.Svc.Pull()
+		db.Svc.Pull()
+	}
 	self.VisitServiceReverse(func(s IService) {
 		s.Stop()
 	})

@@ -8,6 +8,7 @@ le# Binaries for programs and plugins
 
 server/bin/
 server/pkg/
+server/src/.idea/
 tools/bin/
 tools/pkg/
 server/src/proto/
