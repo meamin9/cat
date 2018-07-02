@@ -2,32 +2,43 @@ package cellnet
 
 import (
 	"runtime/debug"
+	"sync"
 )
 
+// 事件队列
 type EventQueue interface {
-	StartLoop()
 
-	StopLoop(result int)
+	// 事件队列开始工作
+	StartLoop() EventQueue
+
+	// 停止事件队列
+	StopLoop() EventQueue
 
 	// 等待退出
-	Wait() int
+	Wait()
 
 	// 投递事件, 通过队列到达消费者端
 	Post(callback func())
-	Poll()
-	C() chan func()
+
+	// 是否捕获异常
+	EnableCapturePanic(v bool)
 }
 
-type evQueue struct {
+type eventQueue struct {
 	queue chan func()
 
-	exitSignal chan int
+	endSignal sync.WaitGroup
 
 	capturePanic bool
 }
 
-// 派发到队列
-func (self *evQueue) Post(callback func()) {
+// 启动崩溃捕获
+func (self *eventQueue) EnableCapturePanic(v bool) {
+	self.capturePanic = v
+}
+
+// 派发事件处理回调到队列中
+func (self *eventQueue) Post(callback func()) {
 
 	if callback == nil {
 		return
@@ -36,11 +47,8 @@ func (self *evQueue) Post(callback func()) {
 	self.queue <- callback
 }
 
-func (self *evQueue) protectedCall(callback func()) {
-
-	if callback == nil {
-		return
-	}
+// 保护调用用户函数
+func (self *eventQueue) protectedCall(callback func()) {
 
 	if self.capturePanic {
 		defer func() {
@@ -56,51 +64,66 @@ func (self *evQueue) protectedCall(callback func()) {
 	callback()
 }
 
-func (self *evQueue) StartLoop() {
+// 开启事件循环
+func (self *eventQueue) StartLoop() EventQueue {
+
+	self.endSignal.Add(1)
 
 	go func() {
+
 		for callback := range self.queue {
+
+			if callback == nil {
+				break
+			}
+
 			self.protectedCall(callback)
 		}
+
+		self.endSignal.Done()
 	}()
+
+	return self
 }
 
-func (self *evQueue) StopLoop(result int) {
-	self.exitSignal <- result
+// 停止事件循环
+func (self *eventQueue) StopLoop() EventQueue {
+	self.queue <- nil
+	return self
 }
 
-func (self *evQueue) Poll() {
-Loop:
-	for {
-		select {
-		case callback := <-self.queue:
-			self.protectedCall(callback)
-		default:
-			break Loop
-		}
-	}
-}
-
-func (self *evQueue) C() chan func() {
-	return self.queue
-}
-
-func (self *evQueue) Wait() int {
-	return <-self.exitSignal
+// 等待退出消息
+func (self *eventQueue) Wait() {
+	self.endSignal.Wait()
 }
 
 const DefaultQueueSize = 100
 
+// 创建默认长度的队列
 func NewEventQueue() EventQueue {
 
-	return NewEventQueueByLen(DefaultQueueSize)
+	return &eventQueue{
+		queue: make(chan func(), DefaultQueueSize),
+	}
 }
 
-func NewEventQueueByLen(l int) EventQueue {
-	self := &evQueue{
-		queue:      make(chan func(), l),
-		exitSignal: make(chan int),
+// 在会话对应的Peer上的事件队列中执行callback，如果没有队列，则马上执行
+func SessionQueuedCall(ses Session, callback func()) {
+	if ses == nil {
+		return
 	}
+	q := ses.Peer().(interface {
+		Queue() EventQueue
+	}).Queue()
 
-	return self
+	QueuedCall(q, callback)
+}
+
+// 有队列时队列调用，无队列时直接调用
+func QueuedCall(queue EventQueue, callback func()) {
+	if queue == nil {
+		callback()
+	} else {
+		queue.Post(callback)
+	}
 }

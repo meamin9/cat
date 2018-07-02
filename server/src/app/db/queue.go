@@ -6,6 +6,10 @@ import (
 
 var ErrExit = errors.New("exit")
 
+type Event struct {
+
+}
+
 type Request struct {
 	Quest  func() (retdata interface{}, err error)
 	Result func(interface{}, error)

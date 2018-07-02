@@ -38,9 +38,12 @@ func (self *Loop) rawPost() {
 		panic("seconds can be zero in loop")
 	}
 
-	After(self.Queue, self.Duration, func() {
-		tick(self, false)
-	})
+	if self.running {
+		After(self.Queue, self.Duration, func() {
+
+			tick(self, false)
+		}, nil)
+	}
 }
 
 func (self *Loop) NextLoop() {
@@ -55,26 +58,22 @@ func (self *Loop) Stop() {
 	self.running = false
 }
 
-func (self *Loop) Notify() {
+func (self *Loop) Notify() *Loop {
 	self.userCallback(self)
+	return self
 }
 
 func tick(ctx interface{}, nextLoop bool) {
 
 	loop := ctx.(*Loop)
 
+	if !nextLoop && loop.running {
+
+		// 即便在Notify中发生了崩溃，也会使用defer再次继续循环
+		defer loop.rawPost()
+	}
+
 	loop.Notify()
-
-	if !loop.running {
-		return
-	}
-
-	// 不等待, 直接跳到下一个循环
-
-	if !nextLoop {
-		loop.rawPost()
-	}
-
 }
 
 func NewLoop(q cellnet.EventQueue, duration time.Duration, callback func(*Loop), context interface{}) *Loop {

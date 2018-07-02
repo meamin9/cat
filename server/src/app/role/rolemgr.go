@@ -1,32 +1,30 @@
 package role
 
 import (
-	"common/class"
-	"db/collections"
+	"app/db"
+	"app/db/collections"
+	"time"
+	"app/common/class"
+	"app"
 )
 
-type mgr struct {
+type RoleMgr struct {
 	roles map[int64]Role
 	id    int64
 }
 
-var _instance *mgr
-
-func init() {
-	_instance = &mgr{
+func NewRoleMgr() *RoleMgr {
+	return &RoleMgr{
 		roles: make(map[int64]Role),
 		id:    10000,
 	}
 }
 
-func Mgr() *mgr {
-	return _instance
+func (self *RoleMgr) CreateRole() {
+
 }
 
-func (me *mgr) NextId() int64 {
-	me.id += 1
-	return me.id
-}
+
 
 // LoadRole 从数据库加载一个role
 func (self *mgr) LoadRole(id int64) {

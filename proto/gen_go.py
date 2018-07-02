@@ -15,14 +15,18 @@ def gen_go():
             if not f.endswith('.proto'):
                 continue
             fpath = os.path.join(root, f)
-            cmd = 'protoc --go_out={} {}'.format(out, fpath) 
+            cmd = 'protoc --plugin=protoc-gen-gogofaster=protoc-gen-gogofaster --gogofaster_out={} {}'.format(out, fpath)
             print(cmd)
-            subprocess.call(cmd)
+            subprocess.call(cmd.split(' '))
+            cmd = 'protoc --plugin=protoc-gen-msg=protoc-gen-msg --msg_out={}/{}.msg.go:. {}'.format(out, os.path.splitext(f)[0], fpath)
+            print(cmd)
+            subprocess.call(cmd.split(' '))
 
 def main():
+    print(workpath)
     os.chdir(workpath)
     gen_go()
-    input('press anykey to exit')
+    #input('press anykey to exit')
 
 if __name__ == '__main__':
     try:

@@ -2,15 +2,12 @@ package rpc
 
 import (
 	"errors"
-
 	"cellnet"
 )
 
 var (
-	ErrInvalidPeerSession    error = errors.New("rpc: Invalid peer type, require cellnet.RPCSessionGetter or cellnet.Session")
-	ErrReplayMessageNotFound       = errors.New("rpc: Reply message name not found")
-
-	MetaCall = cellnet.MessageMetaByName("coredef.RemoteCallACK")
+	ErrInvalidPeerSession = errors.New("rpc: Invalid peer type, require cellnet.RPCSessionGetter or cellnet.Session")
+	ErrEmptySession       = errors.New("rpc: Empty session")
 )
 
 type RPCSessionGetter interface {
@@ -18,19 +15,27 @@ type RPCSessionGetter interface {
 }
 
 // 从peer获取rpc使用的session
-func getPeerSession(ud interface{}) (cellnet.Session, cellnet.Peer, error) {
+func getPeerSession(ud interface{}) (ses cellnet.Session, err error) {
 
 	if ud == nil {
-		return nil, nil, ErrInvalidPeerSession
+		return nil, ErrInvalidPeerSession
 	}
 
 	switch i := ud.(type) {
 	case RPCSessionGetter:
-		return i.RPCSession(), i.RPCSession().FromPeer(), nil
+		ses = i.RPCSession()
 	case cellnet.Session:
-		return i, i.FromPeer(), nil
+		ses = i
+	case cellnet.TCPConnector:
+		ses = i.Session()
 	default:
-		return nil, nil, ErrInvalidPeerSession
+		err = ErrInvalidPeerSession
+		return
 	}
 
+	if ses == nil {
+		return nil, ErrEmptySession
+	}
+
+	return
 }
