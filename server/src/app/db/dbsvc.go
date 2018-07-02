@@ -1,136 +1,116 @@
 package db
 
 import (
+	"app"
 	"gopkg.in/mgo.v2"
 	"sync"
-	"time"
-	"app"
 )
+
+type ISql interface {
+	Exec() (interface{}, error)
+}
+
+type Mail struct {
+	Sql ISql
+	Cb func(interface{}, error)
+}
 
 type DbSvc struct {
 	app.ServiceBase
 
 	DbCfg
 	session *mgo.Session
+	queue   chan *Mail
+	cbqueue chan func()
+	waitExit sync.WaitGroup
 }
 
 func NewDbSrv() *DbSvc {
 	return &DbSvc{}
 }
 
-func (self *DbSvc)Install() {
+func (self *DbSvc) Install() {
 	self.LoadCfg()
-	session, err := mgo.Dial(self.url);
+	var err error
+	self.session, err = mgo.Dial(self.url)
 	if err != nil { // 数据库
 		self.Log.Errorf("db connet failed %v", err)
-	} else {
-		self.session = session
 	}
+	self.queue = make(chan *Mail, 64)
+	self.cbqueue = make(chan func(), 64)
 	self.SetStatus(app.Working)
 }
 
-//const dburl = "cat:123456@localhost:27017/cat" // user password, addrs, db
-//
-//var dbname string = "cat"
-//
-//var log *golog.Logger = golog.New("db")
-//
-//var mdb = struct {
-//	session *mgo.Session
-//	m       *sync.Mutex
-//	w       *sync.WaitGroup
-//	q       *queue
-//}{}
-
-// 测试用函数
-//func SetDbname(name string) {
-//	dbname = name
-//}
-//
-//var exitBegin chan bool
-//var exitEnd chan bool
-
-//func InstallTest() {
-//	SetDbname("cat_test")
-//	exitBegin = make(chan bool)
-//	exitEnd = make(chan bool)
-//
-//	Queue().Start()
-//	go func() {
-//		for {
-//			t0 := time.Now()
-//			Queue().Poll()
-//			t1 := time.Now()
-//			elapsed := t1.Sub(t0)
-//			f := time.Second / 60
-//			select {
-//			case <-exitBegin:
-//				exitEnd <- true
-//			default:
-//				if elapsed < f {
-//					time.Sleep(f - elapsed)
-//				}
-//			}
-//		}
-//	}()
-//}
-//
-//func StopTest() {
-//	time.Sleep(time.Second)
-//	Queue().Stop()
-//	exitBegin <- true
-//	<-exitEnd
-//}
-
-// ===== 测试函数结束 =====
-
-// ，并每秒尝试重连，直到连接成功
-func (self *DbSvc) connectDb() {
-	session, err := mgo.Dial(dburl)
-	for err != nil {
-		log.Errorln("connect mdb failed", dburl)
-		time.Sleep(time.Second)
-		session, err = mgo.Dial(dburl)
+func (self *DbSvc) Send(mail *Mail) {
+	select {
+	case self.queue <- mail:
+	default:
+		self.Log.Errorln("db queue is full")
+		go func() {
+			self.queue <- mail
+		}()
 	}
-	self.session = session
 }
 
-func getSession() *mgo.Session {
-	if mdb.session == nil {
-		connectDb()
+func (self *DbSvc) Run() {
+	go self.ProcMail()
+}
+
+// 阻塞直到db操作完成，db返回队列依然可用
+func (self *DbSvc) Stop() {
+	self.waitExit.Add(1)
+	close(self.queue)
+	self.waitExit.Wait()
+}
+
+func (self *DbSvc) ProcMail() {
+	for {
+		if mail, ok := <- self.queue; ok {
+			//TODO: panic恢复
+			ret, err := mail.Sql.Exec()
+			if err != nil {
+				self.Log.Errorf("sql error %v", err)
+			}
+			if mail.Cb != nil {
+				self.cbqueue <- func() {
+					mail.Cb(ret, err)
+				}
+			}
+		} else {
+			self.waitExit.Done()
+			break
+		}
 	}
-	return mdb.session.Clone()
 }
 
-func DB() *mgo.Database {
-	return getRawSession().DB(dbname)
-}
-
-func getRawSession() *mgo.Session {
-	if mdb.session == nil {
-		connect()
+func (self *DbSvc) ProcMailResponse() {
+	for {
+		select {
+		case cb := <- self.cbqueue: // 这里会频繁的加锁解锁，考虑不用chan队列做
+			cb()
+		default:
+		}
 	}
-	return mdb.session
 }
 
-func send(run func()) {
-	mdb.w.Add(1)
-	go func() {
-		run()
-		mdb.w.Done()
-	}()
+func (self *DbSvc) Session() *mgo.Session {
+	if self.session == nil {
+		var err error
+		self.session, err = mgo.Dial(self.url)
+		if err != nil {
+			panic("db connet failed")
+		}
+	}
+	return self.session.Clone()
 }
 
-func finish() {
-	mdb.w.Wait()
+// 返回一个db的新会话
+func (self *DbSvc) DB() *mgo.Database {
+	return self.Session().DB(self.dbname)
 }
 
-func Queue() *queue {
-	return mdb.q
-}
-
+var svc * DbSvc
 func init() {
-	mdb.m = new(sync.Mutex)
-	mdb.w = new(sync.WaitGroup)
-	mdb.q = NewQueue()
+	svc = &DbSvc{}
+	app.Master.RegService(svc, "db", app.PriorBase)
 }

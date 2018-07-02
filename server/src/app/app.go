@@ -1,35 +1,58 @@
 package app
 
-import "app/network"
+// 所有服务在import这里导入（无序），自身的init里注册Cfg和Svc
+import (
+	_ "app/network"
+	_ "app/db"
+)
 
-var _app = struct {
-	sermgr *ServiceMgr
-	netsrc *network.NetSvc
-}{}
-
-func main() {
-	_app.sermgr = NewServiceMgr().(*ServiceMgr)
-	_app.sermgr.Install()
+type ICfg interface {
+	LoadCfg()
 }
 
-func run() {
-	_app.sermgr.RunAllService()
-	for {
-		select {
+type App struct {
+	*ServiceMgr
+	cfgs []ICfg
+	exit chan bool
+}
 
-		}
+var Master *App
+
+func newapp() *App {
+	return &App{
+		cfgs: make([]ICfg, 0),
+		ServiceMgr: NewServiceMgr(),
+		exit: make(chan bool),
 	}
 }
 
-func installService() {
-	//_app.serviceMgr.InstallService()
+// 初始化配置（不要lazy初始化）
+// 启动db，net
+// 各模块自身初始化，可以依赖配置，网络，加载db
+// 各模块运行，此时所有数据都已正常初始化
+// 游戏主循环
+// 关闭网络
+// 关闭其他模块
+// 关闭db
+func (self *App) Start() {
+	for _, cfg := range self.cfgs {
+		cfg.LoadCfg()
+	}
+	self.VisitService(func(s IService) {
+		s.Init()
+	})
+	self.VisitService(func(s IService) {
+		s.Start()
+	})
+	self.VisitServiceReverse(func(s IService) {
+		s.Stop()
+	})
+}
+
+func (self *App) Stop() {
 
 }
-func Service(serviceName string) IService {
-	return _app.sermgr.Get(serviceName)
-}
-//var NetSvc = network.NewNetSvc()
 
-func NetSvc() *network.NetSvc {
-	return _app.netsrc
+func main() {
+	newapp().Start()
 }
