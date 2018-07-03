@@ -6,10 +6,10 @@ import (
 	"app/keys"
 	"app/db"
 	"app/db/collections"
-	"app/data"
 	"log"
 	"app"
 	"app/network"
+	"app/notice"
 )
 
 type AccountSvc struct {
@@ -17,22 +17,53 @@ type AccountSvc struct {
 	*Cfg
 }
 
-func (self *AccountSvc) Start() {
-	network.Svc.RegProto(proto.CodeCSAccountCreate, self.csAccountCreate)
-	network.Svc.RegProto(proto.CodeCSAccountLogin, self.csAccountLogin)
+func (self *AccountSvc) Init() {
+	network.Instance.RegProto(proto.CodeCSAccountReg, self.csAccountReg)
+	network.Instance.RegProto(proto.CodeCSAccountLogin, self.csAccountLogin)
+}
+
+func (self *AccountSvc) Start() {}
+func (self *AccountSvc) Stop() {}
+
+func (self *AccountSvc) CheckNamePwdLength(name, pwd string) bool {
+	l := len(name)
+	if l < self.Cfg.NameLenRange[0] || l > self.Cfg.NameLenRange[1] {
+		return false
+	}
+	l = len(pwd)
+	if l < self.Cfg.PwdLenRange[0] || l > self.Cfg.PwdLenRange[1] {
+		return false
+	}
+	return true
+}
+
+func (self *AccountSvc) csAccountReg(ses network.Session, imsg interface{}) {
+	msg := imsg.(*proto.CSAccountReg)
+	if ! self.CheckNamePwdLength(msg.Id, msg.Pwd) {
+		return
+	}
+	db.Instance.Send(&db.Mail{
+		Sql: &dbAccountRegister{msg.Id, msg.Pwd},
+		Cb: func(data interface{}, err error) {
+			if err != nil { // 注册失败，可能是用户名已存在
+				notice.SendText(ses, "用户名已存在")
+				return
+			}
+			//d := data.(map[string]interface{})
+			//acc := newAccount(ev.Ses.ID(), msg.Id, msg.Pwd)
+			//Mgr().Add(acc)
+			//ev.Ses.SetAccountId(msg.Id)
+			//ev.Send(acc.data())
+		},
+	})
 }
 
 func (self *AccountSvc) csAccountLogin(ses network.Session, imsg interface{}) {
 	msg := imsg.(*proto.CSAccountLogin)
-	namelen := len(msg.Id)
-	if namelen < self.Cfg.NameLenRange[0] || namelen > self.Cfg.NameLenRange[1] {
+	if ! self.CheckNamePwdLength(msg.Id, msg.Pwd) {
 		return
 	}
-	pwdlen := len(msg.Pwd)
-	if pwdlen < self.Cfg.PwdLenRange[0] || pwdlen > self.Cfg.PwdLenRange[1] {
-		return
-	}
-	db.Svc.Send(&db.Mail{
+	db.Instance.Send(&db.Mail{
 		Sql: &dbAccountRegister{msg.Id, msg.Pwd},
 		Cb: func(data interface{}, err error) {
 			if err != nil {
@@ -43,36 +74,6 @@ func (self *AccountSvc) csAccountLogin(ses network.Session, imsg interface{}) {
 	})
 }
 
-func (self *AccountSvc) csAccountCreate(ses network.Session, imsg interface{}) {
-	msg := imsg.(*proto.CSAccountCreate)
-	l := len(msg.Id)
-	if l < data.ConstMinAccountLength || l > data.ConstMaxAccountLength {
-		ses.Send(common.NewNoticeMsg(keys.NoticeLoginWrongNameLength,
-			string(data.ConstMinAccountLength), string(data.ConstMaxAccountLength)))
-		return
-	}
-	l = len(msg.Pwd)
-	if l < data.ConstMinAccountLength || l > data.ConstMaxAccountLength {
-		ev.Send(common.NewNoticeMsg(keys.NoticeLoginWrongPwdLength,
-			string(data.ConstMinAccountLength), string(data.ConstMaxAccountLength)))
-		return
-	}
-	db.Queue().Send(&db.Request{
-		Quest: func() (interface{}, error) {
-			return collections.AccountRegister(msg.Id, msg.Pwd)
-		},
-		Result: func(data interface{}, err error) {
-			if err != nil {
-				ev.Send(common.NewNoticeMsg(keys.NoticeRegisterExist))
-				return
-			}
-			acc := newAccount(ev.Ses.ID(), msg.Id, msg.Pwd)
-			Mgr().Add(acc)
-			ev.Ses.SetAccountId(msg.Id)
-			ev.Send(acc.data())
-		},
-	})
-}
 
 func dispatchRoleCreate(ev *cellnet.Event) {
 	msg := ev.Msg.(*proto.CSRoleCreate)

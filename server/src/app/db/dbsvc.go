@@ -35,17 +35,6 @@ func (self *DbSvc) Init() {
 	self.cbqueue = make(chan func(), 64)
 }
 
-func (self *DbSvc) Send(mail *Mail) {
-	select {
-	case self.queue <- mail:
-	default:
-		self.Log.Errorln("db queue is full")
-		go func() {
-			self.queue <- mail
-		}()
-	}
-}
-
 func (self *DbSvc) Start() {
 	self.exitSync.Add(1)
 	go func() {
@@ -75,6 +64,17 @@ func (self *DbSvc) Stop() {
 	self.exitSync.Wait()
 }
 
+func (self *DbSvc) Send(mail *Mail) {
+	select {
+	case self.queue <- mail:
+	default:
+		self.Log.Errorln("db queue is full")
+		go func() {
+			self.queue <- mail
+		}()
+	}
+}
+
 func (self *DbSvc) Pull() {
 	for {
 		select {
@@ -101,8 +101,8 @@ func (self *DbSvc) DB() *mgo.Database {
 	return self.Session().DB(self.dbname)
 }
 
-var Svc * DbSvc
+var Instance * DbSvc
 func init() {
-	Svc = &DbSvc{}
-	app.Master.RegService(Svc, "db", app.PriorBase)
+	Instance = &DbSvc{}
+	app.Master.RegService(Instance, "db", app.PriorBase)
 }

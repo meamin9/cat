@@ -10,15 +10,20 @@ def gen_go():
     out = '../server/src/proto'
     if not os.path.exists(out):
         os.makedirs(out)
+    sysstr = platform.system()
+    if sysstr == 'Windows':
+        suffix = '.exe'
+    else:
+        suffix = ''
     for root, _, files in os.walk('./'):
         for f in files:
             if not f.endswith('.proto'):
                 continue
             fpath = os.path.join(root, f)
-            cmd = 'protoc --plugin=protoc-gen-gogofaster=protoc-gen-gogofaster --gogofaster_out={} {}'.format(out, fpath)
+            cmd = 'protoc --plugin=protoc-gen-gogofaster=protoc-gen-gogofaster{} --gogofaster_out={} {}'.format(suffix, out, fpath)
             print(cmd)
             subprocess.call(cmd.split(' '))
-            cmd = 'protoc --plugin=protoc-gen-msg=protoc-gen-msg --msg_out={}/{}.msg.go:. {}'.format(out, os.path.splitext(f)[0], fpath)
+            cmd = 'protoc --plugin=protoc-gen-msg=protoc-gen-msg{} --msg_out={}/{}.msg.go:. {}'.format(suffix, out, os.path.splitext(f)[0], fpath)
             print(cmd)
             subprocess.call(cmd.split(' '))
 

@@ -65,8 +65,8 @@ func (self *NetSvc) Pull() {
 	}
 }
 
-var Svc * NetSvc
+var Instance * NetSvc
 func init() {
-	Svc = &NetSvc{}
-	app.Master.RegService(Svc, "network", app.PriorBase)
+	Instance = &NetSvc{}
+	app.Master.RegService(Instance, "network", app.PriorBase)
 }

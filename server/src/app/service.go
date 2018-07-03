@@ -31,7 +31,7 @@ const (
 type IService interface {
 	Init()
 	Start()
-	Stop()
+	Destroy()
 	Name() string // 唯一标示
 	SetName(string)
 	Status() EServiceStatus
@@ -56,7 +56,7 @@ type ServiceBase struct {
 
 func (self *ServiceBase) Init() {}
 func (self *ServiceBase) Start() {}
-func (self *ServiceBase) Stop() {}
+func (self *ServiceBase) Destroy() {}
 // Name 唯一表示
 func (self *ServiceBase) Name() string { return self.name }
 func (self *ServiceBase) SetName(n string) { self.name = n }

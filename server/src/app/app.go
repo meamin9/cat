@@ -10,8 +10,13 @@ type ICfg interface {
 	LoadCfg()
 }
 
+type ISender interface {
+	Send(msg interface{})
+}
+
 type App struct {
 	*ServiceMgr
+	*AppCfg
 	exit chan bool
 }
 
@@ -25,7 +30,7 @@ func newapp() *App {
 }
 
 // 初始化配置（不要lazy初始化）
-// 启动db，net
+// 初始化db，net
 // 各模块自身初始化，可以依赖配置，网络，加载db
 // 各模块运行，此时所有数据都已正常初始化
 // 游戏主循环

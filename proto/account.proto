@@ -2,39 +2,36 @@ syntax = "proto3";
 
 package proto;
 
-
-message CSTokenLogin {
-  string Token = 1;
-}
-
-message SCToken {
-  string Token = 1;
-}
-
-// 帐号登录，成功返回SCRoleList
+// 帐号登录，成功返回SCAccount
 message CSAccountLogin {
-  string Id = 1;
-  string Pwd = 2;
+    string Id = 1;
+    string Pwd = 2;
 }
 
-// 帐号注册，成功返回SCRoleList
-message CSAccountCreate {
-  string Id = 1;
-  string Pwd = 2;
+// 帐号注册，成功返回SCAccount
+message CSAccountReg {
+    string Id = 1;
+    string Pwd = 2;
 }
 
-message SCRoleList {
+message SCAccountInfo {
+    string Id = 1;
+    uint32 RegTime = 2;
+    message Roleinfo {
+        int64 Id = 1;
+        string Name = 2;
+        int32 Mtime = 4;
+        int32 Gender = 5;
+        int32 Level = 6;
+    }
+    repeated Roleinfo roles = 3;
 }
 
 message CSRoleCreate {
-  string Name = 1;
-  int32 Gender = 2;
+    string Name = 1;
+    int32 Gender = 2;
 }
 
 message SCRoleCreate {
+    SCAccountInfo.Roleinfo roleinfo = 1;
 }
-
-message CSRoleDelete {
-  int64 Id = 1;
-}
-

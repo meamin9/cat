@@ -5,23 +5,37 @@ import (
 	"app/db/collections"
 	"time"
 	"app/common/class"
+	//"app"
+	"app/network"
 	"app"
 )
 
 type RoleMgr struct {
-	roles map[int64]Role
-	id    int64
+	RoleById map[uint64]*Role
+	RoleBySesId map[int64]*Role
+	SessionByHandle map[string]network.Session
+	idCounter uint32
 }
 
 func NewRoleMgr() *RoleMgr {
 	return &RoleMgr{
-		roles: make(map[int64]Role),
-		id:    10000,
+		RoleById: make(map[uint64]*Role),
+		RoleBySesId:    make(map[int64]*Role),
 	}
 }
 
-func (self *RoleMgr) CreateRole() {
+func (self *RoleMgr) NewId() uint64 {
+	time := time.Now().Unix() // 时间不回调基本不会冲突
+	serverId := uint16(app.Master.ServerId)
+	self.idCounter = self.idCounter + 1
+	return uint64(time) << 32 | uint64(serverId) << 16 | uint64(self.idCounter)
+}
 
+func (self *RoleMgr) CreateRole(name string, gender EGender, job EJob) {
+	role := NewRole(self.NewId(), name)
+	role.Gender = gender
+	role.Job = job
+	self.RoleById[role.Id] = role
 }
 
 

@@ -1,29 +1,31 @@
 package account
 
+import "time"
+
 // === account ===
 
 type roleinfo struct {
-	id    int64
+	id    string
 	name  string
-	level int16
+	logoutTime time.Time
+	gender int
+	level int
 }
 
-type account struct {
-	sids  []int64
-	name  string
-	pwd   string
+type Account struct {
+	Id string
 	roles []*roleinfo
 }
 
-func (self *account) Name() string {
-	return self.name
+type AccountMgr struct {
+
 }
 
-func (self *account) addSid(sid int64) {
-	self.sids = append(self.sids, sid)
-}
+func (self *AccountMgr) crateCharacter(name string, gender, job int) {
+	info := &roleinfo{
 
-func (self *account) addRole(info *roleinfo) {
+	}
+
 	self.roles = append(self.roles, info)
 }
 
@@ -37,6 +39,9 @@ func (self *account) unpackRoles(datas []map[string]interface{}) {
 		}
 	}
 }
+
+
+
 
 func (self *account) packRoles() interface{} {
 	ids := make([]int64, len(self.roles))

@@ -1,13 +1,21 @@
 package role
 
-import "app"
+import (
+	"app"
+	"app/network"
+	"proto"
+)
 
 type RoleSvc struct {
 	app.ServiceBase
-	RoleMgr
+	*RoleMgr
 }
 
-func (self *RoleSvc) Install() {
-	app.NetSvc.RegProto()
+func (self *RoleSvc) Init() {
+	network.Instance.RegProto(proto.CodeCSRoleCreate, self.csRoleCreate)
+}
+
+func (self *RoleSvc) csRoleCreate(ses network.Session, data interface{}) {
+	msg := data.(*proto.CSRoleCreate)
 
 }
