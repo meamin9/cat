@@ -25,6 +25,7 @@ type DbSvc struct {
 	exitSync sync.WaitGroup
 }
 
+
 func (self *DbSvc) Init() {
 	var err error
 	self.session, err = mgo.Dial(self.url)
@@ -75,6 +76,10 @@ func (self *DbSvc) Send(mail *Mail) {
 	}
 }
 
+func (self *DbSvc) C() <- chan func() {
+	return self.cbqueue
+}
+
 func (self *DbSvc) Pull() {
 	for {
 		select {
@@ -101,8 +106,8 @@ func (self *DbSvc) DB() *mgo.Database {
 	return self.Session().DB(self.dbname)
 }
 
-var Instance * DbSvc
+var Instance *DbSvc
 func init() {
 	Instance = &DbSvc{}
-	app.Master.RegService(Instance, "db", app.PriorBase)
+	app.Master.RegService(Instance, false)
 }

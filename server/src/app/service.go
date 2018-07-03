@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/davyxu/golog"
 	"sort"
+	"reflect"
 )
 
 type EServiceStatus int
@@ -16,9 +17,8 @@ const (
 )
 
 const (
-	PriorBase int = iota
-	PriorNormal
-	PriorOther
+	SvcTypeManaged int = iota
+	svcTypeSelf
 )
 
 type EServiceType int
@@ -31,13 +31,13 @@ const (
 type IService interface {
 	Init()
 	Start()
-	Destroy()
-	Name() string // 唯一标示
-	SetName(string)
-	Status() EServiceStatus
-	SetStatus(s EServiceStatus)
-	Prior() int
-	SetPrior(s int)
+	Stop()
+	//Name() string // 唯一标示
+	//SetName(string)
+	//Status() EServiceStatus
+	//SetStatus(s EServiceStatus)
+	//Prior() int
+	//SetPrior(s int)
 }
 
 type ByPrior []IService
@@ -87,22 +87,22 @@ func NewServiceMgr() *ServiceMgr {
 	}
 }
 
-func (self *ServiceMgr)RegService(s IService, name string, prior int) {
+func (self *ServiceMgr)RegService(s IService, managed bool) {
+	name := reflect.TypeOf(s).Elem().Name()
 	if _, ok := self.svcMap[name]; ok {
-		panic("service repeat regist")
+		panic("time repeat regist")
 	}
-	s.SetName(name)
-	s.SetPrior(prior)
 	self.svcMap[name] = s
-	self.svcList = append(self.svcList, s)
-	self.dirty = true
+	if managed {
+		self.svcList = append(self.svcList, s)
+	}
 }
 
 func (self *ServiceMgr)ServiceList() []IService {
-	if self.dirty {
-		self.dirty = false
-		sort.Sort(ByPrior(self.svcList))
-	}
+	//if self.dirty {
+	//	self.dirty = false
+	//	sort.Sort(ByPrior(self.svcList))
+	//}
 	return self.svcList
 }
 

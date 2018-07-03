@@ -1,33 +1,29 @@
 package account
 
-import "time"
+import (
+	"time"
+	"app/network"
+)
 
 // === account ===
 
 type roleinfo struct {
-	id    string
-	name  string
-	logoutTime time.Time
-	gender int
-	level int
+	Id    uint64
+	Name  string
+	LogoutTime time.Time
+	Gender int
+	Level int
 }
 
 type Account struct {
 	Id string
-	roles []*roleinfo
+	Roles []*roleinfo
 }
 
 type AccountMgr struct {
-
+	AcctBySesId map[int64]network.Session
 }
 
-func (self *AccountMgr) crateCharacter(name string, gender, job int) {
-	info := &roleinfo{
-
-	}
-
-	self.roles = append(self.roles, info)
-}
 
 func (self *account) unpackRoles(datas []map[string]interface{}) {
 	self.roles = make([]*roleinfo, len(datas))

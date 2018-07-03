@@ -25,7 +25,7 @@ func (self *AccountSvc) Init() {
 func (self *AccountSvc) Start() {}
 func (self *AccountSvc) Stop() {}
 
-func (self *AccountSvc) CheckNamePwdLength(name, pwd string) bool {
+func (self *AccountSvc) CheckNamePwdVaild(name, pwd string) bool {
 	l := len(name)
 	if l < self.Cfg.NameLenRange[0] || l > self.Cfg.NameLenRange[1] {
 		return false
@@ -39,7 +39,7 @@ func (self *AccountSvc) CheckNamePwdLength(name, pwd string) bool {
 
 func (self *AccountSvc) csAccountReg(ses network.Session, imsg interface{}) {
 	msg := imsg.(*proto.CSAccountReg)
-	if ! self.CheckNamePwdLength(msg.Id, msg.Pwd) {
+	if ! self.CheckNamePwdVaild(msg.Id, msg.Pwd) {
 		return
 	}
 	db.Instance.Send(&db.Mail{
@@ -60,7 +60,7 @@ func (self *AccountSvc) csAccountReg(ses network.Session, imsg interface{}) {
 
 func (self *AccountSvc) csAccountLogin(ses network.Session, imsg interface{}) {
 	msg := imsg.(*proto.CSAccountLogin)
-	if ! self.CheckNamePwdLength(msg.Id, msg.Pwd) {
+	if ! self.CheckNamePwdVaild(msg.Id, msg.Pwd) {
 		return
 	}
 	db.Instance.Send(&db.Mail{

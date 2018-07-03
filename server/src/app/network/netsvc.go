@@ -10,8 +10,7 @@ import (
 type Session cellnet.Session
 
 type NetSvc struct {
-	app.ServiceBase
-	host cellnet.Peer
+	tcp cellnet.Peer
 	addr string
 
 	handlerQue  chan func()
@@ -19,9 +18,10 @@ type NetSvc struct {
 }
 
 func (self *NetSvc) Init() {
-	self.handlerQue = make(chan func(), 100)
-	self.host = peer.NewGenericPeer("tcp.Acceptor", "server-cat", self.addr, nil)
-	proc.BindProcessorHandler(self.host, "tcp.ltv", func(event cellnet.Event) {
+	self.handlerQue = make(chan func(), 128)
+	self.HandlerById = make(map[int]func(Session, interface{}))
+	self.tcp = peer.NewGenericPeer("tcp.Acceptor", "server-cat", self.addr, nil)
+	proc.BindProcessorHandler(self.tcp, "tcp.ltv", func(event cellnet.Event) {
 		ses := event.Session().(Session)
 		msg := event.Message()
 		if handler, ok := self.HandlerById[cellnet.MessageToID(msg)]; ok {
@@ -33,11 +33,11 @@ func (self *NetSvc) Init() {
 }
 
 func (self *NetSvc) Start() {
-	self.host.Start()
+	self.tcp.Start()
 }
 
 func (self *NetSvc) Stop() {
-	self.host.Stop() // 阻塞直到accept线程退出，ses的工作线程不一定全退出了
+	self.tcp.Stop() // 阻塞直到accept线程退出，ses的工作线程不一定全退出了
 	// n := self.host.(interface{ Count() int }).Count()
 	//self.exitSync.Add(n)
 }
@@ -54,6 +54,14 @@ func (self *NetSvc) UnregProto(key int) {
 }
 
 
+func (self *NetSvc) C() chan func() {
+	return self.handlerQue
+}
+
+func (self *NetSvc) Call(handler func()) {
+	handler()
+}
+
 func (self *NetSvc) Pull() {
 	for {
 		select {
@@ -68,5 +76,5 @@ func (self *NetSvc) Pull() {
 var Instance * NetSvc
 func init() {
 	Instance = &NetSvc{}
-	app.Master.RegService(Instance, "network", app.PriorBase)
+	app.Master.RegService(Instance, false)
 }

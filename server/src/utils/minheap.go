@@ -1,14 +1,5 @@
 package utils
 
-type IMinHeap interface {
-	Insert(e interface{})
-	Min() interface{}
-	EraseMin()
-	Erase(i int)
-	ShiftDown(i int)
-	ShiftUp(i int)
-}
-
 type MinHeap struct {
 	arr  []interface{}
 	ltop func(a interface{}, b interface{}) bool
