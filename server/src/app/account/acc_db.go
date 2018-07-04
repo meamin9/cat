@@ -1,18 +1,24 @@
 package account
 
 import (
-	"app/db"
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
 	"time"
+	"gopkg.in/mgo.v2/bson"
+	"gopkg.in/mgo.v2"
+	"app/db"
 )
 
 // Collection : Account 账户，一个账户可以创建多个角色
-
+/*
 type dbAccount struct {
 	Id    string          `bson:"_id"`
 	Pwd   string          `bson:"pwd"`
 	Ctime time.Time       `bson:"ctime"`
+	Roles []bson.ObjectId `bson:"roles"`
+}
+ */
+
+type dbAccount struct {
+	Id    string          `bson:"_id"`
 	Roles []bson.ObjectId `bson:"roles"`
 }
 
@@ -51,12 +57,23 @@ type dbAccountLogin struct {
 }
 
 func (self *dbAccountLogin) Exec() (account interface{}, err error) {
-	account = make(map[string]interface{})
+	account = &dbAccount{}
 	err = Collection().Find(bson.M{"_id": self.id, "pwd": self.pwd}).One(account)
 	if err != nil {
 		return nil, err
 	}
 	return account, err
+}
+
+type dbAccountUpdate struct {
+	datas []map[string]interface{}
+}
+
+func (self *dbAccountUpdate) Exec() (interface{}, error) {
+	c := Collection()
+	for _, info := range self.datas {
+		c.UpdateId(info["_id"], )
+	}
 }
 
 //func AccountUpdateRoles(name string, roles []int64) (data interface{}, rc error) {

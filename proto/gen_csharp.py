@@ -14,14 +14,13 @@ def gen_csharp():
             if not f.endswith('.proto'):
                 continue
             fpath = os.path.join(root, f)
-            cmd = 'protoc --csharp_out={} {}'.format(out, fpath) 
+            cmd = 'protoc --csharp_out={} {}'.format(out, fpath)
             print(cmd)
             subprocess.call(cmd)
 
 def main():
     os.chdir(workpath)
     gen_csharp()
-    input('')
 
 if __name__ == '__main__':
     try:

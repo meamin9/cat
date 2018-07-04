@@ -2,27 +2,22 @@ syntax = "proto3";
 
 package proto;
 
+import "common.proto";
+
 // 帐号登录，成功返回SCAccount
 message CSAccountLogin {
-    string Id = 1;
-    string Pwd = 2;
+  string Id = 1;
+  string Pwd = 2;
 }
 
 // 帐号注册，成功返回SCAccount
 message CSAccountReg {
-    string Id = 1;
-    string Pwd = 2;
+  string Id = 1;
+  string Pwd = 2;
 }
 
+// 返回账号信息
 message SCAccountInfo {
-    string Id = 1;
-    message Roleinfo {
-        uint64 Id = 1;
-        string Name = 2;
-        int64 Mtime = 3;
-        int32 Gender = 4;
-        int32 Level = 5;
-        int32 Job = 6;
-    }
-    repeated Roleinfo roles = 2;
+  string Id = 1;
+  repeated RoleInfo roles = 2;
 }

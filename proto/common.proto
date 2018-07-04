@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package proto;
+
+message RoleInfo {
+  int64 Id = 1;
+  string Name = 2;
+  int32 Gender = 3;
+  int32 Job = 4;
+  int32 Level = 5;
+  int64 MTime = 6; //modify time
+}

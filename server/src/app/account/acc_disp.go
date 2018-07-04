@@ -69,20 +69,22 @@ func csAccountReg(ses network.Session, data interface{}) {
 	})
 }
 
-func csAccountLogin(ses network.Session, imsg interface{}) {
-	msg := imsg.(*proto.CSAccountLogin)
+func csAccountLogin(ses network.Session, data interface{}) {
+	msg := data.(*proto.CSAccountLogin)
 	id := strings.TrimSpace(msg.Id)
 	pwd := strings.TrimSpace(msg.Pwd) // 这是个md5码值
 	if ! checkValidity(ses, id, pwd) {
 		return
 	}
 	db.Instance.Send(&db.Mail{
-		Sql: &dbAccountLogin{msg.Id, msg.Pwd},
+		Sql: &dbAccountLogin{id, pwd},
 		Cb: func(data interface{}, err error) {
 			if err != nil {
 				notice.SendText(ses, "帐号或密码错误")
 				return
 			}
+			a
+
 		},
 	})
 }
