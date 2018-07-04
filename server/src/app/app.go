@@ -12,7 +12,7 @@ type ICfg interface {
 }
 
 type ISender interface {
-	Send(msg interface{})
+	Send (msg interface{})
 }
 
 type App struct {

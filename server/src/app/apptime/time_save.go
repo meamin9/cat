@@ -1,13 +1,10 @@
-package app
+package apptime
 
-import "app/db"
-
-// 定时存档
-type ITimeSaveMaster interface {
-	TimeSave()
-	ForceSave()
-	SetDirty()
-}
+import (
+	"app/db"
+	"time"
+	"math/rand"
+)
 
 type IDbPacker interface {
 	Pack() db.ISql
@@ -17,13 +14,19 @@ type IDbPacker interface {
 type TimeSaveHelper struct {
 	master IDbPacker
 	dirty bool
+	timer *Timer
 }
 
 func (self *TimeSaveHelper) Start() {
-
+	loopTime := time.Minute * 5
+	delay := time.Duration(rand.Intn(int(loopTime)))
+	self.timer = Instance.AddTimerWithDelay(loopTime, self.Stop, delay)
 }
 
-func (self *TimeSaveHelper) Stop() {}
+func (self *TimeSaveHelper) Stop() {
+	self.timer.Stop()
+	self.timer = nil
+}
 
 func (self *TimeSaveHelper) Save() {
 	if self.dirty {

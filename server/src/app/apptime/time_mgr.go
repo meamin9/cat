@@ -9,6 +9,8 @@ type TimeMgr struct {
 	offset time.Duration
 	now time.Time
 	tick *time.Ticker
+
+	TimerHeap
 }
 
 func (self *TimeMgr) Init() {
@@ -34,6 +36,7 @@ func (self *TimeMgr) Now() time.Time {
 
 func (self *TimeMgr) Tick(t time.Time) {
 	self.now = t.Add(self.offset)
+	self.ProcTimer(self.now)
 }
 
 var Instance *TimeMgr

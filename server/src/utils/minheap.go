@@ -22,8 +22,11 @@ func (me *MinHeap) ShiftUp(i int) {
 func (me *MinHeap) ShiftDown(i int) {
 	n := len(me.arr)
 	for i < n {
-		lower, right := 2*(i+1)-1, 2*(i+1)
-		if me.ltop(me.arr[right], me.arr[lower]) {
+		lower, right := 2*i+1, 2*i+2
+		if lower < n{
+			break
+		}
+		if right < n && me.ltop(me.arr[right], me.arr[lower]) {
 			lower = right
 		}
 		if me.ltop(me.arr[i], me.arr[lower]) {

@@ -21,7 +21,7 @@ func CName() string {
 }
 
 func Collection() *mgo.Collection {
-	return db.Svc.DB().C(CName())
+	return db.Instance.DB().C(CName())
 }
 
 type dbAccountRegister struct {
@@ -35,11 +35,12 @@ func (self *dbAccountRegister) Exec() (account interface{}, err error) {
 		"pwd":   self.pwd,
 		"ctime": time.Now(),
 	}
-	c := Collection()
-	if err = c.Insert(info); err == nil {
-		account = make(map[string]interface{})
-		c.FindId(self.id).One(account)
-	}
+	//c := Collection()
+	//if err = c.Insert(info); err == nil {
+	//	account = make(map[string]interface{})
+	//	c.FindId(self.id).One(account)
+	//}
+	err = Collection().Insert(info)
 	return account, err
 }
 

@@ -16,22 +16,13 @@ message CSAccountReg {
 
 message SCAccountInfo {
     string Id = 1;
-    uint32 RegTime = 2;
     message Roleinfo {
-        int64 Id = 1;
+        uint64 Id = 1;
         string Name = 2;
-        int32 Mtime = 4;
-        int32 Gender = 5;
-        int32 Level = 6;
+        int64 Mtime = 3;
+        int32 Gender = 4;
+        int32 Level = 5;
+        int32 Job = 6;
     }
-    repeated Roleinfo roles = 3;
-}
-
-message CSRoleCreate {
-    string Name = 1;
-    int32 Gender = 2;
-}
-
-message SCRoleCreate {
-    SCAccountInfo.Roleinfo roleinfo = 1;
+    repeated Roleinfo roles = 2;
 }
