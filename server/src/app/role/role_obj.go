@@ -1,8 +1,6 @@
 package role
 
-import (
-
-)
+import "time"
 
 type EGender int
 const (
@@ -17,14 +15,22 @@ const (
 
 type CProp map[int]int
 
-type Role struct {
+type RoleInfo struct {
 	Id     uint64
 	Name   string
 	Gender EGender
 	Job EJob
 	Level int
+	MTime time.Time
+}
+
+type Role struct {
+	RoleInfo
+	CTime time.Time
 	Prop *CProp
 }
+
+
 
 func NewRole(id uint64, name string) *Role {
 	return &Role{

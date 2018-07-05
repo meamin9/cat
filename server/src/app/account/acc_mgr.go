@@ -3,6 +3,7 @@ package account
 import (
 	"time"
 	"app"
+	"app/role"
 )
 
 // === account ===
@@ -18,7 +19,7 @@ type roleinfo struct {
 
 type Account struct {
 	Id string
-	Roles []*roleinfo
+	Roles []*role.RoleInfo
 }
 
 type AccountMgr struct {

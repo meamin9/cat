@@ -20,7 +20,7 @@ def gen_go():
             if not f.endswith('.proto'):
                 continue
             fpath = os.path.join(root, f)
-            cmd = 'protoc --plugin=protoc-gen-gogofaster=protoc-gen-gogofaster{} --gogofaster_out={} {} {}'.format(suffix, out, fpath)
+            cmd = 'protoc --plugin=protoc-gen-gogofaster=protoc-gen-gogofaster{} --gogofaster_out={} {}'.format(suffix, out, fpath)
             print(cmd)
             subprocess.call(cmd.split(' '))
             # cmd = 'protoc --plugin=protoc-gen-msg=protoc-gen-msg{} --msg_out={}/{}.msg.go:. {} {}'.format(suffix, out, os.path.splitext(f)[0], fpath)

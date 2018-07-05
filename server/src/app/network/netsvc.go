@@ -54,7 +54,7 @@ func (self *NetSvc) UnregProto(key int) {
 }
 
 
-func (self *NetSvc) C() chan func() {
+func (self *NetSvc) Chan() chan func() {
 	return self.handlerQue
 }
 

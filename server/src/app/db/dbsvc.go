@@ -7,13 +7,14 @@ import (
 )
 
 type ISql interface {
-	Exec() (interface{}, error)
+	Exec(ses *mgo.Session) (interface{}, error)
 }
 
 type Mail struct {
 	Sql ISql
 	Cb func(interface{}, error)
 }
+
 
 type DbSvc struct {
 	app.ServiceBase
@@ -24,7 +25,6 @@ type DbSvc struct {
 	cbqueue chan func()
 	exitSync sync.WaitGroup
 }
-
 
 func (self *DbSvc) Init() {
 	var err error
@@ -42,7 +42,9 @@ func (self *DbSvc) Start() {
 		for {
 			if mail, ok := <- self.queue; ok {
 				//TODO: panic恢复
-				ret, err := mail.Sql.Exec()
+				ses := self.Session()
+				ret, err := mail.Sql.Exec(ses)
+				ses.Close()
 				if err != nil {
 					self.Log.Errorf("sql error %v", err)
 				}
@@ -63,6 +65,10 @@ func (self *DbSvc) Start() {
 func (self *DbSvc) Stop() {
 	close(self.queue)
 	self.exitSync.Wait()
+	if self.session != nil {
+		self.session.Close()
+		self.session = nil
+	}
 }
 
 func (self *DbSvc) Send(mail *Mail) {
@@ -76,7 +82,7 @@ func (self *DbSvc) Send(mail *Mail) {
 	}
 }
 
-func (self *DbSvc) C() <- chan func() {
+func (self *DbSvc) Chan() <- chan func() {
 	return self.cbqueue
 }
 
@@ -90,7 +96,7 @@ func (self *DbSvc) Pull() {
 	}
 }
 
-func (self *DbSvc) Session() *mgo.Session {
+func (self *DbSvc) RawSession() *mgo.Session {
 	if self.session == nil {
 		var err error
 		self.session, err = mgo.Dial(self.url)
@@ -98,12 +104,22 @@ func (self *DbSvc) Session() *mgo.Session {
 			panic("db connet failed")
 		}
 	}
-	return self.session.Clone()
+	return self.session
 }
 
-// 返回一个db的新会话
-func (self *DbSvc) DB() *mgo.Database {
-	return self.Session().DB(self.dbname)
+func (self *DbSvc) Session() *mgo.Session {
+	return self.RawSession().Clone()
+}
+
+func (self *DbSvc) DBName() string {
+	return self.dbname
+}
+
+func (self *DbSvc) C(name string, ses *mgo.Session) *mgo.Collection {
+	if ses == nil {
+		ses = self.RawSession()
+	}
+	return ses.DB(self.dbname).C(name)
 }
 
 var Instance *DbSvc

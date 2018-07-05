@@ -36,7 +36,7 @@ func newapp() *App {
 // 各模块开始运行，此时所有数据都已正常初始化，start中可以按照正常数据进行逻辑
 // 启动网络和db线程，进入游戏主循环
 // 关闭网络
-// 关闭其他模块
+// flush db的回调队列，保证各模块数据都是最新的，关闭其他模块
 // 关闭db
 func (self *App) Start() {
 	self.VisitService(func(s IService) {
@@ -56,11 +56,11 @@ func (self *App) Start() {
 	network.Instance.Start()
 	for {
 		select {
-		case proc := <- network.Instance.C():
+		case proc := <- network.Instance.Chan():
 			proc()
-		case proc := <- db.Instance.C():
+		case proc := <- db.Instance.Chan():
 			proc()
-		case t := <- apptime.Instance.C():
+		case t := <- apptime.Instance.Chan():
 			apptime.Instance.Tick(t)
 		case <- self.exitC:
 			break

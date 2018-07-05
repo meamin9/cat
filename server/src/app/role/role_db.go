@@ -4,63 +4,74 @@ import (
 	"app/db"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"time"
+	"app/account"
 )
 
 type DbRole struct {
-	Id bson.ObjectId `bson:"_id"`
-}
-
-func CName() string {
-	return "roles"
-}
-
-func dbCollection() *mgo.Collection {
-	return db.Instance.DB().C(CName())
+	Id uint64 `bson:"_id"`
+	Name string
+	Job int
+	Gender int
+	Level int
+	Account string
+	MTime time.Time `bson:"mtime"`
+	CTime time.Time
 }
 
 // 用来查询角色基本信息
-var roleBaseSelector = bson.M{
-	"_id":    1,
-	"name":   1,
-	"gender": 1,
-	"job":    1,
-	"level":  1,
-	"birth":  1,
+var (
+	CName = "roles"
+	DbDefaultRoleInfoSelector = bson.M{
+		//"_id":    1,
+		"name":   1,
+		"gender": 1,
+		"job":    1,
+		"level":  1,
+		"mtime":  1,
+	}
+)
+
+type DbQueryRoleInfo struct {
+	IdList []uint64
+	Selector map[string]interface{}
 }
 
-type FindRoleInfo struct {
-
+func (self *DbQueryRoleInfo) Exec(s *mgo.Session) (datas interface{}, err error) {
+	query := bson.M{
+		"_id": bson.M{"&in": self.IdList},
+	}
+	if self.Selector == nil {
+		self.Selector = DbDefaultRoleInfoSelector
+		datas = make([]*RoleInfo, 0)
+	} else {
+		datas = make([]map[string]interface{}, 0)
+	}
+	err = s.DB(db.Instance.DBName()).C(CName).Find(query).Select(self.Selector).All(datas)
+	return datas, err
 }
 
-func (self *FindRoleInfo) Exec() (interface{}, error) {
-	//DbRoleC().Find()
-	return nil, nil
+type dbRoleCreate struct {
+	role *DbRole
 }
 
-
-
-func RoleCreate(data map[string]interface{}) (result interface{}, err error) {
-	//err = roleC().Insert(data)
-	return data, err
+func (self *dbRoleCreate) Exec(s *mgo.Session) (interface{}, error) {
+	d := s.DB(db.Instance.DBName())
+	err := d.C(CName).Insert(self.role)
+	if err == nil {
+		err = d.C(account.CName).UpdateId(self.role.Account, bson.M{
+			"$addToSet": bson.M{"roles": self.role.Id },
+		})
+	}
+	return self.role, err
 }
 
-func RoleDelete(id int64) (interface{}, error) {
-	//err := roleC().RemoveId(id)
-	return nil, err
-}
-
-func RoleBaseQuery(id []int64) (result interface{}, ret error) {
-	//req := bson.M{"_id": bson.M{"$in": id}}
-	//data := make([]map[string]interface{}, len(id))
-	//err := roleC().Find(req).Select(roleBaseSelector).All(data)
-	return nil, nil
-}
-
-func RoleLoad(id int64) (interface{}, error) {
-	data := make(map[string]interface{}, 10)
-	//err := roleC().FindId(id).One(data)
-	return data, err
-}
+//
+//func RoleLoad(id int64) (interface{}, error) {
+//	data := make(map[string]interface{}, 10)
+//	//err := roleC().FindId(id).One(data)
+//	return data, err
+//}
 
 func dbInit() {
 	index := mgo.Index{
@@ -70,5 +81,5 @@ func dbInit() {
 		Background: true,
 		Sparse:     true,
 	}
-	dbCollection().EnsureIndex(index)
+	db.Instance.C(CName, nil).EnsureIndex(index)
 }

@@ -5,6 +5,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"gopkg.in/mgo.v2"
 	"app/db"
+	"app/role"
 )
 
 // Collection : Account 账户，一个账户可以创建多个角色
@@ -17,36 +18,25 @@ type dbAccount struct {
 }
  */
 
-type dbAccount struct {
+type DbAccount struct {
 	Id    string          `bson:"_id"`
-	Roles []bson.ObjectId `bson:"roles"`
+	Roles []uint64 `bson:"roles"`
 }
 
-func CName() string {
-	return "accounts"
-}
+var CName = "accounts"
 
-func Collection() *mgo.Collection {
-	return db.Instance.DB().C(CName())
-}
-
-type dbAccountRegister struct {
+type dbAccountCreate struct {
 	id string
 	pwd  string
 }
 
-func (self *dbAccountRegister) Exec() (account interface{}, err error) {
+func (self *dbAccountCreate) Exec(ses *mgo.Session) (account interface{}, err error) {
 	info := bson.M{
 		"_id":   self.id,
 		"pwd":   self.pwd,
 		"ctime": time.Now(),
 	}
-	//c := Collection()
-	//if err = c.Insert(info); err == nil {
-	//	account = make(map[string]interface{})
-	//	c.FindId(self.id).One(account)
-	//}
-	err = Collection().Insert(info)
+	err = db.Instance.C(CName, ses).Insert(info)
 	return account, err
 }
 
@@ -56,38 +46,35 @@ type dbAccountLogin struct {
 	pwd  string
 }
 
-func (self *dbAccountLogin) Exec() (account interface{}, err error) {
-	account = &dbAccount{}
-	err = Collection().Find(bson.M{"_id": self.id, "pwd": self.pwd}).One(account)
+func (self *dbAccountLogin) Exec(s *mgo.Session) (data interface{}, err error) {
+	account := &DbAccount{}
+	d := s.DB(db.Instance.DBName())
+	err = d.C(CName).Find(bson.M{"_id": self.id, "pwd": self.pwd}).One(account)
 	if err != nil {
 		return nil, err
 	}
-	return account, err
-}
-
-type dbAccountUpdate struct {
-	datas []map[string]interface{}
-}
-
-func (self *dbAccountUpdate) Exec() (interface{}, error) {
-	c := Collection()
-	for _, info := range self.datas {
-		c.UpdateId(info["_id"], )
+	q := role.DbQueryRoleInfo{
+		IdList: account.Roles,
 	}
+	infos, err := q.Exec(s)
+	if err != nil {
+		return nil, err
+	}
+	data = &Account{
+		Id: account.Id,
+		Roles: infos.([]*role.RoleInfo),
+	}
+	return data, err
 }
 
-//func AccountUpdateRoles(name string, roles []int64) (data interface{}, rc error) {
-//	err := Collection().UpdateId(name, bson.M{"$set": bson.M{"roles": roles}})
-//	return nil, err
-//}
+type DbAccountUpdate struct {
+	datas []*DbAccount
+}
 
-//func InitDb() {
-//	index := mgo.Index{
-//		Key:        []string{"name"},
-//		Unique:     true,
-//		DropDups:   true,
-//		Background: false,
-//		Sparse:     true,
-//	}
-//	Collection().EnsureIndex(index)
-//}
+func (self *DbAccountUpdate) Exec(s *mgo.Session) (interface{}, error) {
+	c := s.DB(db.Instance.DBName()).C(CName)
+	for _, acc := range self.datas {
+		c.UpdateId(acc.Id, bson.M{"roles": acc.Roles})
+	}
+	return nil, nil
+}

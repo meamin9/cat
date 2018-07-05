@@ -26,7 +26,7 @@ func (self *TimeMgr) Stop() {
 	self.tick.Stop()
 }
 
-func (self *TimeMgr) C() <-chan time.Time {
+func (self *TimeMgr) Chan() <-chan time.Time {
 	return self.tick.C
 }
 

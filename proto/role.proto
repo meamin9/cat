@@ -2,9 +2,8 @@ syntax = "proto3";
 
 package proto;
 
-message RoleCreate {
-  int64 id = 1;
-  int32 level = 2;
-  int32 sex = 3;
-  string name = 4;
+message CSRoleCreate {
+  string name = 1;
+  int32 gender = 2;
+  int32 job = 3;
 }
