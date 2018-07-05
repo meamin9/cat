@@ -3,21 +3,24 @@ package network
 import (
 	"cellnet"
 	"cellnet/peer"
-	"app"
 	"cellnet/proc"
+	"sync"
 )
 
 type Session cellnet.Session
 
-type NetSvc struct {
+type NetMgr struct {
 	tcp cellnet.Peer
 	addr string
 
 	handlerQue  chan func()
 	HandlerById map[int]func(Session, interface{})
+
+	// 连接
+	sesInToken sync.Map
 }
 
-func (self *NetSvc) Init() {
+func (self *NetMgr) Init() {
 	self.handlerQue = make(chan func(), 128)
 	self.HandlerById = make(map[int]func(Session, interface{}))
 	self.tcp = peer.NewGenericPeer("tcp.Acceptor", "server-cat", self.addr, nil)
@@ -30,39 +33,40 @@ func (self *NetSvc) Init() {
 			}
 		}
 	})
+	regSystemMsg()
 }
 
-func (self *NetSvc) Start() {
+func (self *NetMgr) Start() {
 	self.tcp.Start()
 }
 
-func (self *NetSvc) Stop() {
+func (self *NetMgr) Stop() {
 	self.tcp.Stop() // 阻塞直到accept线程退出，ses的工作线程不一定全退出了
 	// n := self.host.(interface{ Count() int }).Count()
 	//self.exitSync.Add(n)
 }
 
-func (self *NetSvc) RegProto(msgId int, cb func(Session, interface{})) {
+func (self *NetMgr) RegProto(msgId int, cb func(Session, interface{})) {
 	if _, ok := self.HandlerById[msgId]; ok {
 		panic("proto is register repeated")
 	}
 	self.HandlerById[msgId] = cb
 }
 
-func (self *NetSvc) UnregProto(key int) {
+func (self *NetMgr) UnregProto(key int) {
 	delete(self.HandlerById, key)
 }
 
-
-func (self *NetSvc) Chan() chan func() {
+func (self *NetMgr) Chan() chan func() {
 	return self.handlerQue
 }
 
-func (self *NetSvc) Call(handler func()) {
+func (self *NetMgr) Call(handler func()) {
 	handler()
 }
 
-func (self *NetSvc) Pull() {
+// 处理完队列里的消息
+func (self *NetMgr) Flush() {
 	for {
 		select {
 		case handler := <- self.handlerQue:
@@ -73,8 +77,8 @@ func (self *NetSvc) Pull() {
 	}
 }
 
-var Instance * NetSvc
-func init() {
-	Instance = &NetSvc{}
-	app.Master.RegService(Instance, false)
+var Instance *NetMgr
+func New() *NetMgr {
+	Instance = &NetMgr{}
+	return Instance
 }

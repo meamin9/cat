@@ -8,7 +8,6 @@ import (
 	"app/role"
 )
 
-// Collection : Account 账户，一个账户可以创建多个角色
 /*
 type dbAccount struct {
 	Id    string          `bson:"_id"`
@@ -16,8 +15,9 @@ type dbAccount struct {
 	Ctime time.Time       `bson:"ctime"`
 	Roles []bson.ObjectId `bson:"roles"`
 }
- */
+*/
 
+// 游戏中读取的数据，一些其他数据虽然会存数据库，但并不会用到，如密码、创建世界
 type DbAccount struct {
 	Id    string          `bson:"_id"`
 	Roles []uint64 `bson:"roles"`
@@ -67,14 +67,15 @@ func (self *dbAccountLogin) Exec(s *mgo.Session) (data interface{}, err error) {
 	return data, err
 }
 
-type DbAccountUpdate struct {
-	datas []*DbAccount
-}
-
-func (self *DbAccountUpdate) Exec(s *mgo.Session) (interface{}, error) {
-	c := s.DB(db.Instance.DBName()).C(CName)
-	for _, acc := range self.datas {
-		c.UpdateId(acc.Id, bson.M{"roles": acc.Roles})
-	}
-	return nil, nil
-}
+// 不需要更新，创建角色时，自动修改account插入数据
+//type DbAccountUpdate struct {
+//	datas []*DbAccount
+//}
+//
+//func (self *DbAccountUpdate) Exec(s *mgo.Session) (interface{}, error) {
+//	c := s.DB(db.Instance.DBName()).C(CName)
+//	for _, acc := range self.datas {
+//		c.UpdateId(acc.Id, bson.M{"roles": acc.Roles})
+//	}
+//	return nil, nil
+//}

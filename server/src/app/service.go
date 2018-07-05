@@ -87,15 +87,23 @@ func NewServiceMgr() *ServiceMgr {
 	}
 }
 
-func (self *ServiceMgr)RegService(s IService, managed bool) {
+func (self *ServiceMgr)RegService(s IService) {
 	name := reflect.TypeOf(s).Elem().Name()
 	if _, ok := self.svcMap[name]; ok {
 		panic("time repeat regist")
 	}
 	self.svcMap[name] = s
-	if managed {
+	//if managed {
 		self.svcList = append(self.svcList, s)
+	//}
+}
+
+func (self *ServiceMgr) RegServiceName(s IService) {
+	name := reflect.TypeOf(s).Elem().Name()
+	if _, ok := self.svcMap[name]; ok {
+		panic("time repeat regist")
 	}
+	self.svcMap[name] = s
 }
 
 func (self *ServiceMgr)ServiceList() []IService {

@@ -15,7 +15,7 @@ type DbRole struct {
 	Gender int
 	Level int
 	Account string
-	MTime time.Time `bson:"mtime"`
+	LogoutTime time.Time
 	CTime time.Time
 }
 
@@ -28,7 +28,7 @@ var (
 		"gender": 1,
 		"job":    1,
 		"level":  1,
-		"mtime":  1,
+		"logoutTime":  1,
 	}
 )
 

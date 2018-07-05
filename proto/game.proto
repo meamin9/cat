@@ -7,6 +7,16 @@ message Echo {
   string content = 1;
 }
 
+// 服务端要求回答口令
+message SCEntryToken {
+  string alias = 1;
+}
+
+// 客户端回答口令
+message CSEntryToken {
+  string token = 1;
+}
+
 message SCNotice {
   int32 Index = 1;
   repeated string Args = 2;

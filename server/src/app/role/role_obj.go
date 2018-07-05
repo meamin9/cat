@@ -13,15 +13,13 @@ const (
 	None EJob = iota
 )
 
-type CProp map[int]int
-
 type RoleInfo struct {
 	Id     uint64
 	Name   string
 	Gender EGender
 	Job EJob
 	Level int
-	MTime time.Time
+	LogoutTime time.Time
 }
 
 type Role struct {

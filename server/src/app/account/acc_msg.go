@@ -36,7 +36,7 @@ func sendAccountInfo(sender app.ISender, account *Account) {
 		infos[i] = &proto.RoleInfo{
 			Id: info.Id,
 			Name: info.Name,
-			MTime: info.MTime.Unix(),
+			LogoutTime: info.LogoutTime.Unix(),
 			Gender: int32(info.Gender),
 			Level: int32(info.Level),
 			Job: int32(info.Job),

@@ -123,6 +123,11 @@ func (self *tcpSession) cleanup() {
 	self.exitSync.Done()
 }
 
+// 等待session close
+func (self *tcpSession) WaitClose() {
+	self.exitSync.Wait()
+}
+
 // 启动会话的各种资源
 func (self *tcpSession) Start() {
 

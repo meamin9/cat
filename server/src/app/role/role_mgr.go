@@ -17,12 +17,13 @@ type RoleMgr struct {
 	idCounter uint32
 }
 
-func NewRoleMgr() *RoleMgr {
-	return &RoleMgr{
-		RoleById: make(map[uint64]*Role),
-		RoleBySesId:    make(map[int64]*Role),
-	}
+func (self *RoleMgr) Init() {
+	self.RoleById = make(map[uint64]*Role)
+	self.RoleBySesId = make(map[int64]*Role)
 }
+
+func (self *RoleMgr) Start() {}
+func (self *RoleMgr) Stop() {}
 
 func (self *RoleMgr) NewId() uint64 {
 	time := time.Now().Unix() // 时间不回调基本不会冲突
@@ -63,4 +64,10 @@ func (self *mgr) CreateRole(name string) *Role {
 	role.name = name
 	role.gender = class.Unmale
 	return role
+}
+
+var Instance *RoleMgr
+func New() *RoleMgr {
+	Instance = &RoleMgr{}
+	return Instance
 }

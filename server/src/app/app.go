@@ -5,6 +5,9 @@ import (
 	"app/network"
 	"app/db"
 	"app/apptime"
+	"app/account"
+	"app/role"
+	"sync"
 )
 
 type ICfg interface {
@@ -15,6 +18,7 @@ type ISender interface {
 	Send (msg interface{})
 }
 
+
 type App struct {
 	*ServiceMgr
 	*AppCfg
@@ -23,11 +27,24 @@ type App struct {
 
 var Master *App
 
-func newapp() *App {
-	return &App{
+func newApp() *App {
+	Master = &App{
 		ServiceMgr: NewServiceMgr(),
 		exitC: make(chan bool,),
 	}
+	return Master
+}
+
+// 改成手动初始化，不用包内的init初始化了（顺序不容易确定）
+func (self *App) initPackage() {
+	network.New()
+	db.New()
+	// 统一管理的module
+	self.svcList = []IService{
+		account.New(),
+		role.New(),
+	}
+
 }
 
 // 初始化配置（不要lazy初始化）
@@ -39,21 +56,42 @@ func newapp() *App {
 // flush db的回调队列，保证各模块数据都是最新的，关闭其他模块
 // 关闭db
 func (self *App) Start() {
-	self.VisitService(func(s IService) {
-		if cfg, ok := s.(ICfg); ok {
-			cfg.LoadCfg()
-		}
-	})
+	self.initPackage()
+
+	// loadcfg和init阶段不同包不会交互，逻辑上线程安全
+	loading := sync.WaitGroup{}
+	n := len(self.svcList)
+	loading.Add(n)
+	for _, s := range self.svcList {
+		go func() {
+			if cfg, ok := s.(ICfg); ok {
+				cfg.LoadCfg()
+			}
+			loading.Done()
+		}()
+	}
+	loading.Wait()
+
+	// package init
 	network.Instance.Init()
 	db.Instance.Init()
-	self.VisitService(func(s IService) {
-		s.Init()
-	})
-	self.VisitService(func(s IService) {
+	loading.Add(n)
+	for _, s := range self.svcList {
+		go func() {
+			s.Init()
+			loading.Done()
+		}()
+	}
+	loading.Wait()
+
+	// package start
+	for _, s := range self.svcList {
 		s.Start()
-	})
+	}
 	db.Instance.Start()
 	network.Instance.Start()
+
+	// main loop
 	for {
 		select {
 		case proc := <- network.Instance.Chan():
@@ -66,6 +104,7 @@ func (self *App) Start() {
 			break
 		}
 	}
+
 	network.Instance.Stop()
 	self.VisitServiceReverse(func(s IService) {
 		s.Stop()
@@ -78,5 +117,5 @@ func (self *App) Stop() {
 }
 
 func main() {
-	newapp().Start()
+	newApp().Start()
 }

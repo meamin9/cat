@@ -16,7 +16,7 @@ type Mail struct {
 }
 
 
-type DbSvc struct {
+type DbMgr struct {
 	app.ServiceBase
 
 	*DbCfg
@@ -26,7 +26,7 @@ type DbSvc struct {
 	exitSync sync.WaitGroup
 }
 
-func (self *DbSvc) Init() {
+func (self *DbMgr) Init() {
 	var err error
 	self.session, err = mgo.Dial(self.url)
 	if err != nil { // 数据库
@@ -36,7 +36,7 @@ func (self *DbSvc) Init() {
 	self.cbqueue = make(chan func(), 64)
 }
 
-func (self *DbSvc) Start() {
+func (self *DbMgr) Start() {
 	self.exitSync.Add(1)
 	go func() {
 		for {
@@ -62,7 +62,7 @@ func (self *DbSvc) Start() {
 }
 
 // 阻塞直到db操作完成，db返回队列依然可用,但此时应该没有pull了
-func (self *DbSvc) Stop() {
+func (self *DbMgr) Stop() {
 	close(self.queue)
 	self.exitSync.Wait()
 	if self.session != nil {
@@ -71,7 +71,7 @@ func (self *DbSvc) Stop() {
 	}
 }
 
-func (self *DbSvc) Send(mail *Mail) {
+func (self *DbMgr) Send(mail *Mail) {
 	select {
 	case self.queue <- mail:
 	default:
@@ -82,11 +82,11 @@ func (self *DbSvc) Send(mail *Mail) {
 	}
 }
 
-func (self *DbSvc) Chan() <- chan func() {
+func (self *DbMgr) Chan() <- chan func() {
 	return self.cbqueue
 }
 
-func (self *DbSvc) Pull() {
+func (self *DbMgr) Pull() {
 	for {
 		select {
 		case cb := <- self.cbqueue: // 这里会频繁的加锁解锁，考虑不用chan队列做
@@ -96,7 +96,7 @@ func (self *DbSvc) Pull() {
 	}
 }
 
-func (self *DbSvc) RawSession() *mgo.Session {
+func (self *DbMgr) RawSession() *mgo.Session {
 	if self.session == nil {
 		var err error
 		self.session, err = mgo.Dial(self.url)
@@ -107,23 +107,23 @@ func (self *DbSvc) RawSession() *mgo.Session {
 	return self.session
 }
 
-func (self *DbSvc) Session() *mgo.Session {
+func (self *DbMgr) Session() *mgo.Session {
 	return self.RawSession().Clone()
 }
 
-func (self *DbSvc) DBName() string {
+func (self *DbMgr) DBName() string {
 	return self.dbname
 }
 
-func (self *DbSvc) C(name string, ses *mgo.Session) *mgo.Collection {
+func (self *DbMgr) C(name string, ses *mgo.Session) *mgo.Collection {
 	if ses == nil {
 		ses = self.RawSession()
 	}
 	return ses.DB(self.dbname).C(name)
 }
 
-var Instance *DbSvc
-func init() {
-	Instance = &DbSvc{}
-	app.Master.RegService(Instance, false)
+var Instance *DbMgr
+func New() *DbMgr{
+	Instance = &DbMgr{}
+	return Instance
 }
