@@ -7,7 +7,11 @@ import (
 	"cellnet/peer"
 	"encoding/binary"
 	"math/rand"
+	"encoding/hex"
+	"crypto/md5"
 )
+
+var cryptoKey = "milan, milan go!"
 
 type entryToken struct {
 	Token string
@@ -77,19 +81,18 @@ func recvSessionClosed(s Session, data interface{}) {
 }
 
 func newEntryTokenPair() (alias, token string) {
-	var b [12]byte
+	var b [8]byte
 	binary.BigEndian.PutUint32(b[:], rand.Uint32())
 	binary.BigEndian.PutUint32(b[4:], uint32(time.Now().Unix()))
-	for i := 8; i < 12; i =i+1 {
-		b[i] = byte(rand.Intn(256))
-	}
 	alias = string(b[:])
-	s := "milan, milan"
-	//buf :=
-	for i, c := range b {
-		b[i] = c ^ s[i]
+	// 计算规则
+	var hexb []byte
+	hex.Encode(hexb, b[:])
+	t := md5.Sum(hexb)
+	for i, c := range t {
+		t[i] = c ^ cryptoKey[i]
 	}
-	token = string(b[:])
+	token = string(t[:])
 	binary.BigEndian.PutUint16(b[8:], 60)
 	return alias, token
 }
