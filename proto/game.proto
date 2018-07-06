@@ -8,7 +8,7 @@ message Echo {
 }
 
 // 服务端要求回答口令
-message SCEntryToken {
+message SCEntryAlias {
   string alias = 1;
 }
 
@@ -17,10 +17,18 @@ message CSEntryToken {
   string token = 1;
 }
 
+// 提示
 message SCNotice {
   int32 Index = 1;
   repeated string Args = 2;
 }
+
+// 文本提示
+message SCNoticeText {
+	string text = 1;
+	int32 typ = 2; // 类型
+}
+
 
 // 默认响应
 message SCResponse {

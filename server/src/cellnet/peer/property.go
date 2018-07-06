@@ -10,6 +10,12 @@ type ctx struct {
 	value interface{}
 }
 
+type ICoreContextSet interface {
+	GetContext(key, valuePtr interface{}) bool
+	RawGetContext(key interface{}) (interface{}, bool)
+	SetContext(key, v interface{})
+}
+
 // 上下文记录，绑定用户自定义数据
 type CoreContextSet struct {
 	ctxes      []ctx

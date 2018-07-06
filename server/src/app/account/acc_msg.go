@@ -3,7 +3,6 @@ package account
 import (
 	"proto"
 	"app/db"
-	"app"
 	"app/network"
 	"app/notice"
 	"strings"
@@ -27,20 +26,13 @@ func checkValidity(ses network.Session, id, pwd string) bool {
 	return true
 }
 
-func sendAccountInfo(sender app.ISender, account *Account) {
+func sendAccountInfo(sender network.ISender, account *Account) {
 	msg := &proto.SCAccountInfo{
 		Id: account.Id,
 	}
 	infos := make([]*proto.RoleInfo, len(account.Roles))
 	for i, info := range account.Roles {
-		infos[i] = &proto.RoleInfo{
-			Id: info.Id,
-			Name: info.Name,
-			LogoutTime: info.LogoutTime.Unix(),
-			Gender: int32(info.Gender),
-			Level: int32(info.Level),
-			Job: int32(info.Job),
-		}
+		infos[i] = info.PackMsg()
 	}
 	msg.Roles = infos
 	sender.Send(msg)
@@ -111,7 +103,7 @@ func recvAccountLogin(ses network.Session, data interface{}) {
 //		},
 //		Result: func(data interface{}, err error) {
 //			if err != nil {
-//				ev.Send(common.NewNoticeMsg(keys.NRoleNameExist))
+//				ev.Send(common.NewNoticeMsg(mosaic.NRoleNameExist))
 //				return
 //			}
 //			acc.addRole(&roleinfo{

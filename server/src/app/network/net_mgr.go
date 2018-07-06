@@ -4,10 +4,14 @@ import (
 	"cellnet"
 	"cellnet/peer"
 	"cellnet/proc"
-	"sync"
+	"proto"
 )
 
 type Session cellnet.Session
+
+type ISender interface {
+	Send (msg interface{})
+}
 
 type NetMgr struct {
 	tcp cellnet.Peer
@@ -17,7 +21,7 @@ type NetMgr struct {
 	HandlerById map[int]func(Session, interface{})
 
 	// 连接
-	sesInToken sync.Map
+	//sesInToken sync.Map
 }
 
 func (self *NetMgr) Init() {
@@ -27,9 +31,22 @@ func (self *NetMgr) Init() {
 	proc.BindProcessorHandler(self.tcp, "tcp.ltv", func(event cellnet.Event) {
 		ses := event.Session().(Session)
 		msg := event.Message()
-		if handler, ok := self.HandlerById[cellnet.MessageToID(msg)]; ok {
-			self.handlerQue <- func() {
-				handler(ses, msg)
+		msgId := cellnet.MessageToID(msg)
+		switch msgId {
+		case CodeSessionAccepted:
+			recvSessionAccepted(ses, msg)
+		case proto.CodeCSEntryToken:
+			recvEntryToken(ses, msg)
+		default:
+			token, ok := ses.(peer.ICoreContextSet).RawGetContext("token")
+			if !ok || !token.(*entryToken).Ok { // 非法连接
+				ses.Close()
+				return
+			}
+			if handler, ok := self.HandlerById[msgId]; ok {
+				self.handlerQue <- func() {
+					handler(ses, msg)
+				}
 			}
 		}
 	})

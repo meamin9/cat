@@ -1,4 +1,4 @@
-package utils
+package util
 
 type MinHeap struct {
 	arr  []interface{}

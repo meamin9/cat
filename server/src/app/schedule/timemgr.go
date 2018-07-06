@@ -2,7 +2,7 @@ package schedule
 
 import (
 	"time"
-	"utils"
+	"util"
 )
 
 type TimerType byte
@@ -35,7 +35,7 @@ type timemgr struct {
 	monthCbs  map[int]func()
 	dayCbs    map[int]func()
 	secondCbs map[int]func()
-	heap      *utils.MinHeap
+	heap      *util.MinHeap
 	id        int
 }
 
@@ -66,7 +66,7 @@ func triggerUpdate(cbs map[int]func()) {
 	}
 }
 
-func updateTimer(now time.Time, heap *utils.MinHeap) {
+func updateTimer(now time.Time, heap *util.MinHeap) {
 	for m := heap.Min(); m != nil; m = heap.Min() {
 		t := m.(*Timer)
 		if t.class == TimerInvalid {
@@ -114,6 +114,6 @@ func NewTimemgr() *timemgr {
 	return &timemgr{
 		now:    time.Now(),
 		offset: 0,
-		heap:   utils.NewMinHeap(compareTimer, 100),
+		heap:   util.NewMinHeap(compareTimer, 100),
 	}
 }

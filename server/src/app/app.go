@@ -14,9 +14,6 @@ type ICfg interface {
 	LoadCfg()
 }
 
-type ISender interface {
-	Send (msg interface{})
-}
 
 
 type App struct {

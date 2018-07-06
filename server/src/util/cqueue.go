@@ -1,4 +1,4 @@
-package utils
+package util
 
 // 使用chan的队列
 

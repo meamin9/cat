@@ -7,3 +7,12 @@ message CSRoleCreate {
   int32 gender = 2;
   int32 job = 3;
 }
+
+message SCRoleCreate {
+	RoleInfo info = 1;
+}
+
+// 角色进入游戏
+message CSRoleEnter {
+	uin64 id = 1;
+}

@@ -1,4 +1,4 @@
-package utils
+package util
 
 func ResetCapcity(sl []interface{}, capacity int) (newsl []interface{}) {
 	if cap(sl) == capacity {
