@@ -19,6 +19,6 @@ func Test_LoadCsv(t *testing.T) {
 	LoadCsv(path, f)
 	log.Print("over", len(data), len(*f))
 	for i, n := range *f {
-		log.Print(i, n.Name)//, n.Content, n.Typ, n.Alias)
+		log.Print(i, n.Name, n.Content, n.Typ, n.Alias)
 	}
 }
