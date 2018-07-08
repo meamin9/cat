@@ -6,6 +6,7 @@ import (
 	"strings"
 	"app/db"
 	"app/account"
+	"app/notice"
 )
 
 func regProp() {
@@ -32,7 +33,7 @@ func recvRoleCreate(s network.Session, data interface{}) {
 		Sql: &dbRoleCreate{ role: dbrole },
 		Cb: func(i interface{}, e error) {
 			if e != nil {
-				//
+				notice.SendNotice(s, notice.CNameRepeated)
 				return
 			}
 			Instance.AddRole(role)

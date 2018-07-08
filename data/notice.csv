@@ -1,0 +1,7 @@
+名字,提示内容,提示类型（飘字、跑马灯）,注释说明
+Name,Content,Type,comment
+NameLengthTooShort,名字长度最少要%s个字节,0,
+NameLengthTooLong,名字最长是%s个字节,0,
+NameContentInvalid,名字中含不合适字符,0,
+NameRepeated,名字已被使用,0,创建账号和角色时的提示
+LoginInvalid,账号或密码错误,0,

@@ -112,14 +112,14 @@ func (self *DbMgr) Session() *mgo.Session {
 }
 
 func (self *DbMgr) DBName() string {
-	return self.dbname
+	return self.Dbname
 }
 
 func (self *DbMgr) C(name string, ses *mgo.Session) *mgo.Collection {
 	if ses == nil {
 		ses = self.RawSession()
 	}
-	return ses.DB(self.dbname).C(name)
+	return ses.DB(self.Dbname).C(name)
 }
 
 var Instance *DbMgr

@@ -191,6 +191,17 @@ func regDefaultParser() {
 //	return v, err
 //}
 
+func ReadJson(fpath string, v interface{}) error {
+	f, err := os.Open(fpath)
+	if err != nil {
+		log.Print(err)
+		return err
+	}
+	var b []byte
+	f.Read(b, )
+
+}
+
 func init() {
 	regDefaultParser()
 }

@@ -14,23 +14,23 @@ type ICfg interface {
 	LoadCfg()
 }
 
-
-
 type App struct {
 	*ServiceMgr
 	*AppCfg
 	exitC chan bool
+	// path
 }
 
-var Master *App
+var Instance *App
 
 func newApp() *App {
-	Master = &App{
+	Instance = &App{
 		ServiceMgr: NewServiceMgr(),
 		exitC: make(chan bool,),
 	}
-	return Master
+	return Instance
 }
+
 
 // 改成手动初始化，不用包内的init初始化了（顺序不容易确定）
 func (self *App) initPackage() {
@@ -53,6 +53,7 @@ func (self *App) initPackage() {
 // flush db的回调队列，保证各模块数据都是最新的，关闭其他模块
 // 关闭db
 func (self *App) Start() {
+	self.LoadCfg()
 	self.initPackage()
 
 	// loadcfg和init阶段不同包不会交互，逻辑上线程安全

@@ -7,6 +7,7 @@ import (
 	"app/notice"
 	"strings"
 	"app/role"
+	"regexp"
 )
 
 func regProp() {
@@ -14,9 +15,13 @@ func regProp() {
 	network.Instance.RegProto(proto.CodeCSAccountLogin, recvAccountLogin)
 }
 
-func checkValidity(ses network.Session, id, pwd string) bool {
+func checkValidity(id, pwd string) bool {
 	l := len(id)
 	if l < Instance.NameLenRange[0] || l > Instance.NameLenRange[1] {
+		return false
+	}
+	if ok, err := regexp.MatchString("[0-9a-zA-Z_-]+", id);
+	err != nil || !ok{
 		return false
 	}
 	l = len(pwd)
@@ -42,14 +47,14 @@ func recvAccountReg(ses network.Session, data interface{}) {
 	msg := data.(*proto.CSAccountReg)
 	id := strings.TrimSpace(msg.Id)
 	pwd := strings.TrimSpace(msg.Pwd) // 这是个md5码值
-	if ! checkValidity(ses, id, pwd) {
+	if ! checkValidity(id, pwd) {
 		return
 	}
 	db.Instance.Send(&db.Mail{
 		Sql: &dbAccountCreate{id, pwd},
 		Cb: func(data interface{}, err error) {
 			if err != nil { // 注册失败，可能是用户名已存在
-				notice.SendText(ses, "用户名已存在")
+				notice.SendNotice(ses, notice.CNameRepeated)
 				return
 			}
 			acc := &Account{
@@ -66,14 +71,14 @@ func recvAccountLogin(ses network.Session, data interface{}) {
 	msg := data.(*proto.CSAccountLogin)
 	id := strings.TrimSpace(msg.Id)
 	pwd := strings.TrimSpace(msg.Pwd) // 这是个md5码值
-	if ! checkValidity(ses, id, pwd) {
+	if ! checkValidity(id, pwd) {
 		return
 	}
 	db.Instance.Send(&db.Mail{
 		Sql: &dbAccountLogin{id, pwd},
 		Cb: func(data interface{}, err error) {
 			if err != nil {
-				notice.SendText(ses, "帐号或密码错误")
+				notice.SendNotice(ses, notice.CLoginInvalid)
 				return
 			}
 			acc := data.(*Account)
@@ -82,39 +87,3 @@ func recvAccountLogin(ses network.Session, data interface{}) {
 		},
 	})
 }
-
-
-//
-//func dispatchRoleCreate(ev *cellnet.Event) {
-//	msg := ev.Msg.(*proto.CSRoleCreate)
-//	aid := ev.Ses.AccountId()
-//	acc, ok := Mgr().Account(aid)
-//	if !ok {
-//		log.Panicln("invaild account", aid)
-//	}
-//	if len(acc.roles) >= 3 {
-//		log.Print("create roles reach max count", acc)
-//		return
-//	}
-//	role := role.Mgr().CreateRole(msg.Name)
-//	db.Queue().Send(&db.Request{
-//		Quest: func() (interface{}, error) {
-//			return collections.RoleCreate(role.Pack())
-//		},
-//		Result: func(data interface{}, err error) {
-//			if err != nil {
-//				ev.Send(common.NewNoticeMsg(mosaic.NRoleNameExist))
-//				return
-//			}
-//			acc.addRole(&roleinfo{
-//				id:    role.Id(),
-//				name:  role.Name(),
-//				level: role.Level(),
-//			})
-//			db.Queue().Send(db.NewRequest(func() (interface{}, error) {
-//				return collections.AccountUpdateRoles(acc.packRoles())
-//			}, nil))
-//		},
-//	})
-//
-//}

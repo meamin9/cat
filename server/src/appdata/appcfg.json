@@ -1,0 +1,11 @@
+{
+  "serverName": "皮皮虾",
+  "serverId": 1,
+  "serverAddr": "localhost:12306",
+  "db": {
+    "username": "cat",
+    "password": "123456",
+    "addrs": ["localhost"],
+    "dbname": "cat"
+  }
+}

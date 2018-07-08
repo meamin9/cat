@@ -66,16 +66,3 @@ func (self *dbAccountLogin) Exec(s *mgo.Session) (data interface{}, err error) {
 	}
 	return data, err
 }
-
-// 不需要更新，创建角色时，自动修改account插入数据
-//type DbAccountUpdate struct {
-//	datas []*DbAccount
-//}
-//
-//func (self *DbAccountUpdate) Exec(s *mgo.Session) (interface{}, error) {
-//	c := s.DB(db.Instance.DBName()).C(CName)
-//	for _, acc := range self.datas {
-//		c.UpdateId(acc.Id, bson.M{"roles": acc.Roles})
-//	}
-//	return nil, nil
-//}
