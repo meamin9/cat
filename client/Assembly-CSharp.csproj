@@ -8,8 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <ProjectGuid>{A2859A56-AB4A-51F9-60BB-1B6FC96E8C70}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -61,7 +60,25 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\App\CNet\Connector.cs" />
+    <Compile Include="Assets\Scripts\App\CNet\Net.cs" />
+    <Compile Include="Assets\Scripts\App\CNet\Proc.cs" />
+    <Compile Include="Assets\Scripts\App\CNet\Session.cs" />
+    <Compile Include="Assets\Scripts\App\Ctrl\GameCtrl.cs" />
+    <Compile Include="Assets\Scripts\App\Ctrl\StartCtrl.cs" />
+    <Compile Include="Assets\Scripts\App\GameOP.cs" />
+    <Compile Include="Assets\Scripts\App\Login\LoginM.cs" />
+    <Compile Include="Assets\Scripts\App\Login\LoginOP.cs" />
+    <Compile Include="Assets\Scripts\App\Login\LoginUI.cs" />
+    <Compile Include="Assets\Scripts\App\Moudle.cs" />
+    <Compile Include="Assets\Scripts\App\Notice\Keys.cs" />
+    <Compile Include="Assets\Scripts\App\Notice\Lang.cs" />
+    <Compile Include="Assets\Scripts\App\Notice\NoticeOP.cs" />
+    <Compile Include="Assets\Scripts\App\Notice\NoticeUI.cs" />
     <Compile Include="Assets\Scripts\App\Service.cs" />
+    <Compile Include="Assets\Scripts\App\UI\UICom.cs" />
+    <Compile Include="Assets\Scripts\App\UI\UIManager.cs" />
+    <Compile Include="Assets\Scripts\App\Utils\StringOP.cs" />
     <Compile Include="Assets\Scripts\Cellnet\Acceptor.cs" />
     <Compile Include="Assets\Scripts\Cellnet\Codec.cs" />
     <Compile Include="Assets\Scripts\Cellnet\Connector.cs" />
@@ -80,21 +97,6 @@
     <Compile Include="Assets\Scripts\Cellnet\StringHash.cs" />
     <Compile Include="Assets\Scripts\Cellnet\Subscribe.cs" />
     <Compile Include="Assets\Scripts\data\Constants.cs" />
-    <Compile Include="Assets\Scripts\App\Ctrl\GameCtrl.cs" />
-    <Compile Include="Assets\Scripts\App\Ctrl\StartCtrl.cs" />
-    <Compile Include="Assets\Scripts\App\GameOP.cs" />
-    <Compile Include="Assets\Scripts\App\Login\LoginM.cs" />
-    <Compile Include="Assets\Scripts\App\Login\LoginOP.cs" />
-    <Compile Include="Assets\Scripts\App\Login\LoginUI.cs" />
-    <Compile Include="Assets\Scripts\App\Moudle.cs" />
-    <Compile Include="Assets\Scripts\App\Net.cs" />
-    <Compile Include="Assets\Scripts\App\Notice\Keys.cs" />
-    <Compile Include="Assets\Scripts\App\Notice\Lang.cs" />
-    <Compile Include="Assets\Scripts\App\Notice\NoticeOP.cs" />
-    <Compile Include="Assets\Scripts\App\Notice\NoticeUI.cs" />
-    <Compile Include="Assets\Scripts\App\UI\UICom.cs" />
-    <Compile Include="Assets\Scripts\App\UI\UIManager.cs" />
-    <Compile Include="Assets\Scripts\App\Utils\StringOP.cs" />
     <Compile Include="Assets\Scripts\Proto\Account.cs" />
     <Compile Include="Assets\Scripts\Proto\Chat.cs" />
     <Compile Include="Assets\Scripts\Proto\Game.cs" />
@@ -646,7 +648,6 @@
       <HintPath>C:/Program Files/Unity/Hub/Editor/2018.1.6f1/Editor/Data/MonoBleedingEdge/lib/mono/unityscript/Boo.Lang.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

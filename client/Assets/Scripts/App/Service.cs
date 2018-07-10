@@ -7,19 +7,15 @@ using System.Threading.Tasks;
 class Singleton<T> where T: class, new()
 {
     static T _instance;
-    T Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
+    T Instance {
+        get {
+            if (_instance == null) {
                 _instance = new T();
             }
             return _instance;
         }
     }
-    void Destroy()
-    {
+    void Destroy() {
         _instance = null;
     }
 }
@@ -32,20 +28,22 @@ interface IService
 }
 
 
-class ServiceMgr
+class ServiceMgr : Singleton<ServiceMgr>, IService
 {
     List<IService> _serviceList = new List<IService>();
 
-    void VisitService(Action<IService> func)
+    public void VisitService(Action<IService> func)
     {
         foreach (var s in _serviceList) {
             func(s);
         }
     }
+    public void Init() {
 
-    void RegService(IService s)
-    {
-        _serviceList.Add(s);
     }
+
+    public void Start() { }
+    public void Stop() { }
+
 
 }
