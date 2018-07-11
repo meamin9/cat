@@ -2,11 +2,12 @@ package app
 
 // 所有服务在import这里导入（无序），自身的init里注册Cfg和Svc
 import (
-	"app/network"
-	"app/db"
-	"app/apptime"
 	"app/account"
+	"app/apptime"
+	"app/db"
+	"app/network"
 	"app/role"
+	"app/util"
 	"sync"
 )
 
@@ -16,21 +17,21 @@ type ICfg interface {
 
 type App struct {
 	*ServiceMgr
-	*AppCfg
 	exitC chan bool
 	// path
 }
 
 var Instance *App
+var log *util.Logger
 
 func newApp() *App {
 	Instance = &App{
 		ServiceMgr: NewServiceMgr(),
-		exitC: make(chan bool,),
+		exitC:      make(chan bool),
 	}
+	log = util.NewLog("app")
 	return Instance
 }
-
 
 // 改成手动初始化，不用包内的init初始化了（顺序不容易确定）
 func (self *App) initPackage() {
@@ -53,7 +54,6 @@ func (self *App) initPackage() {
 // flush db的回调队列，保证各模块数据都是最新的，关闭其他模块
 // 关闭db
 func (self *App) Start() {
-	self.LoadCfg()
 	self.initPackage()
 
 	// loadcfg和init阶段不同包不会交互，逻辑上线程安全
@@ -92,13 +92,13 @@ func (self *App) Start() {
 	// main loop
 	for {
 		select {
-		case proc := <- network.Instance.Chan():
+		case proc := <-network.Instance.Chan():
 			proc()
-		case proc := <- db.Instance.Chan():
+		case proc := <-db.Instance.Chan():
 			proc()
-		case t := <- apptime.Instance.Chan():
+		case t := <-apptime.Instance.Chan():
 			apptime.Instance.Tick(t)
-		case <- self.exitC:
+		case <-self.exitC:
 			break
 		}
 	}

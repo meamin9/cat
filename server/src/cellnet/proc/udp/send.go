@@ -1,10 +1,10 @@
 package udp
 
 import (
-	"encoding/binary"
 	"cellnet"
 	"cellnet/codec"
 	"cellnet/peer/udp"
+	"encoding/binary"
 )
 
 const headerSize = 2 + 2

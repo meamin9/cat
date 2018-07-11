@@ -1,11 +1,11 @@
 package rpc
 
 import (
-	"fmt"
 	"cellnet"
 	"cellnet/codec"
 	_ "cellnet/codec/binary"
 	"cellnet/util"
+	"fmt"
 	"reflect"
 )
 

@@ -1,8 +1,8 @@
 package rpc
 
 import (
-	"errors"
 	"cellnet"
+	"errors"
 )
 
 var (

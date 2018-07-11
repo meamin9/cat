@@ -1,8 +1,8 @@
 package udp
 
 import (
-	"encoding/binary"
 	"cellnet/codec"
+	"encoding/binary"
 )
 
 const MTU = 1472

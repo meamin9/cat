@@ -6,7 +6,7 @@ import (
 	"proto"
 )
 
-func SendNotice(sender network.ISender, noticeId int, args... interface{}) {
+func SendNotice(sender network.ISender, noticeId int, args ...interface{}) {
 	var strs []string
 	if args != nil {
 		strs = make([]string, len(args))
@@ -16,7 +16,7 @@ func SendNotice(sender network.ISender, noticeId int, args... interface{}) {
 	}
 	sender.Send(&proto.SCNotice{
 		Index: int32(noticeId),
-		Args: strs,
+		Args:  strs,
 	})
 }
 
@@ -27,7 +27,6 @@ func SendNoticeText(sender network.ISender, text string) {
 func SendNoticeTextByType(sender network.ISender, text string, typ int) {
 	sender.Send(&proto.SCNoticeText{
 		Text: text,
-		Typ: int32(typ),
+		Typ:  int32(typ),
 	})
 }
-

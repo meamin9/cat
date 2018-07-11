@@ -10,24 +10,23 @@ import (
 type Session cellnet.Session
 
 type ISender interface {
-	Send (msg interface{})
+	Send(msg interface{})
 }
 
 type NetMgr struct {
 	tcp cellnet.Peer
-	addr string
-
-	handlerQue  chan func()
-	HandlerById map[int]func(Session, interface{})
-
-	// 连接
-	//sesInToken sync.Map
+	// POST队列
+	handlerQue chan func()
+	// 协议注册表，不加锁，网络开始前全部注册好
+	handlerByIds map[int]func(Session, interface{})
+	// 监听地址和端口,app
+	Addr string
 }
 
 func (self *NetMgr) Init() {
 	self.handlerQue = make(chan func(), 128)
-	self.HandlerById = make(map[int]func(Session, interface{}))
-	self.tcp = peer.NewGenericPeer("tcp.Acceptor", "server-cat", self.addr, nil)
+	self.handlerByIds = make(map[int]func(Session, interface{}))
+	self.tcp = peer.NewGenericPeer("tcp.Acceptor", "server-cat", self.Addr, nil)
 	proc.BindProcessorHandler(self.tcp, "tcp.ltv", func(event cellnet.Event) {
 		ses := event.Session().(Session)
 		msg := event.Message()
@@ -43,7 +42,7 @@ func (self *NetMgr) Init() {
 				ses.Close()
 				return
 			}
-			if handler, ok := self.HandlerById[msgId]; ok {
+			if handler, ok := self.handlerByIds[msgId]; ok {
 				self.handlerQue <- func() {
 					handler(ses, msg)
 				}
@@ -64,14 +63,14 @@ func (self *NetMgr) Stop() {
 }
 
 func (self *NetMgr) RegProto(msgId int, cb func(Session, interface{})) {
-	if _, ok := self.HandlerById[msgId]; ok {
+	if _, ok := self.handlerByIds[msgId]; ok {
 		panic("proto is register repeated")
 	}
-	self.HandlerById[msgId] = cb
+	self.handlerByIds[msgId] = cb
 }
 
 func (self *NetMgr) UnregProto(key int) {
-	delete(self.HandlerById, key)
+	delete(self.handlerByIds, key)
 }
 
 func (self *NetMgr) Chan() chan func() {
@@ -86,7 +85,7 @@ func (self *NetMgr) Call(handler func()) {
 func (self *NetMgr) Flush() {
 	for {
 		select {
-		case handler := <- self.handlerQue:
+		case handler := <-self.handlerQue:
 			handler()
 		default:
 			break
@@ -95,6 +94,7 @@ func (self *NetMgr) Flush() {
 }
 
 var Instance *NetMgr
+
 func New() *NetMgr {
 	Instance = &NetMgr{}
 	return Instance

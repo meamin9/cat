@@ -1,11 +1,11 @@
 package chat
 
 import (
+	"app/network"
+	"app/role"
 	"cellnet"
 	"fmt"
-	"app/network"
 	_ "proto/chatproto"
-	"app/role"
 	"time"
 )
 

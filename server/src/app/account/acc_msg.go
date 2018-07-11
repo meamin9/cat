@@ -1,13 +1,14 @@
 package account
 
 import (
-	"proto"
 	"app/db"
+	"app/db/collection"
+	"app/mosaic"
 	"app/network"
 	"app/notice"
-	"strings"
-	"app/role"
+	"proto"
 	"regexp"
+	"strings"
 )
 
 func regProp() {
@@ -20,8 +21,7 @@ func checkValidity(id, pwd string) bool {
 	if l < Instance.NameLenRange[0] || l > Instance.NameLenRange[1] {
 		return false
 	}
-	if ok, err := regexp.MatchString("[0-9a-zA-Z_-]+", id);
-	err != nil || !ok{
+	if ok, err := regexp.MatchString("[0-9a-zA-Z_-]+", id); err != nil || !ok {
 		return false
 	}
 	l = len(pwd)
@@ -47,19 +47,19 @@ func recvAccountReg(ses network.Session, data interface{}) {
 	msg := data.(*proto.CSAccountReg)
 	id := strings.TrimSpace(msg.Id)
 	pwd := strings.TrimSpace(msg.Pwd) // 这是个md5码值
-	if ! checkValidity(id, pwd) {
+	if !checkValidity(id, pwd) {
 		return
 	}
 	db.Instance.Send(&db.Mail{
-		Sql: &dbAccountCreate{id, pwd},
+		Sql: &collection.SqlAccountCreate{id, pwd},
 		Cb: func(data interface{}, err error) {
 			if err != nil { // 注册失败，可能是用户名已存在
 				notice.SendNotice(ses, notice.CNameRepeated)
 				return
 			}
 			acc := &Account{
-				Id: id,
-				Roles: make([]*role.RoleInfo, 0),
+				Id:    id,
+				Roles: make([]*mosaic.RoleInfo, 0),
 			}
 			Instance.AddAccount(acc)
 			sendAccountInfo(ses, acc)
@@ -71,11 +71,11 @@ func recvAccountLogin(ses network.Session, data interface{}) {
 	msg := data.(*proto.CSAccountLogin)
 	id := strings.TrimSpace(msg.Id)
 	pwd := strings.TrimSpace(msg.Pwd) // 这是个md5码值
-	if ! checkValidity(id, pwd) {
+	if !checkValidity(id, pwd) {
 		return
 	}
 	db.Instance.Send(&db.Mail{
-		Sql: &dbAccountLogin{id, pwd},
+		Sql: &collection.SqlAccountLogin{id, pwd},
 		Cb: func(data interface{}, err error) {
 			if err != nil {
 				notice.SendNotice(ses, notice.CLoginInvalid)

@@ -1,9 +1,9 @@
 package relay
 
 import (
-	"errors"
 	"cellnet"
 	"cellnet/codec"
+	"errors"
 )
 
 var (

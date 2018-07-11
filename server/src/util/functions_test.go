@@ -1,15 +1,15 @@
 package util
 
 import (
-	"testing"
 	"log"
+	"testing"
 )
 
 type Notice struct {
-	Name string
+	Name    string
 	Content string
-	Typ int
-	Alias string
+	Typ     int
+	Alias   string
 }
 
 func Test_LoadCsv(t *testing.T) {

@@ -1,11 +1,11 @@
 package udp
 
 import (
-	"expvar"
-	"fmt"
 	"cellnet"
 	"cellnet/peer"
 	"cellnet/util"
+	"expvar"
+	"fmt"
 	"net"
 	"time"
 )

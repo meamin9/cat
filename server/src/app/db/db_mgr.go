@@ -1,7 +1,8 @@
 package db
 
 import (
-	"app"
+	"app/util"
+	"fmt"
 	"gopkg.in/mgo.v2"
 	"sync"
 )
@@ -12,25 +13,31 @@ type ISql interface {
 
 type Mail struct {
 	Sql ISql
-	Cb func(interface{}, error)
+	Cb  func(interface{}, error)
 }
 
-
 type DbMgr struct {
-	app.ServiceBase
-
-	*DbCfg
-	session *mgo.Session
-	queue   chan *Mail
-	cbqueue chan func()
+	session  *mgo.Session
+	queue    chan *Mail
+	cbqueue  chan func()
 	exitSync sync.WaitGroup
+
+	// 配置
+	url    string
+	Dbname string
+}
+
+func (self *DbMgr) SetCfg(username, pwd, addrs, dbname string) {
+	// 格式 mongodb://username:password@addr1:port1,...,addrN:portN/dbname?key1=value1&key2=value2
+	self.url = fmt.Sprintf("%v:%v@%v/%v", username, pwd, addrs, dbname)
+	self.Dbname = dbname
 }
 
 func (self *DbMgr) Init() {
 	var err error
 	self.session, err = mgo.Dial(self.url)
 	if err != nil { // 数据库
-		self.Log.Errorf("db connet failed %v", err)
+		log.Errorf("db connet failed %v", err)
 	}
 	self.queue = make(chan *Mail, 64)
 	self.cbqueue = make(chan func(), 64)
@@ -40,13 +47,13 @@ func (self *DbMgr) Start() {
 	self.exitSync.Add(1)
 	go func() {
 		for {
-			if mail, ok := <- self.queue; ok {
+			if mail, ok := <-self.queue; ok {
 				//TODO: panic恢复
 				ses := self.Session()
 				ret, err := mail.Sql.Exec(ses)
 				ses.Close()
 				if err != nil {
-					self.Log.Errorf("sql error %v", err)
+					log.Errorf("sql error %v", err)
 				}
 				if mail.Cb != nil {
 					self.cbqueue <- func() {
@@ -75,21 +82,21 @@ func (self *DbMgr) Send(mail *Mail) {
 	select {
 	case self.queue <- mail:
 	default:
-		self.Log.Errorln("db queue is full")
+		log.Errorln("db queue is full")
 		go func() {
 			self.queue <- mail
 		}()
 	}
 }
 
-func (self *DbMgr) Chan() <- chan func() {
+func (self *DbMgr) Chan() <-chan func() {
 	return self.cbqueue
 }
 
 func (self *DbMgr) Pull() {
 	for {
 		select {
-		case cb := <- self.cbqueue: // 这里会频繁的加锁解锁，考虑不用chan队列做
+		case cb := <-self.cbqueue: // 这里会频繁的加锁解锁，考虑不用chan队列做
 			cb()
 		default:
 		}
@@ -111,10 +118,6 @@ func (self *DbMgr) Session() *mgo.Session {
 	return self.RawSession().Clone()
 }
 
-func (self *DbMgr) DBName() string {
-	return self.Dbname
-}
-
 func (self *DbMgr) C(name string, ses *mgo.Session) *mgo.Collection {
 	if ses == nil {
 		ses = self.RawSession()
@@ -123,7 +126,10 @@ func (self *DbMgr) C(name string, ses *mgo.Session) *mgo.Collection {
 }
 
 var Instance *DbMgr
-func New() *DbMgr{
+var log *util.Logger
+
+func New() *DbMgr {
 	Instance = &DbMgr{}
+	log = util.NewLog("db")
 	return Instance
 }

@@ -1,9 +1,9 @@
 package timer
 
 import (
-	"fmt"
 	"cellnet"
 	"cellnet/util"
+	"fmt"
 	"testing"
 	"time"
 )

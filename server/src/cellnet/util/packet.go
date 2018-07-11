@@ -1,10 +1,10 @@
 package util
 
 import (
-	"encoding/binary"
-	"errors"
 	"cellnet"
 	"cellnet/codec"
+	"encoding/binary"
+	"errors"
 	"io"
 )
 

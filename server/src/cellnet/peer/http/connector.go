@@ -1,9 +1,9 @@
 package http
 
 import (
-	"fmt"
 	"cellnet"
 	"cellnet/peer"
+	"fmt"
 	"io"
 	"net/http"
 	"reflect"

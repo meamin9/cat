@@ -1,8 +1,8 @@
 package peer
 
 import (
-	"errors"
 	"cellnet"
+	"errors"
 )
 
 // 手动投递消息， 兼容v2的设计

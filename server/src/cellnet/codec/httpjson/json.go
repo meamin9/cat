@@ -2,9 +2,9 @@ package httpjson
 
 import (
 	"bytes"
-	"encoding/json"
 	"cellnet"
 	"cellnet/codec"
+	"encoding/json"
 	"io"
 	"io/ioutil"
 	"net/http"

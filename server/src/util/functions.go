@@ -1,12 +1,12 @@
 package util
 
 import (
-	"os"
 	"encoding/csv"
+	"errors"
+	"log"
+	"os"
 	"reflect"
 	"strconv"
-	"log"
-	"errors"
 )
 
 func ResetCapcity(sl []interface{}, capacity int) (newsl []interface{}) {
@@ -20,7 +20,7 @@ func ResetCapcity(sl []interface{}, capacity int) (newsl []interface{}) {
 
 //linedesc 是一个结构体指针,可以是nil，用来描述一行的信息
 // data的类型要求是 *[]*struct， struct描述了csv的一行
-func LoadCsv(filepath string, data interface{}){
+func LoadCsv(filepath string, data interface{}) {
 	f, err := os.Open(filepath)
 	if err != nil {
 		panic(err)
@@ -36,7 +36,7 @@ func LoadCsv(filepath string, data interface{}){
 	lines = lines[2:]
 
 	slicetType := reflect.TypeOf(data).Elem() // []*struct
-	structType := slicetType.Elem().Elem() // struct
+	structType := slicetType.Elem().Elem()    // struct
 	vlist := reflect.MakeSlice(slicetType, n-2, n-2)
 
 	for j, line := range lines {
@@ -60,7 +60,6 @@ func LoadCsv(filepath string, data interface{}){
 	reflect.ValueOf(data).Elem().Set(vlist)
 }
 
-
 var (
 	strconvMap = make(map[reflect.Type]func(str string, vptr interface{}) error)
 )
@@ -82,77 +81,78 @@ func RegStrconvParser(vptr interface{}, parser func(str string, vptr interface{}
 
 func regDefaultParser() {
 	//string
-	RegStrconvParser((*string)(nil), func(str string, vptr interface{}) error{
+	RegStrconvParser((*string)(nil), func(str string, vptr interface{}) error {
 		*vptr.(*string) = str
 		return nil
 	})
 
 	// int
-	RegStrconvParser((*int)(nil), func(str string, vptr interface{}) error{
+	RegStrconvParser((*int)(nil), func(str string, vptr interface{}) error {
 		v, err := strconv.ParseInt(str, 0, 0)
 		*vptr.(*int) = int(v)
 		return err
 	})
-	RegStrconvParser((*int8)(nil), func(str string, vptr interface{}) error{
+	RegStrconvParser((*int8)(nil), func(str string, vptr interface{}) error {
 		v, err := strconv.ParseInt(str, 0, 8)
 		*vptr.(*int8) = int8(v)
 		return err
 	})
-	RegStrconvParser((*int16)(nil), func(str string, vptr interface{}) error{
+	RegStrconvParser((*int16)(nil), func(str string, vptr interface{}) error {
 		v, err := strconv.ParseInt(str, 0, 16)
 		*vptr.(*int16) = int16(v)
 		return err
 	})
-	RegStrconvParser((*int32)(nil), func(str string, vptr interface{}) error{
+	RegStrconvParser((*int32)(nil), func(str string, vptr interface{}) error {
 		v, err := strconv.ParseInt(str, 0, 32)
 		*vptr.(*int32) = int32(v)
 		return err
 	})
-	RegStrconvParser((*int64)(nil), func(str string, vptr interface{}) error{
+	RegStrconvParser((*int64)(nil), func(str string, vptr interface{}) error {
 		v, err := strconv.ParseInt(str, 0, 64)
 		*vptr.(*int64) = int64(v)
 		return err
 	})
 
 	// uint
-	RegStrconvParser((*uint)(nil), func(str string, vptr interface{}) error{
+	RegStrconvParser((*uint)(nil), func(str string, vptr interface{}) error {
 		v, err := strconv.ParseUint(str, 0, 0)
 		*vptr.(*uint) = uint(v)
 		return err
 	})
-	RegStrconvParser((*uint8)(nil), func(str string, vptr interface{}) error{
+	RegStrconvParser((*uint8)(nil), func(str string, vptr interface{}) error {
 		v, err := strconv.ParseUint(str, 0, 8)
 		*vptr.(*uint8) = uint8(v)
 		return err
 	})
-	RegStrconvParser((*uint16)(nil), func(str string, vptr interface{}) error{
+	RegStrconvParser((*uint16)(nil), func(str string, vptr interface{}) error {
 		v, err := strconv.ParseUint(str, 0, 16)
 		*vptr.(*uint16) = uint16(v)
 		return err
 	})
-	RegStrconvParser((*uint32)(nil), func(str string, vptr interface{}) error{
+	RegStrconvParser((*uint32)(nil), func(str string, vptr interface{}) error {
 		v, err := strconv.ParseUint(str, 0, 32)
 		*vptr.(*uint32) = uint32(v)
 		return err
 	})
-	RegStrconvParser((*uint64)(nil), func(str string, vptr interface{}) error{
+	RegStrconvParser((*uint64)(nil), func(str string, vptr interface{}) error {
 		v, err := strconv.ParseUint(str, 0, 64)
 		*vptr.(*uint64) = uint64(v)
 		return err
 	})
 
 	//float
-	RegStrconvParser((*float32)(nil), func(str string, vptr interface{}) error{
+	RegStrconvParser((*float32)(nil), func(str string, vptr interface{}) error {
 		v, err := strconv.ParseFloat(str, 32)
 		*vptr.(*float32) = float32(v)
 		return err
 	})
-	RegStrconvParser((*float64)(nil), func(str string, vptr interface{}) error{
+	RegStrconvParser((*float64)(nil), func(str string, vptr interface{}) error {
 		v, err := strconv.ParseFloat(str, 64)
 		*vptr.(*float64) = float64(v)
 		return err
 	})
 }
+
 //
 //// 整数要求是10进制
 //func paserString2(str string, vptr interface{}) error {
@@ -198,7 +198,7 @@ func ReadJson(fpath string, v interface{}) error {
 		return err
 	}
 	var b []byte
-	f.Read(b, )
+	f.Read(b)
 
 }
 

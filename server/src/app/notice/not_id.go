@@ -5,11 +5,10 @@
 package notice
 
 const (
-    CNoticeHeader int = iota
-    CNameLengthTooShort // 名字长度最少要%s个字节
-    CNameLengthTooLong // 名字最长是%s个字节
-    CNameContentInvalid // 名字中含不合适字符
-    CNameRepeated // 名字已被使用
-    CLoginInvalid // 账号或密码错误
+	CNoticeHeader       int = iota
+	CNameLengthTooShort     // 名字长度最少要%s个字节
+	CNameLengthTooLong      // 名字最长是%s个字节
+	CNameContentInvalid     // 名字中含不合适字符
+	CNameRepeated           // 名字已被使用
+	CLoginInvalid           // 账号或密码错误
 )
-

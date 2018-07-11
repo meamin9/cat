@@ -2,7 +2,7 @@ package account
 
 type Cfg struct {
 	NameLenRange [2]int
-	PwdLenRange [2]int
+	PwdLenRange  [2]int
 }
 
 func (self *Cfg) LoadCfg() {

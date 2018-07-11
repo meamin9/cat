@@ -6,9 +6,9 @@ package test
 
 import (
 	"cellnet"
-	"reflect"
-	_ "cellnet/codec/gogopb"
 	"cellnet/codec"
+	_ "cellnet/codec/gogopb"
+	"reflect"
 )
 
 func init() {

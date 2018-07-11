@@ -1,10 +1,10 @@
 package http
 
 import (
-	"errors"
-	"fmt"
 	"cellnet"
 	"cellnet/codec"
+	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"

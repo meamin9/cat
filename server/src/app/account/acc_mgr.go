@@ -6,21 +6,21 @@ package account
 */
 
 import (
-	"app/role"
+	"app/mosaic"
 )
 
 type Account struct {
-	Id string
-	Roles []*role.RoleInfo
+	Id    string
+	Roles []*mosaic.RoleInfo
 }
 
-func (self *Account) AddRoleInfo(info *role.RoleInfo) {
+func (self *Account) AddRoleInfo(info *mosaic.RoleInfo) {
 	self.Roles = append(self.Roles, info)
 }
 
 type AccountMgr struct {
 	*Cfg
-	AcctById map[string]*Account
+	AcctById  map[string]*Account
 	acctBySid map[int64]*Account
 }
 
@@ -28,24 +28,24 @@ func (self *AccountMgr) Init() {
 	regProp()
 }
 func (self *AccountMgr) Start() {}
-func (self *AccountMgr) Stop() {}
-
+func (self *AccountMgr) Stop()  {}
 
 func (self *AccountMgr) AddAccount(acct *Account) {
 	self.AcctById[acct.Id] = acct
 }
 
-func (self *AccountMgr) AccountById (id string) *Account {
+func (self *AccountMgr) AccountById(id string) *Account {
 	return self.AcctById[id]
 }
 
 // find account by session id
-func (self *AccountMgr) AccountBySid (sid int64) *Account {
+func (self *AccountMgr) AccountBySid(sid int64) *Account {
 	return self.acctBySid[sid]
 }
 
 var Instance *AccountMgr
-func New() *AccountMgr{
+
+func New() *AccountMgr {
 	Instance = &AccountMgr{}
 	return Instance
 }

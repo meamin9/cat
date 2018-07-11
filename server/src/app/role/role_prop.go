@@ -1,9 +1,5 @@
 package role
 
-import (
-	"common/class"
-)
-
 const (
 	name   int = 5000
 	level  int = 2000
@@ -12,10 +8,10 @@ const (
 )
 
 type RoleProp struct {
-	propInt16      [1]int16
-	propString     [1]string
-	propGendertype [1]class.Gender
-	propJobtype    [1]int
+	propInt16  [1]int16
+	propString [1]string
+	//propGendertype [1]class.Gender
+	propJobtype [1]int
 }
 
 func (self *RoleProp) GetInt16(key int) int16 {
@@ -34,13 +30,13 @@ func (self *RoleProp) SetString(key int, v string) {
 	self.propString[key%1000] = v
 }
 
-func (self *RoleProp) GetGendertype(key int) class.Gender {
-	return self.propGendertype[key%1000]
-}
-
-func (self *RoleProp) SetGendertype(key int, v class.Gender) {
-	self.propGendertype[key%1000] = v
-}
+//func (self *RoleProp) GetGendertype(key int) class.Gender {
+//	return self.propGendertype[key%1000]
+//}
+//
+//func (self *RoleProp) SetGendertype(key int, v class.Gender) {
+//	self.propGendertype[key%1000] = v
+//}
 
 func (self *RoleProp) GetJobtype(key int) int {
 	return self.propJobtype[key%1000]

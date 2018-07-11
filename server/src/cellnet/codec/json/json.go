@@ -1,9 +1,9 @@
 package json
 
 import (
-	"encoding/json"
 	"cellnet"
 	"cellnet/codec"
+	"encoding/json"
 )
 
 type jsonCodec struct {

@@ -2,8 +2,8 @@ package apptime
 
 import (
 	"app/db"
-	"time"
 	"math/rand"
+	"time"
 )
 
 type IDbPacker interface {
@@ -13,8 +13,8 @@ type IDbPacker interface {
 // 同步定时打包存盘
 type TimeSaveHelper struct {
 	master IDbPacker
-	dirty bool
-	timer *Timer
+	dirty  bool
+	timer  *Timer
 }
 
 func (self *TimeSaveHelper) Start() {

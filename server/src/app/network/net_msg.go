@@ -1,27 +1,29 @@
 package network
 
 import (
-	"cellnet/util"
-	"time"
-	"proto"
 	"cellnet/peer"
-	"encoding/binary"
-	"math/rand"
-	"encoding/hex"
+	"cellnet/util"
 	"crypto/md5"
+	"encoding/binary"
+	"encoding/hex"
+	"math/rand"
+	"proto"
+	"time"
 )
 
 var cryptoKey = "milan, milan go!"
 
 type entryToken struct {
-	Token string
+	Token   string
 	Timeout *time.Timer
-	Ok bool // 合法的连接这个值要为true
+	Ok      bool // 合法的连接这个值要为true
 }
+
 var (
 	CodeSessionAccepted = int(util.StringHash("cellnet.SessionAccepted"))
-	CodeSessionClosed = int(util.StringHash("cellnet.SessionClosed"))
+	CodeSessionClosed   = int(util.StringHash("cellnet.SessionClosed"))
 )
+
 func regSystemMsg() {
 	// 注册网络事件
 	//Instance.RegProto(CodeSessionAccepted, recvSessionAccepted)
@@ -42,7 +44,7 @@ func recvSessionAccepted(s Session, _ interface{}) {
 		//Instance.sesInToken.Delete(s.ID())
 	})
 	entry := &entryToken{
-		Token: token,
+		Token:   token,
 		Timeout: timeout,
 	}
 	//Instance.sesInToken.Store(s.ID(), entry)
@@ -96,4 +98,3 @@ func newEntryTokenPair() (alias, token string) {
 	binary.BigEndian.PutUint16(b[8:], 60)
 	return alias, token
 }
-

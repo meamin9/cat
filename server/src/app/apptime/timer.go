@@ -1,16 +1,17 @@
 package apptime
+
 // 定时器
 
 import (
-	"time"
 	"container/heap"
+	"time"
 )
 
 type Timer struct {
-	trigTime time.Time
+	trigTime  time.Time
 	trigEvent func()
-	loopTime time.Duration // 小于等于0时不循环
-	index int
+	loopTime  time.Duration // 小于等于0时不循环
+	index     int
 }
 
 func (self *Timer) Stop() {
@@ -38,7 +39,7 @@ func (self *TimerHeap) Push(x interface{}) {
 func (self *TimerHeap) Pop() interface{} {
 	list := *self
 	n := len(list)
-	timer := list[n - 1]
+	timer := list[n-1]
 	timer.index = -1
 	*self = list[:n-1]
 	return timer
@@ -53,7 +54,7 @@ func (self TimerHeap) Top() *Timer {
 
 func (self *TimerHeap) AddTimer(interval time.Duration, cb func(), loop bool) *Timer {
 	timer := &Timer{
-		trigTime: Instance.Now().Add(interval),
+		trigTime:  Instance.Now().Add(interval),
 		trigEvent: cb,
 	}
 	if loop {
@@ -65,9 +66,9 @@ func (self *TimerHeap) AddTimer(interval time.Duration, cb func(), loop bool) *T
 
 func (self *TimerHeap) AddTimerWithDelay(loopTime time.Duration, cb func(), delay time.Duration) *Timer {
 	timer := &Timer{
-		trigTime: Instance.Now().Add(delay + loopTime),
+		trigTime:  Instance.Now().Add(delay + loopTime),
 		trigEvent: cb,
-		loopTime: loopTime,
+		loopTime:  loopTime,
 	}
 	heap.Push(self, timer)
 	return timer
@@ -83,7 +84,7 @@ func (self *TimerHeap) ProcTimer(now time.Time) {
 		}
 		next := m.trigTime.Sub(now) + m.loopTime
 		if next <= 0 {
-			next = next + m.loopTime * (-next)/m.loopTime + m.loopTime
+			next = next + m.loopTime*(-next)/m.loopTime + m.loopTime
 		}
 		m.trigTime = now.Add(next)
 		heap.Fix(self, m.index)

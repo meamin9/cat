@@ -1,8 +1,8 @@
 package game
 
 import (
-	"cellnet"
 	"app/network"
+	"cellnet"
 	"proto"
 )
 

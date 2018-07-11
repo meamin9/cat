@@ -1,14 +1,14 @@
 package apptime
 
 import (
+	"app/util"
 	"time"
-	"app"
 )
 
 type TimeMgr struct {
 	offset time.Duration
-	now time.Time
-	tick *time.Ticker
+	now    time.Time
+	tick   *time.Ticker
 
 	TimerHeap
 }
@@ -40,7 +40,10 @@ func (self *TimeMgr) Tick(t time.Time) {
 }
 
 var Instance *TimeMgr
-func init() {
+var log *util.Logger
+
+func New() *TimeMgr {
 	Instance = &TimeMgr{}
-	app.Master.RegService(Instance, true)
+	log = util.NewLog("apptime")
+	return Instance
 }

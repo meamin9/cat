@@ -1,9 +1,9 @@
 package rpc
 
 import (
-	"errors"
 	"cellnet"
 	"cellnet/codec"
+	"errors"
 	"sync"
 	"sync/atomic"
 )
