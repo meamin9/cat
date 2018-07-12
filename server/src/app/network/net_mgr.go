@@ -3,8 +3,11 @@ package network
 import (
 	"cellnet"
 	"cellnet/peer"
+	_ "cellnet/peer/tcp"
 	"cellnet/proc"
+	_ "cellnet/proc/tcp"
 	"proto"
+	"app/appinfo"
 )
 
 type Session cellnet.Session
@@ -19,14 +22,12 @@ type NetMgr struct {
 	handlerQue chan func()
 	// 协议注册表，不加锁，网络开始前全部注册好
 	handlerByIds map[int]func(Session, interface{})
-	// 监听地址和端口,app
-	Addr string
 }
 
 func (self *NetMgr) Init() {
 	self.handlerQue = make(chan func(), 128)
 	self.handlerByIds = make(map[int]func(Session, interface{}))
-	self.tcp = peer.NewGenericPeer("tcp.Acceptor", "server-cat", self.Addr, nil)
+	self.tcp = peer.NewGenericPeer("tcp.Acceptor", "server-cat", appinfo.ServerAddr, nil)
 	proc.BindProcessorHandler(self.tcp, "tcp.ltv", func(event cellnet.Event) {
 		ses := event.Session().(Session)
 		msg := event.Message()

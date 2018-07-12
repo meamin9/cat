@@ -1,0 +1,4 @@
+字段名,文本值,提示说明
+Name,Content,comment
+NameLengthLower,6,
+NameLengthUpper,14,

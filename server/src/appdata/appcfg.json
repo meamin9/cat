@@ -5,7 +5,7 @@
   "db": {
     "username": "cat",
     "password": "123456",
-    "addrs": "localhost:12307",
+    "addrs": "localhost:27017",
     "dbname": "cat"
   }
 }

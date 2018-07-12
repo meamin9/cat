@@ -1,7 +1,7 @@
-package app
+package main
 
-// 所有服务在import这里导入（无序），自身的init里注册Cfg和Svc
 import (
+	_ "app/appinfo"
 	"app/account"
 	"app/apptime"
 	"app/db"
@@ -9,28 +9,23 @@ import (
 	"app/role"
 	"app/util"
 	"sync"
+	"app/db/collection"
 )
 
-type ICfg interface {
-	LoadCfg()
-}
+
+var DEBUG = true
 
 type App struct {
-	*ServiceMgr
+	packList []interface{}
 	exitC chan bool
-	// path
 }
 
-var Instance *App
 var log *util.Logger
-
 func newApp() *App {
-	Instance = &App{
-		ServiceMgr: NewServiceMgr(),
+	log = util.NewLog("app")
+	return &App{
 		exitC:      make(chan bool),
 	}
-	log = util.NewLog("app")
-	return Instance
 }
 
 // 改成手动初始化，不用包内的init初始化了（顺序不容易确定）
@@ -38,11 +33,12 @@ func (self *App) initPackage() {
 	network.New()
 	db.New()
 	// 统一管理的module
-	self.svcList = []IService{
+	self.packList = []interface{}{
+		collection.New(),
+		apptime.New(),
 		account.New(),
 		role.New(),
 	}
-
 }
 
 // 初始化配置（不要lazy初始化）
@@ -54,16 +50,17 @@ func (self *App) initPackage() {
 // flush db的回调队列，保证各模块数据都是最新的，关闭其他模块
 // 关闭db
 func (self *App) Start() {
+	log.Infoln("App Enter")
 	self.initPackage()
-
-	// loadcfg和init阶段不同包不会交互，逻辑上线程安全
+	// load和init阶段不同包不会交互，逻辑上线程安全
 	loading := sync.WaitGroup{}
-	n := len(self.svcList)
+	n := len(self.packList)
 	loading.Add(n)
-	for _, s := range self.svcList {
+	for _, s := range self.packList {
+		pack := s // 这里需要新建一个临时变量
 		go func() {
-			if cfg, ok := s.(ICfg); ok {
-				cfg.LoadCfg()
+			if cfg, ok := pack.(interface{Load()}); ok {
+				cfg.Load()
 			}
 			loading.Done()
 		}()
@@ -74,17 +71,22 @@ func (self *App) Start() {
 	network.Instance.Init()
 	db.Instance.Init()
 	loading.Add(n)
-	for _, s := range self.svcList {
+	for _, s := range self.packList {
+		pack := s
 		go func() {
-			s.Init()
+			if cfg, ok := pack.(interface{Init()}); ok {
+				cfg.Init()
+			}
 			loading.Done()
 		}()
 	}
 	loading.Wait()
 
 	// package start
-	for _, s := range self.svcList {
-		s.Start()
+	for _, s := range self.packList {
+		if cfg, ok := s.(interface{Start()}); ok {
+			cfg.Start()
+		}
 	}
 	db.Instance.Start()
 	network.Instance.Start()
@@ -102,12 +104,15 @@ func (self *App) Start() {
 			break
 		}
 	}
-
+	// Stop
 	network.Instance.Stop()
-	self.VisitServiceReverse(func(s IService) {
-		s.Stop()
-	})
+	for _, s := range self.packList {
+		if cfg, ok := s.(interface{Stop()}); ok {
+			cfg.Stop()
+		}
+	}
 	db.Instance.Stop()
+	log.Infoln("App Exited")
 }
 
 func (self *App) Stop() {

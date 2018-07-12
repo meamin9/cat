@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package proto;
 
+import "common.proto";
+
 message CSRoleCreate {
   string name = 1;
   int32 gender = 2;
@@ -14,5 +16,5 @@ message SCRoleCreate {
 
 // 角色进入游戏
 message CSRoleEnter {
-	uin64 id = 1;
+	uint64 id = 1;
 }

@@ -4,16 +4,17 @@ import (
 	"encoding/json"
 	"github.com/davyxu/golog"
 	"os"
-	"path/filepath"
 )
 
+var log = NewLog("util")
+
+
 // 打印错误，外面不要检测错误了
-func LoadJson(filename string, result interface{}) {
-	path := filepath.Join(Cfgpath, filename)
+func LoadJson(path string, result interface{}) {
 	f, err := os.Open(path)
 	if err == nil {
 		defer f.Close()
-		size, _ := f.Seek(2, 0)
+		size, _ := f.Seek(0, 2)
 		b := make([]byte, size)
 		f.Seek(0, 0)
 		f.Read(b)
@@ -33,11 +34,12 @@ func NewLog(tag string) *Logger {
 	return &Logger{golog.New(tag)}
 }
 
-var log *Logger
-var Cfgpath string
 
-func init() {
-	log = NewLog("util")
-	p, _ := os.Executable()
-	Cfgpath = filepath.Join(filepath.Dir(p), "appdata")
-}
+//func init() {
+//	log = NewLog("util")
+	//log.Infoln(os.Args[1], os.Args[2])
+	//p, _ := os.Executable()
+	//dir := os.Args
+	//Jsonpath = filepath.Join(dir, "appdata")
+	//Datapath = filepath.Join(dir, "")
+//}

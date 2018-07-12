@@ -1,9 +1,10 @@
 package appinfo
 
 import (
-	"app/db"
-	"app/network"
 	"app/util"
+	"fmt"
+	"os"
+	"path/filepath"
 )
 
 // json 定义
@@ -23,15 +24,29 @@ var (
 	ServerName string
 	ServerId   uint16
 	ServerAddr string
+	Dburl string
+	Dbname string
+	Datapath string
+	ServerDatapath string //服务器自身配置的路径
 )
 
 func init() {
+	argsCount := len(os.Args)
+	ServerDatapath = "appdata"
+	Datapath = "data"
+	if argsCount > 1 {
+		ServerDatapath = os.Args[1]
+	}
+	if argsCount > 2 {
+		Datapath = os.Args[2]
+	}
 	res := appjson{}
-	util.LoadJson("appcfg.json", &res)
+	path := filepath.Join(ServerDatapath, "appcfg.json")
+	util.LoadJson(path, &res)
 	ServerId = res.ServerId
 	ServerName = res.ServerName
-	// net & db
-	network.Instance.Addr = res.ServerAddr
+	// db & net
 	dbcfg := res.Db
-	db.Instance.SetCfg(dbcfg.Username, dbcfg.Password, dbcfg.Addrs, dbcfg.Dbname)
+	Dburl = fmt.Sprintf("%v:%v@%v/%v", dbcfg.Username, dbcfg.Password, dbcfg.Addrs, dbcfg.Dbname)
+	Dbname = dbcfg.Dbname
 }

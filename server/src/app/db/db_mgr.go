@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gopkg.in/mgo.v2"
 	"sync"
+	"app/appinfo"
 )
 
 type ISql interface {
@@ -34,13 +35,14 @@ func (self *DbMgr) SetCfg(username, pwd, addrs, dbname string) {
 }
 
 func (self *DbMgr) Init() {
-	var err error
-	self.session, err = mgo.Dial(self.url)
-	if err != nil { // 数据库
-		log.Errorf("db connet failed %v", err)
-	}
 	self.queue = make(chan *Mail, 64)
 	self.cbqueue = make(chan func(), 64)
+	self.Dbname = appinfo.Dbname
+	self.url = appinfo.Dburl
+	if self.RawSession() == nil {
+		panic("connect to db failed")
+	}
+
 }
 
 func (self *DbMgr) Start() {
@@ -108,7 +110,7 @@ func (self *DbMgr) RawSession() *mgo.Session {
 		var err error
 		self.session, err = mgo.Dial(self.url)
 		if err != nil {
-			panic("db connet failed")
+			log.Errorf("db connet failed: {}", err)
 		}
 	}
 	return self.session

@@ -77,7 +77,7 @@ func (self *SqlRoleCreate) Exec(s *mgo.Session) (interface{}, error) {
 	return self.Role, err
 }
 
-func init() {
+func initRole() {
 	index := mgo.Index{
 		Key:        []string{"name"},
 		Unique:     true,

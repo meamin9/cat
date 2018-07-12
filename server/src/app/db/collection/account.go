@@ -12,7 +12,7 @@ var accountCName = "accounts"
 /*
 type dbAccountTrue struct {
 	Id    string          `bson:"_id"`
-	Pwd   string          `bson:"pwd"`
+	Pwd   string          `bson:"Pwd"`
 	Ctime time.Time       `bson:"ctime"`
 	Roles []uint64 `bson:"roles"`
 }
@@ -31,14 +31,14 @@ type DbAccountRet struct {
 
 // 1. 创建账号
 type SqlAccountCreate struct {
-	id  string
-	pwd string
+	Id  string
+	Pwd string
 }
 
 func (self *SqlAccountCreate) Exec(ses *mgo.Session) (account interface{}, err error) {
 	info := bson.M{
-		"_id":   self.id,
-		"pwd":   self.pwd,
+		"_id":   self.Id,
+		"Pwd":   self.Pwd,
 		"ctime": time.Now(),
 	}
 	err = ses.DB(db.Instance.Dbname).C(accountCName).Insert(info)
@@ -47,14 +47,14 @@ func (self *SqlAccountCreate) Exec(ses *mgo.Session) (account interface{}, err e
 
 // 如果登录成功，返回该账号的所有角色基本信息列表（可能为空）
 type SqlAccountLogin struct {
-	id  string
-	pwd string
+	Id  string
+	Pwd string
 }
 
 func (self *SqlAccountLogin) Exec(s *mgo.Session) (data interface{}, err error) {
 	account := &dbAccountBase{}
 	d := s.DB(db.Instance.Dbname)
-	err = d.C(roleCName).Find(bson.M{"_id": self.id, "pwd": self.pwd}).One(account)
+	err = d.C(roleCName).Find(bson.M{"_id": self.Id, "Pwd": self.Pwd}).One(account)
 	if err != nil {
 		return nil, err
 	}

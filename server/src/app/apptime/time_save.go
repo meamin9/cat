@@ -37,7 +37,7 @@ func (self *TimeSaveHelper) Save() {
 	}
 }
 
-func NewTimeSaveHelper(master *IDbPacker) *TimeSaveHelper {
+func NewTimeSaveHelper(master IDbPacker) *TimeSaveHelper {
 	return &TimeSaveHelper{
 		master: master,
 	}

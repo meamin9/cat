@@ -6,6 +6,7 @@ le# Binaries for programs and plugins
 
 *.DS_Store
 
+proto/merge.proto
 server/bin/
 server/pkg/
 server/src/.idea/

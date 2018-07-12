@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # 设置GOPATH
-CURR=`pwd`
+CURR=`Pwd`
 cd ../../../../../../..
-export GOPATH=`pwd`
+export GOPATH=`Pwd`
 cd ${CURR}
 
 # 插件及protoc存放路径
