@@ -20,6 +20,8 @@ namespace CNet
 
         private Task readTask;
 
+        private MailBox<int> outBox = new MailBox<int>();
+
         public Connector(string addr) {
             this.SetAddr(addr);
         }

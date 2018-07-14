@@ -66,6 +66,7 @@
     <Compile Include="Assets\Scripts\App\CNet\MsgMeta.cs" />
     <Compile Include="Assets\Scripts\App\CNet\Net.cs" />
     <Compile Include="Assets\Scripts\App\CNet\Proc.cs" />
+    <Compile Include="Assets\Scripts\App\CNet\MailBox.cs" />
     <Compile Include="Assets\Scripts\App\CNet\Session.cs" />
     <Compile Include="Assets\Scripts\App\Ctrl\GameCtrl.cs" />
     <Compile Include="Assets\Scripts\App\Ctrl\StartCtrl.cs" />
