@@ -10,6 +10,7 @@ import (
 	"app/util"
 	"sync"
 	"app/db/collection"
+	"app/mosaic"
 )
 
 
@@ -36,6 +37,7 @@ func (self *App) initPackage() {
 	self.packList = []interface{}{
 		collection.New(),
 		apptime.New(),
+		mosaic.New(),
 		account.New(),
 		role.New(),
 	}

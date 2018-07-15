@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// 性别
 type EGender int
 
 const (
@@ -13,12 +14,14 @@ const (
 	Male
 )
 
+// 职业
 type EJob int
 
 const (
 	None EJob = iota
 )
 
+// 角色信息简介
 type RoleInfo struct {
 	Id         uint64
 	Name       string
@@ -38,4 +41,11 @@ func (self *RoleInfo) PackMsg() *proto.RoleInfo {
 		Level:      int32(self.Level),
 		Job:        int32(self.Job),
 	}
+}
+
+// 闭区间
+type ClosedInterval [2]int
+
+func (inter *ClosedInterval) InRange(n int) bool {
+	return inter[0] <= n && n <= inter[1]
 }

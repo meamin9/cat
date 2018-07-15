@@ -19,23 +19,21 @@ func (self *Account) AddRoleInfo(info *mosaic.RoleInfo) {
 }
 
 type AccountMgr struct {
-	*Cfg
-	AcctById  map[string]*Account
+	acctById  map[string]*Account
 	acctBySid map[int64]*Account
 }
 
 func (self *AccountMgr) Init() {
 	regProp()
 }
-func (self *AccountMgr) Start() {}
-func (self *AccountMgr) Stop()  {}
 
-func (self *AccountMgr) AddAccount(acct *Account) {
-	self.AcctById[acct.Id] = acct
+func (self *AccountMgr) AddLoginAccount(acct *Account, sid int64) {
+	self.acctById[acct.Id] = acct
+	self.acctBySid[sid] = acct
 }
 
 func (self *AccountMgr) AccountById(id string) *Account {
-	return self.AcctById[id]
+	return self.acctById[id]
 }
 
 // find account by session id
@@ -44,7 +42,6 @@ func (self *AccountMgr) AccountBySid(sid int64) *Account {
 }
 
 var Instance *AccountMgr
-
 func New() *AccountMgr {
 	Instance = &AccountMgr{}
 	return Instance

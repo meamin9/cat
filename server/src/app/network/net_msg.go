@@ -26,10 +26,10 @@ var (
 
 func regSystemMsg() {
 	// 注册网络事件
-	//Instance.RegProto(CodeSessionAccepted, recvSessionAccepted)
-	Instance.RegProto(CodeSessionClosed, recvSessionClosed)
+	Instance.RegProto(CodeSessionAccepted, recvSessionAccepted)
+	//Instance.RegProto(CodeSessionClosed, recvSessionClosed)
 	// 连接口令
-	//Instance.RegProto(proto.CodeCSEntryToken, recvEntryToken)
+	Instance.RegProto(proto.CodeCSEntryToken, recvEntryToken)
 }
 
 // 这个信息是io线程并发的

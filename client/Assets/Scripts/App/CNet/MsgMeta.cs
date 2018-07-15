@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CNet {
     // 先用反射来实现，后面需要时再改成非反射
@@ -15,8 +12,13 @@ namespace CNet {
             this.MsgId = id;
         }
 
+        public bool IsEmpty() {
+            return MsgId == 0;
+        }
+
         public static MsgMeta Empty;
     }
+
     class MsgMetaSet : Singleton<MsgMetaSet> {
 
         private static Dictionary<UInt16, MsgMeta> metaById = new Dictionary<UInt16, MsgMeta>();
@@ -36,7 +38,7 @@ namespace CNet {
             try {
                 return metaByType[type];
             }
-            catch (KeyNotFoundException _) {
+            catch (KeyNotFoundException) {
                 return MsgMeta.Empty;
             }
         }
@@ -44,7 +46,7 @@ namespace CNet {
         public static MsgMeta MetaById(UInt16 msgId) {
             try {
                 return metaById[msgId];
-            } catch (KeyNotFoundException _) {
+            } catch (KeyNotFoundException) {
                 return MsgMeta.Empty;
             }
         }

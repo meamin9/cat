@@ -7,8 +7,8 @@ import (
 	"app/network"
 	"app/notice"
 	"proto"
-	"regexp"
 	"strings"
+	"app/util"
 )
 
 func regProp() {
@@ -17,18 +17,9 @@ func regProp() {
 }
 
 func checkValidity(id, pwd string) bool {
-	l := len(id)
-	if l < Instance.NameLenRange[0] || l > Instance.NameLenRange[1] {
-		return false
-	}
-	if ok, err := regexp.MatchString("[0-9a-zA-Z_-]+", id); err != nil || !ok {
-		return false
-	}
-	l = len(pwd)
-	if l < Instance.PwdLenRange[0] || l > Instance.PwdLenRange[1] {
-		return false
-	}
-	return true
+	return mosaic.Const.AccountNameLengthRange.InRange(len(id)) &&
+		util.IsWords(id) &&
+		len(pwd) > 0
 }
 
 func sendAccountInfo(sender network.ISender, account *Account) {
@@ -61,7 +52,7 @@ func recvAccountReg(ses network.Session, data interface{}) {
 				Id:    id,
 				Roles: make([]*mosaic.RoleInfo, 0),
 			}
-			Instance.AddAccount(acc)
+			Instance.AddLoginAccount(acc, ses.ID())
 			sendAccountInfo(ses, acc)
 		},
 	})
