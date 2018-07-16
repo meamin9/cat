@@ -10,6 +10,9 @@ using System.IO;
 
 namespace CNet
 {
+    enum Status {
+
+    }
     class Connector
     {
         private string _addr;
@@ -18,10 +21,15 @@ namespace CNet
         private int _reconTimes = 4;
         private int[] _reconnElpased = {500, 1000, 2000, 4000};
         private Session _session;
+        private bool _isRunning = false;
 
         public Connector(string addr, Int32 port) {
             _addr = addr;
             _port = port;
+        }
+
+        public Stream GetStream() {
+            return _tcp.GetStream();
         }
 
         public bool Connect()
@@ -55,18 +63,21 @@ namespace CNet
         public async Task Start() {
             var ok = await Task.Run((Func<bool>)Connect);
             if (ok) {
-                _session = new Session(_tcp.GetStream());
+                _session = new Session(this);
                 _session.Start();
             }
         }
 
         public void Close() {
-            if (this._tcp == null) {
+            lock (_isRunning) {
+                _isRunning
+            }
+            if (_tcp == null) {
                 return;
             }
-            _session.WaitClose();
-            this._tcp.Close();
-            this._tcp = null;
+            _session.Wait();
+            _tcp.Close();
+            _tcp = null;
         }
     }
 }
