@@ -1,18 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
-using Google.Protobuf;
 using System.IO;
 
-namespace CNet
+namespace Network
 {
-    enum Status {
-
-    }
     class Connector
     {
         private string _addr;
@@ -30,6 +23,12 @@ namespace CNet
 
         public Stream GetStream() {
             return _tcp.GetStream();
+        }
+
+        public Session Session {
+            get {
+                return _session;
+            }
         }
 
         public bool Connect()
@@ -69,12 +68,13 @@ namespace CNet
         }
 
         public void Close() {
-            lock (_isRunning) {
-                _isRunning
+            lock (this) {
+                if (! _isRunning) {
+                    return;
+                }
+                _isRunning = false;
             }
-            if (_tcp == null) {
-                return;
-            }
+            _tcp.GetStream().Close();
             _session.Wait();
             _tcp.Close();
             _tcp = null;

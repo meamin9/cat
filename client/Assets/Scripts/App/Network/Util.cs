@@ -2,7 +2,7 @@
 using System.IO;
 using Google.Protobuf;
 
-namespace CNet
+namespace Network
 {
     public class Util
     {

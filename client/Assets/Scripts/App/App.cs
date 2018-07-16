@@ -2,7 +2,14 @@
 using System.Reflection;
 using UnityEngine;
 
-namespace Game {}
+namespace APP 
+{
+    class App {
+        static public void Initialize() {
+            
+        }
+    }
+}
 
 public class Moudle
 {

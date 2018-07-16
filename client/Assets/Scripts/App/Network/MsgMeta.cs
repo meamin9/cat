@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CNet {
+namespace Network {
     // 先用反射来实现，后面需要时再改成非反射
     struct MsgMeta { // 不支持codec了，直接用protobuf
         public Type MsgType;

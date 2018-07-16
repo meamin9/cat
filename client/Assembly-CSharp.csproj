@@ -54,11 +54,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\App\CNet\Connector.cs" />
-    <Compile Include="Assets\Scripts\App\CNet\MailBox.cs" />
-    <Compile Include="Assets\Scripts\App\CNet\MsgMeta.cs" />
-    <Compile Include="Assets\Scripts\App\CNet\Net.cs" />
-    <Compile Include="Assets\Scripts\App\CNet\Session.cs" />
+    <Compile Include="Assets\Scripts\App\Network\Connector.cs" />
+    <Compile Include="Assets\Scripts\App\Network\MailBox.cs" />
+    <Compile Include="Assets\Scripts\App\Network\MsgMeta.cs" />
+    <Compile Include="Assets\Scripts\App\Network\Network.cs" />
+    <Compile Include="Assets\Scripts\App\Network\Session.cs" />
     <Compile Include="Assets\Scripts\App\Ctrl\GameCtrl.cs" />
     <Compile Include="Assets\Scripts\App\Ctrl\StartCtrl.cs" />
     <Compile Include="Assets\Scripts\App\GameOP.cs" />
@@ -66,7 +66,7 @@
     <Compile Include="Assets\Scripts\App\Login\LoginM.cs" />
     <Compile Include="Assets\Scripts\App\Login\LoginOP.cs" />
     <Compile Include="Assets\Scripts\App\Login\LoginUI.cs" />
-    <Compile Include="Assets\Scripts\App\Moudle.cs" />
+    <Compile Include="Assets\Scripts\App\App.cs" />
     <Compile Include="Assets\Scripts\App\Notice\Keys.cs" />
     <Compile Include="Assets\Scripts\App\Notice\Lang.cs" />
     <Compile Include="Assets\Scripts\App\Notice\NoticeOP.cs" />
@@ -74,7 +74,7 @@
     <Compile Include="Assets\Scripts\App\Service.cs" />
     <Compile Include="Assets\Scripts\App\UI\UICom.cs" />
     <Compile Include="Assets\Scripts\App\UI\UIManager.cs" />
-    <Compile Include="Assets\Scripts\App\Utils\StringOP.cs" />
+    <Compile Include="Assets\Scripts\App\Util\StringOP.cs" />
     <Compile Include="Assets\Scripts\Cellnet\Acceptor.cs" />
     <Compile Include="Assets\Scripts\Cellnet\Codec.cs" />
     <Compile Include="Assets\Scripts\Cellnet\Connector.cs" />
@@ -644,7 +644,12 @@
     <Reference Include="Boo.Lang">
       <HintPath>/Applications/Unity/Hub/Editor/2018.1.6f1/Unity.app/Contents/MonoBleedingEdge/lib/mono/unityscript/Boo.Lang.dll</HintPath>
     </Reference>
-    <Compile Include="Assets\Scripts\App\CNet\Util.cs" />
+    <Compile Include="Assets\Scripts\App\Network\Util.cs" />
+    <Compile Include="Assets\Scripts\App\Util\ClassHelper.cs" />
+    <Compile Include="Assets\Scripts\App\Launcher\Launcher.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\Scripts\App\Launcher\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -3,22 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-class Singleton<T> where T: class, new()
-{
-    static T _instance;
-    T Instance {
-        get {
-            if (_instance == null) {
-                _instance = new T();
-            }
-            return _instance;
-        }
-    }
-    void Destroy() {
-        _instance = null;
-    }
-}
+using Util;
 
 interface IService
 {

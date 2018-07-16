@@ -17,6 +17,7 @@ class MailBox<T>
         }
     }
 
+    // 拿出所有信息，如果当前没有，会阻塞直到有
     public void Peek(ref List<T> list) {
         Monitor.Enter(_queue);
         try {
@@ -32,11 +33,16 @@ class MailBox<T>
         
     }
 
-    public void Poll(Action<T> action) {
-        // 先复制出来，再action，避免每次dequeue时加锁解锁
-        //T mail;
-        //while (_queue.TryDequeue(out mail)) {
-        //    action(mail);
-        //}
+    // 拿出所有的信息，不阻塞调用线程
+    public void Poll(ref List<T> list) {
+        if (Monitor.TryEnter(_queue)) {
+            try {
+                list.AddRange(_queue);
+                _queue.Clear();
+            }
+            finally {
+                Monitor.Exit(_queue);
+            }
+        }
     }
 }
