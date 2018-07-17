@@ -1,5 +1,6 @@
-#! python2
+#! python3
 # -*- coding: utf-8 -*-
+import os, sys
 
 def replace(path, source, target):
 	with open(path, 'rb+') as f:
@@ -10,8 +11,8 @@ def replace(path, source, target):
 
 def replace_unity_theme():
 	path = 'Unity.exe'
-	source = '84C0750833C04883C4205BC38B0348'.decode('hex')
-	target = '84C0740833C04883C4205BC38B0348'.decode('hex')
+	source = bytes.fromhex('84C0750833C04883C4205BC38B0348')#.decode('hex')
+	target = bytes.fromhex('84C0740833C04883C4205BC38B0348')#.decode('hex')
 	replace(path, source, target)
 
 def main():
@@ -19,8 +20,9 @@ def main():
 
 if __name__ == '__main__':
 	try:
+		os.chdir(sys.path[0])
 		main()
 	except:
 		import traceback
 		traceback.print_exc()
-		raw_input('runtime error!')
+		input('runtime error!')
