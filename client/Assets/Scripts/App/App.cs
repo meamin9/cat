@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Reflection;
 using UnityEngine;
+using NSNetwork;
+using Util;
 
-namespace APP 
+class App : MonoBehaviour
 {
-    class App {
-        static public void Initialize() {
-            
-        }
+    public void Awake() {
+        //CNetwork.Instance.StartConnect();
     }
 }
 
@@ -21,11 +21,11 @@ public class Moudle
         }
 
 		Debug.Log("init Proto message");
-		Net.Instance.Init();
+		//Net.Instance.Init();
 		Debug.Log("init Proto finished");
 
 		Debug.Log("init UIManager");
-        UIManager.Create();
+        UIMgr.Create();
 
         inited = true;
     }

@@ -19,7 +19,7 @@ namespace Network {
         public static MsgMeta Empty;
     }
 
-    class MsgMetaSet : Singleton<MsgMetaSet> {
+    class MsgMetaSet {
 
         private static Dictionary<UInt16, MsgMeta> metaById = new Dictionary<UInt16, MsgMeta>();
         private static Dictionary<Type, MsgMeta> metaByType = new Dictionary<Type, MsgMeta>();

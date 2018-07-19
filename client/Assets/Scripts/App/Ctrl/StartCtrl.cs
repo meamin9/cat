@@ -8,7 +8,7 @@ using UnityEngine;
 public class StartCtrl: MonoBehaviour {
 	void Start () {
         Moudle.PlayerReset();
-		UIManager.Instance.Show<LoginUI>(LoginUI.Define);
+		UIMgr.Instance.Show<LoginUI>(LoginUI.Define);
 	}
 
     void OnEnable() {
