@@ -5,7 +5,6 @@ le# Binaries for programs and plugins
 # *.dylib
 
 *.DS_Store
-
 proto/merge.proto
 server/bin/
 server/pkg/
@@ -14,6 +13,7 @@ tools/bin/
 tools/pkg/
 server/src/proto/
 client/Assets/Scripts/proto/
+client/ProjectSettings/
 client/obj/
 client/.vs/
 client/Temp/

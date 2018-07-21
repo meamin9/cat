@@ -1,8 +1,9 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Util
 {
-    class Singleton<T> where T : class, new()
+    public class Singleton<T> where T : class, new()
     {
         static T _instance;
         public static T Instance {
@@ -13,7 +14,7 @@ namespace Util
                 return _instance;
             }
         }
-        public static void Destroy() {
+        public static void ReleaseInstance() {
             _instance = null;
         }
     }
@@ -25,7 +26,7 @@ namespace Util
         void Stop();
     }
 
-    class SingleService<T> : IService where T : class, new()
+    public class SingleService<T> : IService where T : class, new()
     {
         public virtual void Init() { }
         public virtual void Start() { }
@@ -40,7 +41,26 @@ namespace Util
                 return _instance;
             }
         }
-        public static void Destroy() {
+        public static void ReleaseInstance() {
+            _instance = null;
+        }
+    }
+
+
+    public class SingleMonoBehaviour<T> : MonoBehaviour where T : class
+    {
+        static T _instance;
+        public static T Instance {
+            get {
+                if (_instance == null) {
+                    var typ = typeof(T);
+                    var obj = new GameObject(typ.Name);
+                    _instance = obj.AddComponent(typ) as T;
+                }
+                return _instance;
+            }
+        }
+        public static void ReleaseInstance() {
             _instance = null;
         }
     }
