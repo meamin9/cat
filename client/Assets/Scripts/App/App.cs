@@ -2,7 +2,7 @@
 using System.Reflection;
 using UnityEngine;
 using NSNetwork;
-using Util;
+using NSUnityUtil;
 
 class App : MonoBehaviour
 {
@@ -36,8 +36,8 @@ public class Moudle
     }
 
     static void initProto() {
-		Cellnet.SessionEvent.Init(); // Session事件注册
-		Cellnet.MessageMetaSet.StaticInit(Assembly.GetExecutingAssembly(), "proto");
+		//Cellnet.SessionEvent.Init(); // Session事件注册
+		//Cellnet.MessageMetaSet.StaticInit(Assembly.GetExecutingAssembly(), "proto");
 	}
 }
 

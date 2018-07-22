@@ -2,7 +2,7 @@
 using System.IO;
 using Google.Protobuf;
 
-namespace Network
+namespace NSNetwork
 {
     public class Util
     {

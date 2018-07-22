@@ -4,9 +4,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.IO;
 
-namespace Network
+namespace NSNetwork
 {
-    class Connector
+    public class Connector
     {
         private string _addr;
         private Int32 _port;

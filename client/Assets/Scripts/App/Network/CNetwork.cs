@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Util;
+using NSUnityUtil;
 
 // 网络
 namespace NSNetwork
 {
     // 网络单例
-    class CNetwork : Singleton<CNetwork>
+    public class CNetwork : Singleton<CNetwork>
     {
         Connector _peer;
         List<MsgEvent> _recvList = new List<MsgEvent>();

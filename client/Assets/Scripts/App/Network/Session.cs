@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.IO;
+using NSUnityUtil;
 
-namespace Network
+namespace NSNetwork
 {
     // 网络事件
-    struct MsgEvent
+    public struct MsgEvent
     {
         public object Msg;
         public UInt16 MsgId;
@@ -18,7 +19,7 @@ namespace Network
         static public MsgEvent Disconnected = new MsgEvent(null, 2);
     }
     // 发送
-    struct SendEvent {
+    public struct SendEvent {
         public object Msg;
         public SendEvent(object msg) {
             Msg = msg;
@@ -26,7 +27,7 @@ namespace Network
 
     }
 
-    class Session
+    public class Session
     {
         private MailBox<MsgEvent> _recvBox = new MailBox<MsgEvent>();
         private MailBox<SendEvent> _sendBox = new MailBox<SendEvent>();
