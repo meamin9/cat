@@ -22,6 +22,7 @@ if __name__ == '__main__':
 	try:
 		os.chdir(sys.path[0])
 		main()
+		input('finished')
 	except:
 		import traceback
 		traceback.print_exc()
