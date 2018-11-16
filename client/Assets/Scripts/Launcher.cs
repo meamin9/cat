@@ -7,8 +7,8 @@ using UnityEngine;
 
 public class Launcher : MonoBehaviour
 {
-    private const string VERSION_FILE = "Version";
-    public const string ASSETS_FILE = "Bundles.json";
+    private const string VERSION_NAME = "VERSION";
+    public const string VERSION_INFO = "VERSION.json";
     public static string PatchDir
     {
         get { return Path.Combine(Application.persistentDataPath, "Patch"); }
@@ -21,7 +21,11 @@ public class Launcher : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(LoadAssembly());
+#if UNITY_EDITOR
+        Automata.Game.GameStage.Enter();
+#else
+    StartCoroutine(LoadAssembly());
+#endif
     }
 
     [System.Serializable]
@@ -33,12 +37,12 @@ public class Launcher : MonoBehaviour
     IEnumerator LoadAssembly()
     {
         Dictionary<string, VersionCodeInfo> versionCodes = null;
-        var versionPath = Path.Combine(PatchDir, VERSION_FILE);
+        var versionPath = Path.Combine(PatchDir, VERSION_NAME);
         if (File.Exists(versionPath))
         {
             var version = File.ReadAllText(versionPath).Trim();
-            var filePath = Path.Combine(PatchDir, ASSETS_FILE + version.ToString());
-            versionCodes = JsonUtility.FromJson<Dictionary<string, VersionCodeInfo>>(File.ReadAllText(filePath));
+            var filePath = Path.Combine(PatchDir, VERSION_INFO + version.ToString());
+            versionCodes = LitJson.JsonMapper.ToObject<Dictionary<string, VersionCodeInfo>>(File.ReadAllText(filePath));
         }
         Assembly patch = null;
         string[] _dllArray = { "Automata.Adapter.bytes", "Automata.Base.bytes", "Automata.Patch.bytes" };
@@ -70,9 +74,9 @@ public class Launcher : MonoBehaviour
         AssetBundle.UnloadAllAssetBundles(true);
         Resources.UnloadUnusedAssets();
         var type = patch.GetType("Automata.Patch.PatchStage");
-        var ins = Activator.CreateInstance(type);
+        //var ins = Activator.CreateInstance(type);
         var method = type.GetMethod("Enter");
-        method.Invoke(ins, null);
+        method.Invoke(null, null);
     }
 }
 

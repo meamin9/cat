@@ -1,0 +1,12 @@
+{
+    "name": "Automata.Game",
+    "references": [
+        "Automata.Adapter",
+        "Automata.Base",
+        "Third.EasyTouchControls"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

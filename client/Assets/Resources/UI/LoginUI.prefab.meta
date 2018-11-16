@@ -1,10 +1,8 @@
 fileFormatVersion: 2
 guid: 40035f4cb0430469b9dada20f957ba43
-timeCreated: 1509546058
-licenseType: Free
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 100100000
   userData: 
-  assetBundleName: 
+  assetBundleName: ui/loginui.prefab.ab
   assetBundleVariant: 

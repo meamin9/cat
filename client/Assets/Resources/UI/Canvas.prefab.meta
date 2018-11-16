@@ -1,10 +1,8 @@
 fileFormatVersion: 2
 guid: 697492c648c444c619bdc075e8f437f2
-timeCreated: 1509559745
-licenseType: Free
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 100100000
   userData: 
-  assetBundleName: 
+  assetBundleName: ui/canvas.prefab.ab
   assetBundleVariant: 

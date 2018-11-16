@@ -1,0 +1,10 @@
+{
+    "name": "Automata.Base",
+    "references": [
+        "Automata.Adapter"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

@@ -1,10 +1,8 @@
 fileFormatVersion: 2
 guid: a9a0dd6db63524108b99ca384debc8be
-timeCreated: 1509559406
-licenseType: Free
 NativeFormatImporter:
   externalObjects: {}
   mainObjectFileID: 100100000
   userData: 
-  assetBundleName: 
+  assetBundleName: ui/startui.prefab.ab
   assetBundleVariant: 

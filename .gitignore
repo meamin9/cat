@@ -24,9 +24,14 @@ client/Assets/Scripts/protobuf-net/obj*
 client/Assets/Scripts/protobuf-net/Web*
 client/Assets/Scripts/UnitTest*
 client/Assets/Scripts/Source*
+*/Temp/
+*.sln
+*.csproj
 main
 bin/
 obj/
+*/bin/
+*/obj/
 
 *.suo
 *.suo.*

@@ -1,0 +1,11 @@
+{
+    "name": "Automata.Patch",
+    "references": [
+        "Automata.Base",
+        "Automata.Adapter"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

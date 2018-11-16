@@ -6,7 +6,7 @@ import subprocess
 workpath = sys.path[0]
 
 def gen_csharp():
-    out = '../client/Assets/Scripts/Proto'
+    out = '../client/Assets/Scripts/Game/Proto'
     if not os.path.exists(out):
         os.makedirs(out)
     for root, _, files in os.walk('./'):
@@ -25,6 +25,7 @@ def main():
 if __name__ == '__main__':
     try:
         main()
+        input('press anykey to quit')
     except:
         import traceback
         traceback.print_exc()

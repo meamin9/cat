@@ -1,0 +1,31 @@
+ManifestFileVersion: 0
+CRC: 3467580653
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: views/uiloading.prefab.ab
+      Dependencies: {}
+    Info_1:
+      Name: scenes/testscene/s_test.unity.ab
+      Dependencies: {}
+    Info_2:
+      Name: tables.ab
+      Dependencies: {}
+    Info_3:
+      Name: avatar/entity.prefab.ab
+      Dependencies: {}
+    Info_4:
+      Name: ui/canvas.prefab.ab
+      Dependencies: {}
+    Info_5:
+      Name: ui/loginui.prefab.ab
+      Dependencies: {}
+    Info_6:
+      Name: ui/startui.prefab.ab
+      Dependencies: {}
+    Info_7:
+      Name: ui/joystickui.prefab.ab
+      Dependencies: {}
+    Info_8:
+      Name: config/baseconfig.asset.ab
+      Dependencies: {}

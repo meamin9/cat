@@ -1,0 +1,32 @@
+ManifestFileVersion: 0
+CRC: 4220469896
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: b6a5324067df5025edc5163d1e91c09c
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 9db9d4aeecca07b55be6d3c7320937d9
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: c26c7a0dcd8138d4194e0a4435a4740c, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 222
+  Script: {instanceID: 0}
+- Class: 224
+  Script: {instanceID: 0}
+- Class: 225
+  Script: {instanceID: 0}
+Assets:
+- Assets/Resources/UI/JoystickUI.prefab
+Dependencies: []
