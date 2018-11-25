@@ -13,6 +13,7 @@ namespace Automata.Game
         public void OnAttach()
         {
             _joystick = gameObject.GetComponent<ETCJoystick>();
+            _joystick.onMove.AddListener(OnMove);
 
         }
         public void OnDetach() { }
@@ -20,6 +21,11 @@ namespace Automata.Game
         public void OnHide() { }
 
         public ETCJoystick _joystick;
+
+        private void OnMove(Vector2 offset)
+        {
+            EntityMgr.Player.Move(new Vector3(offset.x, 0, offset.y)*0.05f);
+        }
 
     }
 

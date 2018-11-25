@@ -15,10 +15,19 @@ namespace Automata.Game
         private static IEnumerator Start()
         {
             yield return BaseStage.Initialize();
+            yield return AssetMgr.Instance.LoadAsync(AppSetting.AssetPath, AppSetting.Load);
+
+            InitAllMgr();
             RegistAllUI();
             //UIMgr.Instance.Show(UIID.Loading);
             UIMgr.Instance.Show(UIID.Joystick);
             MonoProxy.Instance.StartCoroutine(LoadPrimaryEntry());
+        }
+        public static void InitAllMgr()
+        {
+            //InputMgr.Instance
+            CameraMgr.Instance.Initialize();
+
         }
 
         public static void RegistAllUI()
@@ -29,9 +38,10 @@ namespace Automata.Game
 
         public static IEnumerator LoadPrimaryEntry()
         {
+            
             yield return AssetMgr.Instance.LoadAsync(SceneEntry.AssetPath, Table<SceneEntry>.LoadDict);
             yield return SceneMgr.Instance.SwitchScene(100);
-            EntityMgr.Instance.CreateEntity("");
+            EntityMgr.Instance.CreatePlayer("");
         }
     }
 }

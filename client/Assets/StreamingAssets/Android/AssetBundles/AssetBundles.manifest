@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 3467580653
+CRC: 3579056256
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -28,4 +28,7 @@ AssetBundleManifest:
       Dependencies: {}
     Info_8:
       Name: config/baseconfig.asset.ab
+      Dependencies: {}
+    Info_9:
+      Name: config/appsetting.asset.ab
       Dependencies: {}

@@ -53,6 +53,11 @@ namespace Automata.Adapter
     /// </summary>
     public class MonoProxy : SingleMonoBehaviour<MonoProxy>
     {
+        public MonoBehaviourAdapter Adapter { get; private set; }
+        private void Awake()
+        {
+            Adapter = gameObject.AddComponent<MonoBehaviourAdapter>();
+        }
     }
 
 }

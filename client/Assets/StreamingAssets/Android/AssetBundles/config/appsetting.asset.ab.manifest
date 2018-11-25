@@ -1,0 +1,18 @@
+ManifestFileVersion: 0
+CRC: 3459280113
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: b6de9a511092868798e3abe0bebc7ffa
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: a73569320d5aea1097bbfdc6131926ee
+HashAppended: 0
+ClassTypes:
+- Class: 114
+  Script: {fileID: 11500000, guid: c5d1725b8e506a0409b074c0413401ac, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+Assets:
+- Assets/Resources/Config/AppSetting.asset
+Dependencies: []

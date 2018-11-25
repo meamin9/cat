@@ -9,13 +9,18 @@ namespace Automata.Game
 {
     public class EntityMgr : Singleton<EntityMgr>
     {
+        public static Player Player { get; private set; }
 
-        public Entity CreateEntity(string id)
+        public event System.Action OnPlayerLoaded;
+
+        public Entity CreatePlayer(string id)
         {
             AssetMgr.Instance.LoadAsync("Entity.prefab", (req) => {
-                var entity = new Entity();
+                var entity = new Player();
                 entity.gameObject = GameObject.Instantiate<GameObject>(req.Asset as GameObject);
                 entity.OnAttach();
+                Player = entity;
+                OnPlayerLoaded?.Invoke();
             });
             return null;
         }

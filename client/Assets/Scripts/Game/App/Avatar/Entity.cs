@@ -17,6 +17,14 @@ namespace Automata.Game
         {
             _navAgent.Move(offset);
         }
+
+        public void MoveTo(Vector3 pos) { }
+    }
+
+    public class Player : Entity
+    {
+        //public static Player
+
     }
 
     public class Entity
@@ -33,14 +41,19 @@ namespace Automata.Game
 
         protected void Update()
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                RaycastHit hitInfo;
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.Raycast(ray.origin, ray.direction, out hitInfo))
-                    _navAgent.destination = hitInfo.point;
-            }
+            //if (Input.GetMouseButtonDown(0))
+            //{
+            //    RaycastHit hitInfo;
+            //    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            //    if (Physics.Raycast(ray.origin, ray.direction, out hitInfo))
+            //        _navAgent.destination = hitInfo.point;
+            //}
 
+        }
+
+        public void Move(Vector3 offset)
+        {
+            _navAgent.Move(offset);
         }
 
         public void MoveTo(Vector3 pos)

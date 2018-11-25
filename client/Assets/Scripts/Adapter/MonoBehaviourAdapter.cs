@@ -3,6 +3,9 @@ using System;
 
 namespace Automata.Adapter
 {
+
+
+
     public class MonoBehaviourAdapter : MonoBehaviour
     {
         public event Action awake;

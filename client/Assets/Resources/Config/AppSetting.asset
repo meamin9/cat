@@ -8,8 +8,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b9c055b9311952419f9ecc4cf5080d3, type: 3}
-  m_Name: BaseConfig
+  m_Script: {fileID: 11500000, guid: c5d1725b8e506a0409b074c0413401ac, type: 3}
+  m_Name: AppSetting
   m_EditorClassIdentifier: 
-  PatchUrl: http://127.0.0.1:8080/
-  LoadInResource: 1
+  FOV: 34
+  RelativePosition: {x: 0, y: 5, z: -7}
+  Rotation: {x: 30, y: 0, z: 0}

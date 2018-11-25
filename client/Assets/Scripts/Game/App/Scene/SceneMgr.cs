@@ -20,6 +20,7 @@ namespace Automata.Game
 
     public class SceneMgr : Singleton<SceneMgr>
     {
+        public event System.Action OnSceneLoaded;
 
         private SceneObject _curScene;
         private SceneEntry _nextSceneEntry;
@@ -98,6 +99,7 @@ namespace Automata.Game
                 yield break;
             }
             _EndSwitchScene();
+            OnSceneLoaded?.Invoke();
         }
     }
 }
