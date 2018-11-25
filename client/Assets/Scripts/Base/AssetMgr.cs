@@ -67,7 +67,7 @@ namespace Automata.Base
             {
                 if (_defaultDir == null)
                 {
-#if UNITY_IPHONE || UNITY_EDITOR_OSX
+#if UNITY_IOS
                     _defaultDir = Path.Combine(Application.streamingAssetsPath, "IOS", "AssetBundles");
 #else
                     _defaultDir = Path.Combine(Application.streamingAssetsPath, "Android", "AssetBundles");

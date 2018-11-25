@@ -9,14 +9,19 @@ public class Launcher : MonoBehaviour
 {
     private const string VERSION_NAME = "VERSION";
     public const string VERSION_INFO = "VERSION.json";
-    public static string PatchDir
-    {
+    public static string PatchDir {
         get { return Path.Combine(Application.persistentDataPath, "Patch"); }
     }
+        
+    public static string DefaultDir {
+        get {
+#if UNITY_IOS
+            return Path.Combine(Application.streamingAssetsPath, "IOS", "AssetBundles");
+#else
+            return Path.Combine(Application.streamingAssetsPath, "Android", "AssetBundles");
+#endif
 
-    public static string DefaultDir
-    {
-        get { return Application.streamingAssetsPath; }
+        }
     }
 
     private void Start()
