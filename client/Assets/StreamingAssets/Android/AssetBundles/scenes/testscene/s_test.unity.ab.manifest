@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 3410468853
+CRC: 1132451885
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 79fdae7d56e4aaa24fc74d209b988e5b
+    Hash: d98280b9077829e393a32718868a772e
   TypeTreeHash:
     serializedVersion: 2
     Hash: b7247ef79fe99eee173755cdf2a62740
@@ -55,4 +55,7 @@ ClassTypes:
   Script: {instanceID: 0}
 Assets:
 - Assets/Resources/Scenes/TestScene/S_Test.unity
-Dependencies: []
+Dependencies:
+- C:/cat/client/Assets/StreamingAssets/Android/AssetBundles/scenes/materials/floor1.mat.ab
+- C:/cat/client/Assets/StreamingAssets/Android/AssetBundles/scenes/testscene/s_test/lightmap-0_comp_dir.png.ab
+- C:/cat/client/Assets/StreamingAssets/Android/AssetBundles/scenes/testscene/s_test/lightmap-1_comp_dir.png.ab

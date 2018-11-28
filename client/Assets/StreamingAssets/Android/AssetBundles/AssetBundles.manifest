@@ -1,34 +1,62 @@
 ManifestFileVersion: 0
-CRC: 958094337
+CRC: 2270924698
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
-      Name: scenes/testscene/s_test.unity.ab
+      Name: views/uiloading.prefab.ab
       Dependencies: {}
     Info_1:
-      Name: ui/loginui.prefab.ab
-      Dependencies: {}
+      Name: scenes/testscene/s_test.unity.ab
+      Dependencies:
+        Dependency_0: scenes/materials/floor1.mat.ab
+        Dependency_1: scenes/testscene/s_test/lightmap-0_comp_dir.png.ab
+        Dependency_2: scenes/testscene/s_test/lightmap-1_comp_dir.png.ab
     Info_2:
-      Name: avatar/entity.prefab.ab
+      Name: tables.ab
       Dependencies: {}
     Info_3:
-      Name: views/uiloading.prefab.ab
+      Name: avatar/entity.prefab.ab
       Dependencies: {}
     Info_4:
       Name: ui/canvas.prefab.ab
       Dependencies: {}
     Info_5:
-      Name: ui/joystickui.prefab.ab
+      Name: ui/loginui.prefab.ab
       Dependencies: {}
     Info_6:
       Name: ui/startui.prefab.ab
       Dependencies: {}
     Info_7:
-      Name: config/baseconfig.asset.ab
+      Name: ui/joystickui.prefab.ab
       Dependencies: {}
     Info_8:
-      Name: config/appsetting.asset.ab
+      Name: config/baseconfig.asset.ab
       Dependencies: {}
     Info_9:
-      Name: tables.ab
+      Name: config/appsetting.asset.ab
+      Dependencies: {}
+    Info_10:
+      Name: avatar/unitychan.prefab.ab
+      Dependencies: {}
+    Info_11:
+      Name: scenes/materials/floor1.mat.ab
+      Dependencies:
+        Dependency_0: scenes/textures/floor1.jpg.ab
+    Info_12:
+      Name: scenes/textures/floor1.jpg.ab
+      Dependencies: {}
+    Info_13:
+      Name: scenes/textures/floor2.jpg.ab
+      Dependencies: {}
+    Info_14:
+      Name: scenes/textures/floor_1.jpg.ab
+      Dependencies: {}
+    Info_15:
+      Name: scenes/testscene/s_test/lightmap-0_comp_dir.png.ab
+      Dependencies: {}
+    Info_16:
+      Name: scenes/testscene/s_test/lightmap-1_comp_dir.png.ab
+      Dependencies: {}
+    Info_17:
+      Name: texture/rare.png.ab
       Dependencies: {}

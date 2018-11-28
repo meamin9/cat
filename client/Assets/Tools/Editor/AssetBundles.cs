@@ -48,39 +48,90 @@ public static class DevTools
         var baseLen = resDir.Length;
         var dir = resDir + "Scenes/";
         var paths = Directory.GetFiles(dir, "*.unity", SearchOption.AllDirectories);
-        foreach(var path in paths)
+        var count = 0;
+        float total = paths.Length;
+        EditorUtility.DisplayProgressBar("Set Bundles Name", dir, count / total);
+        foreach (var path in paths)
         {
             var importer = AssetImporter.GetAtPath(path);
             var bundleName = path.Substring(baseLen).Replace("\\", "/") + ".ab";
             importer.assetBundleName = bundleName;
+            EditorUtility.DisplayProgressBar("Set Bundles Name", string.Format("{0}({1}/{2})", dir, count, total), count++ / total);
         }
 
         dir = resDir;// + "Views/";
         paths = Directory.GetFiles(dir, "*.prefab", SearchOption.AllDirectories);
+        count = 0;
+        total = paths.Length;
         foreach (var path in paths)
         {
             var importer = AssetImporter.GetAtPath(path);
             var bundleName = path.Substring(baseLen).Replace("\\", "/") + ".ab";
             importer.assetBundleName = bundleName;
+            EditorUtility.DisplayProgressBar("Set Bundles Name", string.Format("{0}({1}/{2})", dir, count, total), count++ / total);
         }
+
+        dir = resDir;// + "Views/";
+        paths = Directory.GetFiles(dir, "*.mat", SearchOption.AllDirectories);
+        count = 0;
+        total = paths.Length;
+        foreach (var path in paths)
+        {
+            var importer = AssetImporter.GetAtPath(path);
+            var bundleName = path.Substring(baseLen).Replace("\\", "/") + ".ab";
+            importer.assetBundleName = bundleName;
+            EditorUtility.DisplayProgressBar("Set Bundles Name", string.Format("{0}({1}/{2})", dir, count, total), count++ / total);
+        }
+
+        dir = resDir;// + "Views/";
+        paths = Directory.GetFiles(dir, "*.jpg", SearchOption.AllDirectories);
+        count = 0;
+        total = paths.Length;
+        foreach (var path in paths)
+        {
+            var importer = AssetImporter.GetAtPath(path);
+            var bundleName = path.Substring(baseLen).Replace("\\", "/") + ".ab";
+            importer.assetBundleName = bundleName;
+            EditorUtility.DisplayProgressBar("Set Bundles Name", string.Format("{0}({1}/{2})", dir, count, total), count++ / total);
+        }
+
+        dir = resDir;// + "Views/";
+        paths = Directory.GetFiles(dir, "*.png", SearchOption.AllDirectories);
+        count = 0;
+        total = paths.Length;
+        foreach (var path in paths)
+        {
+            var importer = AssetImporter.GetAtPath(path);
+            var bundleName = path.Substring(baseLen).Replace("\\", "/") + ".ab";
+            importer.assetBundleName = bundleName;
+            EditorUtility.DisplayProgressBar("Set Bundles Name", string.Format("{0}({1}/{2})", dir, count, total), count++ / total);
+        }
+
 
         dir = resDir + "Config/";
         paths = Directory.GetFiles(dir, "*.asset", SearchOption.AllDirectories);
+        count = 0;
+        total = paths.Length;
         foreach (var path in paths)
         {
             var importer = AssetImporter.GetAtPath(path);
             var bundleName = path.Substring(baseLen).Replace("\\", "/") + ".ab";
             importer.assetBundleName = bundleName;
+            EditorUtility.DisplayProgressBar("Set Bundles Name", string.Format("{0}({1}/{2})", dir, count, total), count++ / total);
         }
 
         dir = resDir + "Tables/";
         paths = Directory.GetFiles(dir, "*.json", SearchOption.AllDirectories);
+        count = 0;
+        total = paths.Length;
         foreach (var path in paths)
         {
             var importer = AssetImporter.GetAtPath(path);
             var bundleName = "tables.ab";
             importer.assetBundleName = bundleName;
+            EditorUtility.DisplayProgressBar("Set Bundles Name", string.Format("{0}({1}/{2})", dir, count, total), count++ / total);
         }
+        EditorUtility.ClearProgressBar();
     }
 
     [MenuItem("Tools/AssetBundles/Build Version Info (Android)")]
@@ -99,6 +150,8 @@ public static class DevTools
         }
         var newAssets = new Dictionary<string, BundleConf>();
         var paths = Directory.GetFiles(dir, "*.manifest", SearchOption.AllDirectories);
+        var count = 0;
+        float total = paths.Length + 1;
         foreach (var path in paths)
         {
             var filePath = path.Substring(0, path.Length - ".manifest".Length);
@@ -133,9 +186,12 @@ public static class DevTools
                 }
                 newConf.Assets = assetList.ToArray();
             }
+            EditorUtility.DisplayProgressBar("Gen Version Info", dir, ++count / total);
         }
         var content = LitJson.JsonMapper.ToJson(newAssets);
         File.WriteAllText(infoPath, content);
+        EditorUtility.DisplayProgressBar("Gen Version Info", dir, ++count / total);
+        EditorUtility.ClearProgressBar();
     }
 
     [System.Serializable]

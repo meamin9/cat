@@ -15,7 +15,7 @@ namespace Automata.Game
 
         public Entity CreatePlayer(string id)
         {
-            AssetMgr.Instance.LoadAsync("Entity.prefab", (req) => {
+            AssetMgr.Instance.LoadAsync("unitychan.prefab", (req) => {
                 var entity = new Player();
                 entity.gameObject = GameObject.Instantiate<GameObject>(req.Asset as GameObject);
                 entity.OnAttach();

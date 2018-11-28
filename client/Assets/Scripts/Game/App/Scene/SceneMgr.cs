@@ -98,6 +98,17 @@ namespace Automata.Game
                 _EndSwitchScene();
                 yield break;
             }
+#if UNITY_EDITOR
+            GameObject mapRoot = GameObject.Find("MapRoot");
+            if (mapRoot != null)
+            {
+                Renderer[] renders = mapRoot.GetComponentsInChildren<Renderer>(true);
+                for (int i = 0; i < renders.Length; i++)
+                {
+                    renders[i].material.shader = Shader.Find(renders[i].material.shader.name);
+                }
+            }
+#endif
             _EndSwitchScene();
             OnSceneLoaded?.Invoke();
         }

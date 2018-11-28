@@ -1,0 +1,16 @@
+ManifestFileVersion: 0
+CRC: 1475122380
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 0e82a9eca2bb4a3728a704f9ca8d5313
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: f19fbf085e00d23fbc8d6cf7b345590b
+HashAppended: 0
+ClassTypes:
+- Class: 28
+  Script: {instanceID: 0}
+Assets:
+- Assets/Resources/Scenes/TestScene/S_Test/Lightmap-0_comp_dir.png
+Dependencies: []
