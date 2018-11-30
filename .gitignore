@@ -24,6 +24,7 @@ client/Assets/Scripts/protobuf-net/obj*
 client/Assets/Scripts/protobuf-net/Web*
 client/Assets/Scripts/UnitTest*
 client/Assets/Scripts/Source*
+client/Assets/StreamingAssets/Android/AssetBundles/
 */Temp/
 *.sln
 *.csproj

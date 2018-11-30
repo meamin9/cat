@@ -55,6 +55,12 @@ namespace Automata.Adapter
         {
             onDestory?.Invoke();
         }
+
+        public event Action onAnimatorMove;
+        private void OnAnimatorMove()
+        {
+            onAnimatorMove?.Invoke();
+        }
     }
 
 }

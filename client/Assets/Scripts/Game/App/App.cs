@@ -1,16 +1,13 @@
-﻿using System;
+﻿//using System;
 using System.Reflection;
 using UnityEngine;
 using Automata.Game;
 
 namespace Automata.Game
 {
-    class App : MonoBehaviour
+    public class App
     {
-        public void Awake()
-        {
-            //CNetwork.Instance.StartConnect();
-        }
+        private Random _rand;
     }
 
     public class Moudle

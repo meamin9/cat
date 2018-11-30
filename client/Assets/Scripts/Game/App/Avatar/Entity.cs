@@ -31,12 +31,9 @@ namespace Automata.Game
     {
         public GameObject gameObject { get; set; }
         protected NavMeshAgent _navAgent;
+        public Animator _anim;
+
         protected MonoBehaviourAdapter _adapter;
-
-        public AnimController _animControl;
-
-        Vector3 _smoothDeltaPosition = Vector2.zero;
-        Vector2 _velocity = Vector2.zero;
 
         public void OnAttach()
         {
@@ -45,44 +42,18 @@ namespace Automata.Game
 
             _adapter = gameObject.AddComponent<MonoBehaviourAdapter>();
             _adapter.update += Update;
+            _adapter.onAnimatorMove += OnAnimatorMove;
 
-            _animControl = new AnimController();
-            _animControl.OnAttach(gameObject.GetComponent<Animator>());
-            _animControl.Play(EAvatarAnim.Idle2);
+            _anim = gameObject.GetComponent<Animator>();
         }
 
-        void OnGUI()
+        void OnAnimatorMove()
         {
-            //for (var i = EAvatarAnim.Idle; i)
-            //{
-            //    if (GUILayout.Button(animation.name))
-            //    {
-            //        anim.CrossFade(animation.name, 0);
-            //    }
-            //}
+            gameObject.transform.position = _navAgent.nextPosition;
         }
 
         protected void Update()
         {
-            Vector3 worldDeltaPosition = _navAgent.nextPosition - gameObject.transform.position;
-
-            // Map 'worldDeltaPosition' to local space
-            float dx = Vector3.Dot(gameObject.transform.right, worldDeltaPosition);
-            float dy = Vector3.Dot(gameObject.transform.up, worldDeltaPosition);
-            float dz = Vector3.Dot(gameObject.transform.forward, worldDeltaPosition);
-            Vector2 deltaPosition = new Vector3(dx, dy, dz);
-
-            // Low-pass filter the deltaMove
-            float smooth = Mathf.Min(1.0f, Time.deltaTime / 0.15f);
-            _smoothDeltaPosition = Vector3.Lerp(_smoothDeltaPosition, deltaPosition, smooth);
-
-            // Update velocity if time advances
-            var velocity = Vector3.zero;
-            if (Time.deltaTime > 1e-5f)
-                velocity = _smoothDeltaPosition / Time.deltaTime;
-
-            bool shouldMove = velocity.sqrMagnitude > 0.25f && _navAgent.remainingDistance > _navAgent.radius;
-
             //if (Input.GetMouseButtonDown(0))
             //{
             //    RaycastHit hitInfo;
@@ -91,29 +62,98 @@ namespace Automata.Game
             //        _navAgent.destination = hitInfo.point;
             //}
 
-            if (!shouldMove)
-            {
-                //Debug.Log(_navAgent.hasPath);
-                //Debug.Log(_navAgent.pathPending);
-                //Debug.Log(_navAgent.pathStatus);
-                //Debug.Log(_navAgent.pathStatus);
-                //Debug.Log("-----");
+            Vector3 worldDeltaPosition = _navAgent.nextPosition - gameObject.transform.position;
 
-                _animControl.Play(EAvatarAnim.Idle);
-                //_animControl.Play(EAvatarAnim.Idle);
+            // Map 'worldDeltaPosition' to local space
+            float dx = Vector3.Dot(gameObject.transform.right, worldDeltaPosition);
+            float dy = Vector3.Dot(gameObject.transform.up, worldDeltaPosition);
+            float dz = Vector3.Dot(gameObject.transform.forward, worldDeltaPosition);
+            var deltaPosition = new Vector3(dx, dy, dz);
+
+            //// Low-pass filter the deltaMove
+            //float smooth = Mathf.Min(1.0f, Time.deltaTime / 0.15f);
+            //_smoothDeltaPosition = Vector3.Lerp(_smoothDeltaPosition, deltaPosition, smooth);
+
+            //// Update velocity if time advances
+            //var velocity = Vector3.zero;
+            //if (Time.deltaTime > 1e-5f)
+            //    velocity = _smoothDeltaPosition / Time.deltaTime;
+
+            //bool shouldMove = _navAgent.remainingDistance > _navAgent.radius;
+
+            var spd = _moveSpeed;
+            if (_anim.IsInTransition(0))
+            {
+                var trans = _anim.GetAnimatorTransitionInfo(0);
+                if (trans.fullPathHash == AnimNameHash.Idle2Run)
+                {
+                    spd = Mathf.Lerp(0, _moveSpeed, trans.normalizedTime);
+                }
+                else if (trans.fullPathHash == AnimNameHash.Run2Idle)
+                {
+                    spd = Mathf.Lerp(_moveSpeed, 0, trans.normalizedTime);
+                }
+            }
+            _navAgent.speed = spd;
+
+
+            if (deltaPosition.magnitude < 1e-5f)
+            {
+                SetTransId(AnimTransId.Idle);
             }
             else
             {
-                Debug.Log("runing");
+                SetTransId(AnimTransId.Run);
             }
 
+
+
+        }
+
+        public void Play(int id)
+        {
+            var nameHash = _anim.GetCurrentAnimatorStateInfo(0).fullPathHash;
+            if (id == nameHash)
+            {
+                return;
+            }
+
+        }
+
+        public int TransId { get; private set; }
+        public void SetTransId(int id)
+        {
+            if (TransId == id)
+            {
+                return;
+            }
+            TransId = id;
+            _anim.SetInteger("EAvatarAnim", id);
+        }
+
+        private float _speed = 0;
+        private float _moveSpeed = 1f;
+        public void CheckSpeed()
+        {
+            var spd = _speed;
+            if (_anim.IsInTransition(0))
+            {
+                var trans = _anim.GetAnimatorTransitionInfo(0);
+                if (trans.fullPathHash == AnimNameHash.Idle2Run)
+                {
+                    spd = Mathf.Lerp(0, _speed, trans.normalizedTime);
+                }
+                else if (trans.fullPathHash == AnimNameHash.Run2Idle)
+                {
+                    spd = Mathf.Lerp(_speed, 0, trans.normalizedTime);
+                }
+            }
+            _navAgent.speed = spd;
         }
 
         public void Move(Vector3 offset)
         {
             _navAgent.Move(offset);
-            _animControl.Play(EAvatarAnim.Walk);
-            _animControl._anim.CrossFade("WALK00_F", 0.2f);
         }
 
         public void MoveTo(Vector3 pos)

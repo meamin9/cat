@@ -1,6 +1,7 @@
 ﻿using Automata.Base;
 using System.Collections;
 using Automata.Adapter;
+using UnityEngine;
 
 namespace Automata.Game
 {
@@ -14,6 +15,7 @@ namespace Automata.Game
 
         private static IEnumerator Start()
         {
+            Random.InitState((int)System.DateTime.Now.ToFileTime());
             yield return BaseStage.Initialize();
             yield return AssetMgr.Instance.LoadAsync(AppSetting.AssetPath, AppSetting.Load);
 
@@ -26,6 +28,7 @@ namespace Automata.Game
         public static void InitAllMgr()
         {
             //InputMgr.Instance
+            TimeMgr.Instance.Initialize();
             CameraMgr.Instance.Initialize();
 
         }
