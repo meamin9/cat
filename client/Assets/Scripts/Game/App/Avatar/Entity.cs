@@ -49,6 +49,8 @@ namespace Automata.Game
 
         void OnAnimatorMove()
         {
+            var vec3 = _navAgent.nextPosition - gameObject.transform.position;
+            gameObject.transform.LookAt(_navAgent.nextPosition);
             gameObject.transform.position = _navAgent.nextPosition;
         }
 
