@@ -84,27 +84,22 @@ namespace Automata.Game
             //bool shouldMove = _navAgent.remainingDistance > _navAgent.radius;
 
             var spd = _moveSpeed;
-            if (_anim.IsInTransition(0))
-            {
+            if (_anim.IsInTransition(0)) {
                 var trans = _anim.GetAnimatorTransitionInfo(0);
-                if (trans.fullPathHash == AnimNameHash.Idle2Run)
-                {
+                if (trans.fullPathHash == AnimNameHash.Idle2Run) {
                     spd = Mathf.Lerp(0, _moveSpeed, trans.normalizedTime);
                 }
-                else if (trans.fullPathHash == AnimNameHash.Run2Idle)
-                {
+                else if (trans.fullPathHash == AnimNameHash.Run2Idle) {
                     spd = Mathf.Lerp(_moveSpeed, 0, trans.normalizedTime);
                 }
             }
             _navAgent.speed = spd;
 
 
-            if (deltaPosition.magnitude < 1e-5f)
-            {
+            if (deltaPosition.magnitude < 1e-5f) {
                 SetTransId(AnimTransId.Idle);
             }
-            else
-            {
+            else {
                 SetTransId(AnimTransId.Run);
             }
 
@@ -112,21 +107,10 @@ namespace Automata.Game
 
         }
 
-        public void Play(int id)
-        {
-            var nameHash = _anim.GetCurrentAnimatorStateInfo(0).fullPathHash;
-            if (id == nameHash)
-            {
-                return;
-            }
-
-        }
-
         public int TransId { get; private set; }
         public void SetTransId(int id)
         {
-            if (TransId == id)
-            {
+            if (TransId == id) {
                 return;
             }
             TransId = id;
@@ -138,15 +122,12 @@ namespace Automata.Game
         public void CheckSpeed()
         {
             var spd = _speed;
-            if (_anim.IsInTransition(0))
-            {
+            if (_anim.IsInTransition(0)) {
                 var trans = _anim.GetAnimatorTransitionInfo(0);
-                if (trans.fullPathHash == AnimNameHash.Idle2Run)
-                {
+                if (trans.fullPathHash == AnimNameHash.Idle2Run) {
                     spd = Mathf.Lerp(0, _speed, trans.normalizedTime);
                 }
-                else if (trans.fullPathHash == AnimNameHash.Run2Idle)
-                {
+                else if (trans.fullPathHash == AnimNameHash.Run2Idle) {
                     spd = Mathf.Lerp(_speed, 0, trans.normalizedTime);
                 }
             }
