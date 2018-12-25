@@ -1,5 +1,5 @@
 ManifestFileVersion: 0
-CRC: 2270924698
+CRC: 499793341
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
@@ -11,6 +11,8 @@ AssetBundleManifest:
         Dependency_0: scenes/materials/floor1.mat.ab
         Dependency_1: scenes/testscene/s_test/lightmap-0_comp_dir.png.ab
         Dependency_2: scenes/testscene/s_test/lightmap-1_comp_dir.png.ab
+        Dependency_3: scenes/testscene/s_test/lightmap-0_comp_shadowmask.png.ab
+        Dependency_4: scenes/testscene/s_test/lightmap-1_comp_shadowmask.png.ab
     Info_2:
       Name: tables.ab
       Dependencies: {}
@@ -59,4 +61,10 @@ AssetBundleManifest:
       Dependencies: {}
     Info_17:
       Name: texture/rare.png.ab
+      Dependencies: {}
+    Info_18:
+      Name: scenes/testscene/s_test/lightmap-0_comp_shadowmask.png.ab
+      Dependencies: {}
+    Info_19:
+      Name: scenes/testscene/s_test/lightmap-1_comp_shadowmask.png.ab
       Dependencies: {}

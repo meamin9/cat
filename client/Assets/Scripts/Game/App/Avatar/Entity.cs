@@ -39,6 +39,7 @@ namespace Automata.Game
         {
             _navAgent = gameObject.AddComponent<NavMeshAgent>();
             _navAgent.updatePosition = false;
+            _navAgent.updateRotation = false;
 
             _adapter = gameObject.AddComponent<MonoBehaviourAdapter>();
             _adapter.update += Update;
@@ -50,8 +51,12 @@ namespace Automata.Game
         void OnAnimatorMove()
         {
             var vec3 = _navAgent.nextPosition - gameObject.transform.position;
-            gameObject.transform.LookAt(_navAgent.nextPosition);
-            gameObject.transform.position = _navAgent.nextPosition;
+
+            if (vec3.sqrMagnitude > 1E-6f) {
+                var rotate = Quaternion.LookRotation(vec3);
+                gameObject.transform.rotation = Quaternion.Slerp(gameObject.transform.rotation, rotate, 0.15f);
+                gameObject.transform.position = _navAgent.nextPosition;
+            }
         }
 
         protected void Update()
@@ -67,10 +72,10 @@ namespace Automata.Game
             Vector3 worldDeltaPosition = _navAgent.nextPosition - gameObject.transform.position;
 
             // Map 'worldDeltaPosition' to local space
-            float dx = Vector3.Dot(gameObject.transform.right, worldDeltaPosition);
-            float dy = Vector3.Dot(gameObject.transform.up, worldDeltaPosition);
-            float dz = Vector3.Dot(gameObject.transform.forward, worldDeltaPosition);
-            var deltaPosition = new Vector3(dx, dy, dz);
+            //float dx = Vector3.Dot(gameObject.transform.right, worldDeltaPosition);
+            //float dy = Vector3.Dot(gameObject.transform.up, worldDeltaPosition);
+            //float dz = Vector3.Dot(gameObject.transform.forward, worldDeltaPosition);
+            //var deltaPosition = new Vector3(dx, dy, dz);
 
             //// Low-pass filter the deltaMove
             //float smooth = Mathf.Min(1.0f, Time.deltaTime / 0.15f);
@@ -96,7 +101,7 @@ namespace Automata.Game
             _navAgent.speed = spd;
 
 
-            if (deltaPosition.magnitude < 1e-5f) {
+            if (worldDeltaPosition.sqrMagnitude < 1e-6f) {
                 SetTransId(AnimTransId.Idle);
             }
             else {

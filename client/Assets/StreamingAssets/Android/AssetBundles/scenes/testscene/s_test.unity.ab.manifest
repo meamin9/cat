@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 1132451885
+CRC: 2797040132
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: d98280b9077829e393a32718868a772e
+    Hash: 7be26f270e7ad791a266f2eb47791fee
   TypeTreeHash:
     serializedVersion: 2
     Hash: b7247ef79fe99eee173755cdf2a62740
@@ -59,3 +59,5 @@ Dependencies:
 - C:/cat/client/Assets/StreamingAssets/Android/AssetBundles/scenes/materials/floor1.mat.ab
 - C:/cat/client/Assets/StreamingAssets/Android/AssetBundles/scenes/testscene/s_test/lightmap-0_comp_dir.png.ab
 - C:/cat/client/Assets/StreamingAssets/Android/AssetBundles/scenes/testscene/s_test/lightmap-1_comp_dir.png.ab
+- C:/cat/client/Assets/StreamingAssets/Android/AssetBundles/scenes/testscene/s_test/lightmap-0_comp_shadowmask.png.ab
+- C:/cat/client/Assets/StreamingAssets/Android/AssetBundles/scenes/testscene/s_test/lightmap-1_comp_shadowmask.png.ab
