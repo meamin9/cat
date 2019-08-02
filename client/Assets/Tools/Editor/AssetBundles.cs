@@ -1,7 +1,7 @@
 using System.IO;
 using UnityEditor;
 using UnityEngine;
-using Automata.Base;
+using AM.Base;
 using System.Collections.Generic;
 
 public static class DevTools
@@ -143,24 +143,24 @@ public static class DevTools
     {
         var infoPath = dir + AssetMgr.ASSETS_FILE;
         var prefixLen = dir.Length;
-        var assets = new Dictionary<string, BundleConf>();
+        var assets = new Dictionary<string, BundleEntry>();
         if (File.Exists(infoPath))
         {
-            assets = LitJson.JsonMapper.ToObject< Dictionary<string, BundleConf>>(File.ReadAllText(infoPath));
+            assets = LitJson.JsonMapper.ToObject< Dictionary<string, BundleEntry>>(File.ReadAllText(infoPath));
         }
-        var newAssets = new Dictionary<string, BundleConf>();
+        var newAssets = new Dictionary<string, BundleEntry>();
         var paths = Directory.GetFiles(dir, "*.manifest", SearchOption.AllDirectories);
         var count = 0;
         float total = paths.Length + 1;
         foreach (var path in paths)
         {
             var filePath = path.Substring(0, path.Length - ".manifest".Length);
-            var newConf = new BundleConf();
+            var newConf = new BundleEntry();
             var fileInfo = new FileInfo(filePath);
             newConf.Size = fileInfo.Length;
             var name = filePath.Substring(prefixLen).Replace("\\", "/");
             newAssets.Add(name, newConf);
-            BundleConf conf;
+            BundleEntry conf;
             if(assets.TryGetValue(name, out conf))
             {
                 newConf.Version = conf.Version;
@@ -197,7 +197,7 @@ public static class DevTools
     [System.Serializable]
     public struct VersionJson
     {
-        public Dictionary<string, BundleConf> A;
+        public Dictionary<string, BundleEntry> A;
     }
 
 }

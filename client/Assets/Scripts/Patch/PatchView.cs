@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Automata.Base;
+using AM.Base;
 using UnityEngine.UI;
 
-namespace Automata.Patch
+namespace AM.Patch
 {
-    public class PatchUI : IBaseUI
+    public class PatchUI
     {
         public static int Index { get { return 1; } }
         public int Id { get { return Index; } }

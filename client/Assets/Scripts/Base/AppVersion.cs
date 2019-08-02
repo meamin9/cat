@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using Log = UnityEngine.Debug;
 
-namespace Automata.Base
+namespace AM.Base
 {
     public struct AppVersion
     {
@@ -28,7 +22,7 @@ namespace Automata.Base
             var strs = versionStr.Trim().Split('.');
             if (strs.Length != 3)
             {
-                UnityEngine.Debug.LogErrorFormat("Invalid version {0}", versionStr);
+                Log.LogErrorFormat("Invalid version {0}", versionStr);
             }
             Main = int.Parse(strs[0]);
             Sub = int.Parse(strs[1]);

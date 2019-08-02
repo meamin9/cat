@@ -8,6 +8,7 @@ def replace(path, source, target):
 		f.seek(0)
 		f.write(c)
 		f.truncate()
+		print("replace")
 
 def replace_unity_theme():
 	path = 'Unity.exe'

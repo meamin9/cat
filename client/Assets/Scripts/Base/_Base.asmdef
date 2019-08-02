@@ -1,10 +1,14 @@
 {
-    "name": "Automata.Base",
+    "name": "AM.Base",
     "references": [
-        "Automata.Adapter"
+        "_Adapter"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
 }

@@ -1,12 +1,16 @@
 {
-    "name": "Automata.Game",
+    "name": "AM.Game",
     "references": [
-        "Automata.Adapter",
-        "Automata.Base",
-        "Third.EasyTouchControls"
+        "Third.EasyTouchControls",
+        "AM.Base",
+        "_Adapter"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": []
 }

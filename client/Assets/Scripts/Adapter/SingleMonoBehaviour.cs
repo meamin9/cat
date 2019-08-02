@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Automata.Adapter
+namespace AM.Base
 {
     public class SingleMonoBehaviour<T> : MonoBehaviour where T : MonoBehaviour
     {

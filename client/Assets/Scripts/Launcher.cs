@@ -27,7 +27,7 @@ public class Launcher : MonoBehaviour
     private void Start()
     {
 #if UNITY_EDITOR
-        Automata.Game.GameStage.Enter();
+        AM.Game.Main.Start();
 #else
     StartCoroutine(LoadAssembly());
 #endif
@@ -50,7 +50,7 @@ public class Launcher : MonoBehaviour
             versionCodes = LitJson.JsonMapper.ToObject<Dictionary<string, VersionCodeInfo>>(File.ReadAllText(filePath));
         }
         Assembly patch = null;
-        string[] _dllArray = { "Automata.Adapter.bytes", "Automata.Base.bytes", "Automata.Patch.bytes" };
+        string[] _dllArray = { "AM.Adapter.bytes", "AM.Base.bytes", "AM.Patch.bytes" };
         var n = _dllArray.Length;
         for(var i =0; i < n; ++i)
         {
@@ -78,7 +78,7 @@ public class Launcher : MonoBehaviour
         }
         AssetBundle.UnloadAllAssetBundles(true);
         Resources.UnloadUnusedAssets();
-        var type = patch.GetType("Automata.Patch.PatchStage");
+        var type = patch.GetType("AM.Patch.PatchStage");
         //var ins = Activator.CreateInstance(type);
         var method = type.GetMethod("Enter");
         method.Invoke(null, null);

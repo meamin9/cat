@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 
-namespace Automata.Adapter
+namespace AM.Base
 {
 
 

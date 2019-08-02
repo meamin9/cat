@@ -1,13 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using Automata.Base;
-using Automata.Adapter;
+using AM.Base;
 using UnityEngine;
 using System;
 using System.IO;
 using System.Reflection;
 
-namespace Automata.Patch
+namespace AM.Patch
 {
     public class PatchStage
     {
@@ -16,7 +15,7 @@ namespace Automata.Patch
         private int _downloadedCount = 0;
         private long _patchSize = 0;
         private int _patchFileCount = 0;
-        private List<KeyValuePair<string, BundleConf>> _diffs;
+        private List<KeyValuePair<string, BundleEntry>> _diffs;
         private bool _needReboot = false;
         private string[] _rebootAssets = { "Automata.Adapter.bytes", "Automata.Base.bytes", "Automata.Patch.bytes" };
         private byte[] _patchInfo;
@@ -24,7 +23,7 @@ namespace Automata.Patch
 
         private PatchStage()
         {
-            UIMgr.Instance.RegistUICreator(PatchUI.Index, UIMgr.GenUICreator<PatchUI>());
+            //UIMgr.RegistUICreator(PatchUI.Index, UIMgr.GenUICreator<PatchUI>());
         }
 
         public static void Enter()
@@ -35,9 +34,9 @@ namespace Automata.Patch
 
         private IEnumerator Start()
         {
-            yield return BaseStage.Initialize();
+            yield return Base.AssetMgr.InitAsync();
             AppVersion version;
-            var versionUrl = BaseConfig.Instance.PatchUrl + AssetMgr.VERSION_FILE;
+            var versionUrl = AppConfig.Instance.PatchUrl + AssetMgr.VERSION_FILE;
             using (var www = new WWW(versionUrl))
             {
                 yield return www;
@@ -48,8 +47,9 @@ namespace Automata.Patch
                     yield break;
                 }
             }
-            Log.Infof("有新版本，准备更新 {0}->{1}", AssetMgr.Instance.CurrentVersion, version);
-            UIMgr.Instance.Show(PatchUI.Index);
+            Debug.LogFormat("有新版本，准备更新 {0}->{1}", AssetMgr.Instance.CurrentVersion, version);
+            //不要依赖uimgr，这个会经常改动
+            //UIManager.Show(PatchUI.Index);
             //var tempDir = Path.Combine(Application.temporaryCachePath, PatchTempDir);
             //if (!Directory.Exists(tempDir))
             //{
@@ -61,22 +61,22 @@ namespace Automata.Patch
             {
                 Directory.CreateDirectory(patchDir);
             }
-            Dictionary<string, BundleConf> assets;
-            var assetsUrl = BaseConfig.Instance.PatchUrl + AssetMgr.ASSETS_FILE;
+            Dictionary<string, BundleEntry> assets;
+            var assetsUrl = AppConfig.Instance.PatchUrl + AssetMgr.ASSETS_FILE;
             using (var www = new WWW(assetsUrl))
             {
                 yield return www;
-                assets = JsonUtility.FromJson<Dictionary<string, BundleConf>>(www.text);
+                assets = JsonUtility.FromJson<Dictionary<string, BundleEntry>>(www.text);
                 yield return null;
                 _patchInfo = www.bytes;
                 var filePath = Path.Combine(AssetMgr.PatchDir, AssetMgr.ASSETS_FILE + version.ToString());
                 File.WriteAllBytes(filePath, www.bytes);
             }
-            _diffs = new List<KeyValuePair<string, BundleConf>>();
+            _diffs = new List<KeyValuePair<string, BundleEntry>>();
             long size = 0;
             foreach (var it in assets)
             {
-                var info = AssetMgr.Instance.GetBundleEntry(it.Key);
+                var info = AssetMgr.Instance.GetBundleInfo(it.Key);
                 if (info == null || info.VersionCode < it.Value.Version)
                 {
                     _diffs.Add(it);
@@ -95,7 +95,7 @@ namespace Automata.Patch
                 }
             }
             var count = _diffs.Count;
-            Log.Infof("更新文件数 {0}, 大小 {1}KB", _diffs.Count, (float)size / 1024);
+            Debug.LogFormat("更新文件数 {0}, 大小 {1}KB", _diffs.Count, (float)size / 1024);
             if (count == 0)
             {
                 yield break;
@@ -109,12 +109,12 @@ namespace Automata.Patch
             MonoProxy.Instance.StartCoroutine(DownloadAssets(_diffs, count / 2 + count / 4, count));
         }
 
-        private IEnumerator DownloadAssets(List<KeyValuePair<string, BundleConf>> assets, int beginIndex, int endIndex)
+        private IEnumerator DownloadAssets(List<KeyValuePair<string, BundleEntry>> assets, int beginIndex, int endIndex)
         {
             for (var i = beginIndex; i < endIndex; ++i)
             {
                 var asset = assets[i];
-                var url = BaseConfig.Instance.PatchUrl + asset.Key;
+                var url = AppConfig.Instance.PatchUrl + asset.Key;
                 var info = asset.Value;
                 var fileName = asset.Key + asset.Value.Version.ToString();
                 var filePath = Path.Combine(AssetMgr.PatchDir, fileName);
@@ -149,7 +149,7 @@ namespace Automata.Patch
             for(var i = 0; i < count; ++i)
             {
                 var diff = _diffs[i];
-                var info = AssetMgr.Instance.GetBundleEntry(diff.Key);
+                var info = AssetMgr.Instance.GetBundleInfo(diff.Key);
                 if (info != null && !info.InApp)
                 {
                     path = Path.Combine(AssetMgr.PatchDir, diff.Key + info.VersionCode.ToString());
@@ -159,10 +159,10 @@ namespace Automata.Patch
                     }
                 }
             }
-            Log.Info("更新完成");
+            Debug.LogFormat("更新完成");
             if (_needReboot)
             {
-                Log.Warn("更新后重启");
+                Debug.LogFormat("更新后重启");
                 return;
             }
             Exit();
@@ -172,10 +172,10 @@ namespace Automata.Patch
         {
             AssetMgr.Instance.Clear();
             AssetMgr.Instance.LoadAssetsTable();
-            AssetMgr.Instance.LoadAsync("Automata.Game.bytes", (req) => {
+            AssetMgr.Instance.LoadAsync("AM.Game.bytes", (req) => {
                 var textAsset = req.Asset as TextAsset;
                 var game = Assembly.Load(textAsset.bytes);
-                var type = game.GetType("Automata.Game.GameStage");
+                var type = game.GetType("AM.Game.GameStage");
                 //var ins = Activator.CreateInstance(type);
                 var method = type.GetMethod("Enter");
                 method.Invoke(null, null);

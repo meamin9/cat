@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Automata.Adapter
+namespace AM.Base
 {
     public class StateMachineBehaviourAdapter : StateMachineBehaviour
     {
