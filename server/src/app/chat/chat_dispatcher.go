@@ -3,7 +3,7 @@ package chat
 import (
 	"app/network"
 	"app/role"
-	"cellnet"
+	"github.com/davyxu/cellnet"
 	"fmt"
 	_ "proto/chatproto"
 	"time"

@@ -203,6 +203,7 @@ namespace Proto {
 
   /// <summary>
   /// 帐号注册，成功返回SCAccount
+  /// 帐号注册，成功返回SCAccount222
   /// </summary>
   public sealed partial class CSAccountReg : pb::IMessage<CSAccountReg> {
     private static readonly pb::MessageParser<CSAccountReg> _parser = new pb::MessageParser<CSAccountReg>(() => new CSAccountReg());

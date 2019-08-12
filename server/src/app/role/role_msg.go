@@ -1,28 +1,27 @@
 package role
 
 import (
-	"app/account"
 	"app/db"
 	"app/db/collection"
 	"app/mosaic"
-	"app/network"
 	"app/notice"
+	"app/user"
 	"proto"
 	"strings"
 )
 
 func regProp() {
-	network.Instance.RegProto(proto.CodeCSRoleCreate, recvRoleCreate)
+	user.Instance.RegProto(proto.CodeCSRoleCreate, recvRoleCreate)
 	//network.Instance.RegProto(proto.CodeCSRoleEnter, csAccountLogin)
 }
 
-func recvRoleCreate(s network.Session, data interface{}) {
+func recvRoleCreate(s user.Session, data interface{}) {
 	msg := data.(*proto.CSRoleCreate)
 	name := strings.TrimSpace(msg.Name)
 	gender := mosaic.EGender(msg.Gender)
 	job := mosaic.EJob(msg.Job)
 	//TODO: 检查参数合法
-	acc := account.Instance.AccountBySid(s.ID())
+	acc := user.Instance.AccountBySid(s.ID())
 	if acc == nil {
 		// Error
 		return
@@ -45,6 +44,6 @@ func recvRoleCreate(s network.Session, data interface{}) {
 	})
 }
 
-func sendRoleCreate(s network.Session, info *mosaic.RoleInfo) {
+func sendRoleCreate(s user.Session, info *mosaic.RoleInfo) {
 	s.Send(info.PackMsg())
 }

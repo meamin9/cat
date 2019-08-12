@@ -1,16 +1,15 @@
-package main
+package app
 
 import (
 	_ "app/appinfo"
-	"app/account"
 	"app/apptime"
 	"app/db"
-	"app/network"
-	"app/role"
-	"app/util"
-	"sync"
 	"app/db/collection"
 	"app/mosaic"
+	"app/role"
+	"app/user"
+	"app/util"
+	"sync"
 )
 
 
@@ -30,15 +29,15 @@ func newApp() *App {
 }
 
 // 改成手动初始化，不用包内的init初始化了（顺序不容易确定）
-func (self *App) initPackage() {
-	network.New()
+func (app *App) initPackage() {
+	user.New()
 	db.New()
 	// 统一管理的module
-	self.packList = []interface{}{
+	app.packList = []interface{}{
 		collection.New(),
 		apptime.New(),
 		mosaic.New(),
-		account.New(),
+		user.New(),
 		role.New(),
 	}
 }
@@ -51,18 +50,18 @@ func (self *App) initPackage() {
 // 关闭网络
 // flush db的回调队列，保证各模块数据都是最新的，关闭其他模块
 // 关闭db
-func (self *App) Start() {
+func (app *App) Start() {
 	log.Infoln("App Enter")
-	self.initPackage()
+	app.initPackage()
 	// load和init阶段不同包不会交互，逻辑上线程安全
 	loading := sync.WaitGroup{}
-	n := len(self.packList)
+	n := len(app.packList)
 	loading.Add(n)
-	for _, s := range self.packList {
-		pack := s // 这里需要新建一个临时变量
+	for _, pack := range app.packList {
+		pack := pack // 这里需要新建一个临时变量
 		go func() {
-			if cfg, ok := pack.(interface{Load()}); ok {
-				cfg.Load()
+			if cfg, ok := pack.(interface{PrevInit()}); ok {
+				cfg.PrevInit()
 			}
 			loading.Done()
 		}()
@@ -70,10 +69,10 @@ func (self *App) Start() {
 	loading.Wait()
 
 	// package init
-	network.Instance.Init()
+	user.Instance.Init()
 	db.Instance.Init()
 	loading.Add(n)
-	for _, s := range self.packList {
+	for _, s := range app.packList {
 		pack := s
 		go func() {
 			if cfg, ok := pack.(interface{Init()}); ok {
@@ -85,30 +84,31 @@ func (self *App) Start() {
 	loading.Wait()
 
 	// package start
-	for _, s := range self.packList {
-		if cfg, ok := s.(interface{Start()}); ok {
-			cfg.Start()
+	for _, s := range app.packList {
+		if cfg, ok := s.(interface{PostInit()}); ok {
+			cfg.PostInit()
 		}
 	}
 	db.Instance.Start()
-	network.Instance.Start()
+	user.Instance.Start()
 
 	// main loop
+Loop:
 	for {
 		select {
-		case proc := <-network.Instance.Chan():
+		case proc := <-user.Instance.Chan():
 			proc()
 		case proc := <-db.Instance.Chan():
 			proc()
 		case t := <-apptime.Instance.Chan():
 			apptime.Instance.Tick(t)
-		case <-self.exitC:
-			break
+		case <-app.exitC:
+			break Loop
 		}
 	}
 	// Stop
-	network.Instance.Stop()
-	for _, s := range self.packList {
+	user.Instance.Stop()
+	for _, s := range app.packList {
 		if cfg, ok := s.(interface{Stop()}); ok {
 			cfg.Stop()
 		}
@@ -117,8 +117,8 @@ func (self *App) Start() {
 	log.Infoln("App Exited")
 }
 
-func (self *App) Stop() {
-	self.exitC <- true
+func (app *App) Stop() {
+	app.exitC <- true
 }
 
 func main() {

@@ -1,7 +1,7 @@
 package collection
 
 import (
-	//"app/account"
+	//"app/user"
 	"app/db"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"

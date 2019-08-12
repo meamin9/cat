@@ -3,7 +3,7 @@ package role
 import (
 	"app/db/collection"
 	"app/mosaic"
-	"app/network"
+	"app/user"
 	"time"
 )
 
@@ -11,7 +11,7 @@ type Role struct {
 	*mosaic.RoleInfo
 	CTime   time.Time
 	Account string
-	Session network.Session
+	Session user.Session
 }
 
 func newRole(name string, gender mosaic.EGender, job mosaic.EJob) *Role {

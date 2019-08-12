@@ -1,11 +1,11 @@
 package network
 
 import (
-	"cellnet/peer"
-	"cellnet/util"
+	"app/user"
 	"crypto/md5"
 	"encoding/binary"
 	"encoding/hex"
+	"github.com/davyxu/cellnet/util"
 	"math/rand"
 	"proto"
 	"time"
@@ -26,59 +26,59 @@ var (
 
 func regSystemMsg() {
 	// 注册网络事件
-	Instance.RegProto(CodeSessionAccepted, recvSessionAccepted)
+	//Instance.RegProto( cellnet.SessionAccepted, recvSessionAccepted)
 	//Instance.RegProto(CodeSessionClosed, recvSessionClosed)
 	// 连接口令
-	Instance.RegProto(proto.CodeCSEntryToken, recvEntryToken)
+	user.Instance.RegProto(proto.KeyCSEntryToken, recvEntryToken)
 }
 
 // 这个信息是io线程并发的
-func recvSessionAccepted(s Session, _ interface{}) {
+func recvSessionAccepted(s user.Session, _ interface{}) {
 	// 记录在session上
-	alias, token := newEntryTokenPair()
-	timeout := time.AfterFunc(30, func() { // 30秒内没收到口令直接断开
-		s.Close()
-		//if tcp, ok := s.(interface{ WaitClose()}); ok {
-		//	tcp.WaitClose()
-		//}
-		//Instance.sesInToken.Delete(s.ID())
-	})
-	entry := &entryToken{
-		Token:   token,
-		Timeout: timeout,
-	}
-	//Instance.sesInToken.Store(s.ID(), entry)
-	s.(peer.ICoreContextSet).SetContext("token", entry)
-	sendEntryAlias(s, alias)
+	//alias, token := newEntryTokenPair()
+	//timeout := time.AfterFunc(30, func() { // 30秒内没收到口令直接断开
+	//	s.Close()
+	//	//if tcp, ok := s.(interface{ WaitClose()}); ok {
+	//	//	tcp.WaitClose()
+	//	//}
+	//	//Instance.sesInToken.Delete(s.ID())
+	//})
+	////entry := &entryToken{
+	////	Token:   token,
+	////	Timeout: timeout,
+	////}
+	////Instance.sesInToken.Store(s.ID(), entry)
+	////s.(peer.ICoreContextSet).SetContext("token", entry)
+	//sendEntryAlias(s, alias)
 }
 
-func sendEntryAlias(sender Session, alias string) {
+func sendEntryAlias(sender user.Session, alias string) {
 	sender.Send(&proto.SCEntryAlias{
 		Alias: alias,
 	})
 }
 
 // 这个信息是io线程并发的
-func recvEntryToken(s Session, data interface{}) {
+func recvEntryToken(s user.Session, data interface{}) {
 	//entry, ok := Instance.sesInToken.Load(s.ID())
-	entry, ok := s.(peer.ICoreContextSet).RawGetContext("token")
-	if ok {
-		en := entry.(*entryToken)
-		en.Timeout.Stop()
-		if en.Token == data.(*proto.CSEntryToken).Token {
-			//Instance.sesInToken.Delete(s.ID())
-			en.Ok = true
-			return
-		}
-	}
-	s.Close()
+	//entry, ok := s.(peer.ICoreContextSet).RawGetContext("token")
+	//if ok {
+	//	en := entry.(*entryToken)
+	//	en.Timeout.Stop()
+	//	if en.Token == data.(*proto.CSEntryToken).Token {
+	//		//Instance.sesInToken.Delete(s.ID())
+	//		en.Ok = true
+	//		return
+	//	}
+	//}
+	//s.Close()
 	//if tcp, ok := s.(interface{ WaitClose()}); ok {
 	//	tcp.WaitClose()
 	//}
 	//Instance.sesInToken.Delete(s.ID())
 }
 
-func recvSessionClosed(s Session, data interface{}) {
+func recvSessionClosed(s user.Session, data interface{}) {
 
 }
 

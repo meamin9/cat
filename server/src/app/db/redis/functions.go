@@ -11,7 +11,7 @@ const (
 	roles    = "r:"
 )
 
-// MARK: account data
+// MARK: user data
 type Account struct {
 	//	Id      string `redis:"id"`
 	Pwd     string  `json:"pwd"`

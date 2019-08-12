@@ -11,6 +11,7 @@ message CSAccountLogin {
 }
 
 // 帐号注册，成功返回SCAccount
+// 帐号注册，成功返回SCAccount222
 message CSAccountReg {
   string Id = 1;
   string Pwd = 2;

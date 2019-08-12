@@ -2,7 +2,7 @@ package game
 
 import (
 	"app/network"
-	"cellnet"
+	"github.com/davyxu/cellnet"
 	"proto"
 )
 
