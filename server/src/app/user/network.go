@@ -20,7 +20,7 @@ type NetEvent struct {
 	Id int // message id
 }
 
-type NetMgr struct {
+type Network struct {
 	tcp cellnet.Peer
 	// POST队列
 	handlerQue chan func()
@@ -31,54 +31,54 @@ type NetMgr struct {
 
 	eventMutex sync.Mutex
 	eventQueue []NetEvent
+
+	eventChan chan NetEvent
 }
 
-func (self *NetMgr) InitNet() {
-	self.handlerQue = make(chan func(), 128)
-	self.handlerByIds = make(map[int]func(User, interface{}))
-	self.tcp = peer.NewGenericPeer("tcp.Acceptor", "server-cat", appinfo.ServerAddr, nil)
-	proc.BindProcessorHandler(self.tcp, "tcp.ltv", func(event cellnet.Event) {
-		self.eventMutex.Lock()
-		defer self.eventMutex.Unlock()
+func (n *Network) InitNet() {
+	n.eventChan = make(chan NetEvent, 256)
+	//n.handlerByIds = make(map[int]func(User, interface{}))
+	n.tcp = peer.NewGenericPeer("tcp.Acceptor", "server-cat", appinfo.ServerAddr, nil)
+	proc.BindProcessorHandler(n.tcp, "tcp.ltv", func(event cellnet.Event) {
 		msgId := cellnet.MessageToID(event.Message())
-		self.eventQueue = append(self.eventQueue, NetEvent{Event: event, Id: msgId})
+		n.eventChan <- NetEvent{Event: event, Id: msgId}
 	})
 }
 
-func (self *NetMgr) Start() {
-	self.tcp.Start()
+func (n *Network) Start() {
+	n.tcp.Start()
 }
 
-func (self *NetMgr) Stop() {
-	self.tcp.Stop() // 阻塞直到accept线程退出，ses的工作线程不一定全退出了
-	// n := self.host.(interface{ Count() int }).Count()
-	//self.exitSync.Add(n)
+func (n *Network) Stop() {
+	n.tcp.Stop() // 阻塞直到accept线程退出，ses的工作线程不一定全退出了
+	// n := n.host.(interface{ Count() int }).Count()
+	//n.exitSync.Add(n)
 }
 
-func (self *NetMgr) RegProto(msgId int, cb func(Session, interface{})) {
-	if _, ok := self.handlerByIds[msgId]; ok {
+func (n *Network) RegProto(msgId int, cb func(Session, interface{})) {
+	if _, ok := n.handlerByIds[msgId]; ok {
 		panic("proto is register repeated")
 	}
-	self.handlerByIds[msgId] = cb
+	n.handlerByIds[msgId] = cb
 }
 
-func (self *NetMgr) UnregProto(key int) {
-	delete(self.handlerByIds, key)
+func (n *Network) UnregProto(key int) {
+	delete(n.handlerByIds, key)
 }
 
-func (self *NetMgr) NetChan() chan func() {
-	return self.handlerQue
+func (n *Network) NetChan() chan func() {
+	return n.handlerQue
 }
 
-func (self *NetMgr) Call(handler func()) {
+func (n *Network) Call(handler func()) {
 	handler()
 }
 
 // 处理完队列里的消息
-func (self *NetMgr) Flush() {
+func (n *Network) Flush() {
 	for {
 		select {
-		case handler := <-self.handlerQue:
+		case handler := <-n.handlerQue:
 			handler()
 		default:
 			break
@@ -86,9 +86,9 @@ func (self *NetMgr) Flush() {
 	}
 }
 
-var Instance *NetMgr
+var Instance *Network
 
-func New() *NetMgr {
-	Instance = &NetMgr{}
+func New() *Network {
+	Instance = &Network{}
 	return Instance
 }
