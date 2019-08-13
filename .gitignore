@@ -5,7 +5,7 @@ le# Binaries for programs and plugins
 # *.dylib
 
 *.DS_Store
-AM.GameTest/
+AM.GameTests/
 *MSTest.*
 proto/merge.proto
 server/bin/
