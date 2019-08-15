@@ -16,16 +16,16 @@ type implementUser struct {
 	Account    Account
 }
 
-type Manager struct {
+type manager struct {
 	userBySid map[int64]User
 	procById map[int]func(User, interface{})
 	Network
 }
 
-var _mgr = &Manager{}
+var _mgr = &manager{}
 var log = util.NewLog("user")
 
-func (m *Manager) ProcNetEvent(event NetEvent) {
+func (m *manager) ProcNetEvent(event NetEvent) {
 	defer func() {
 		if err := recover(); err != nil {
 			log.Errorf("panic:%+v", err)
@@ -60,7 +60,7 @@ func (m *Manager) ProcNetEvent(event NetEvent) {
 }
 
 
-func (m *Manager) RegNetMsg(msgId int, proc func(User, interface{})) {
+func (m *manager) RegNetMsg(msgId int, proc func(User, interface{})) {
 	if _, ok := m.procById[msgId]; ok {
 		panic("proto is register repeated")
 	}
@@ -71,6 +71,3 @@ func Init() {
 
 }
 
-func PostInit() {
-
-}

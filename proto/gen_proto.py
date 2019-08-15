@@ -34,7 +34,7 @@ def genGo():
 	source = ' '.join(proto_list)
 	cmd = 'protoc --plugin=protoc-gen-gogofaster=protoc-gen-gogofaster{} --gogofaster_out={} {}'.format(suffix, serverDir, source)
 	print(cmd)
-	subprocess.call(cmd)
+	subprocess.call(cmd.split(' '))
 
 def genMsgInfo():
 	remsg = re.compile(r"(?P<com>(//.*\s)+)message\s+(?P<msg>\w+)\s*\{")
@@ -155,7 +155,7 @@ def genCsharp():
 	source = ' '.join(proto_list)
 	cmd = 'protoc --csharp_out={} {}'.format(clientDir, source)
 	print(cmd)
-	subprocess.call(cmd)
+	subprocess.call(cmd.split(' '))
 
 def main():
 	if len(sys.argv) != 2:
