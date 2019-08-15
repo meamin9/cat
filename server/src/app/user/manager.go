@@ -19,11 +19,17 @@ type implementUser struct {
 type manager struct {
 	userBySid map[int64]User
 	procById map[int]func(User, interface{})
-	Network
+	*network
 }
 
-var _mgr = &manager{}
-var log = util.NewLog("user")
+var (
+	log = util.NewLog("user")
+	Mgr = &manager{
+		userBySid: make(map[int64]User),
+		procById:  make(map[int]func(User, interface{})),
+		network: newNetWork(),
+	}
+)
 
 func (m *manager) ProcNetEvent(event NetEvent) {
 	defer func() {
@@ -59,7 +65,6 @@ func (m *manager) ProcNetEvent(event NetEvent) {
 	}
 }
 
-
 func (m *manager) RegNetMsg(msgId int, proc func(User, interface{})) {
 	if _, ok := m.procById[msgId]; ok {
 		panic("proto is register repeated")
@@ -67,7 +72,4 @@ func (m *manager) RegNetMsg(msgId int, proc func(User, interface{})) {
 	m.procById[msgId] = proc
 }
 
-func Init() {
-
-}
 

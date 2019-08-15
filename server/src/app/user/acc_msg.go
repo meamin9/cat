@@ -1,6 +1,7 @@
 package user
 
 import (
+	"app/consts"
 	"app/db"
 	"app/db/collection"
 	"app/mosaic"
@@ -25,22 +26,47 @@ var (
 	CodeSessionClosed   = int(util.StringHash("cellnet.SessionClosed"))
 )
 
-func regProp() {
-	m := proto.RPCCreate{
-		Req: &proto.RPCCreate_Req{},
+func init() {
+	Mgr.RegNetMsg(proto.KeyAccountCreate, accountCreate)
+	Mgr.RegNetMsg(proto.KeyAccountLogin, accountLogin)
+}
+
+func accountCreate(user User, netMsg interface{}) {
+	msg := netMsg.(proto.AccountCreate)
+	req := msg.Req
+	msg.Req = nil
+	id := strings.TrimSpace(req.Id)
+	pwd := strings.TrimSpace(req.Pwd)
+	if !consts.AccountLen.In(len(id)) {
+		msg.Err = 1
+		goto ERROR
 	}
-
-	Instance.RegProto()
-	Instance.RegProto(proto.KeyCSAccountReg, recvAccountReg)
-	Instance.RegProto(proto.KeyCSAccountLogin, recvAccountLogin)
+	if !consts.AccountLen.In(len(pwd)) {
+		msg.Err = 2
+		goto ERROR
+	}
+	db.Instance.Send(&db.Mail{
+		Sql: &collection.SqlAccountCreate{id, pwd},
+		Cb: func(data interface{}, err error) {
+			if err != nil { // 注册失败，可能是用户名已存在
+				notice.SendNotice(ses, notice.CNameRepeated)
+				return
+			}
+			acc := &Account{
+				Id:    id,
+				Roles: make([]*mosaic.RoleInfo, 0),
+			}
+			Instance.AddLoginAccount(acc, ses.ID())
+			sendAccountInfo(ses, acc)
+		},
+	})
+ERROR:
+	user.Send(msg)
 }
 
-func checkValidity(id, pwd string) bool {
-	return mosaic.Const.AccountNameLengthRange.InRange(len(id)) &&
-		util.IsWords(id) &&
-		len(pwd) > 0
+func accountLogin(user User, msg interface{}) {
+	ERROR:
 }
-
 func sendAccountInfo(sender ISender, account *Account) {
 	msg := &proto.SCAccountInfo{
 		Id: account.Id,

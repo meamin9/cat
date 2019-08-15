@@ -8,7 +8,7 @@ import (
 
 func init() {
 	log.Debugln("register echo")
-	network.RegisterProto("proto.Echo", func(ev *cellnet.Event) {
+	consts.RegisterProto("proto.Echo", func(ev *cellnet.Event) {
 		msg := ev.Msg.(*proto.Echo)
 		log.Debugln("rec echo", msg.Content)
 		ack := proto.Echo{
@@ -16,7 +16,7 @@ func init() {
 		}
 		ev.Send(&ack)
 	})
-	network.RegisterProto("coredef.SessionClosed", func(ev *cellnet.Event) {
+	consts.RegisterProto("coredef.SessionClosed", func(ev *cellnet.Event) {
 
 	})
 

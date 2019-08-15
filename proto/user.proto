@@ -19,6 +19,7 @@ message RPCMsg {
 	int32 err = 5;
 }
 
+// 创建账号
 message AccountCreate {
 	message Req {
 		string id = 1;

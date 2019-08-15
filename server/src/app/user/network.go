@@ -12,49 +12,51 @@ type NetEvent interface {
 	MsgId() int
 }
 
-type RecNetEvent struct {
+type recNetEvent struct {
 	cellnet.Event
 	msgId int
 }
 
-func (r *RecNetEvent) MsgId() int {
+func (r *recNetEvent) MsgId() int {
 	return r.msgId
 }
 
-type Network struct {
+type network struct {
 	tcp cellnet.Peer
 	eventChan chan NetEvent
 }
 
-func (n *Network) Init() {
-	n.eventChan = make(chan NetEvent, 256)
-	//n.handlerByIds = make(map[int]func(User, interface{}))
-	n.tcp = peer.NewGenericPeer("tcp.Acceptor", "server-cat", appinfo.ServerAddr, nil)
+func newNetWork() (n *network) {
+	n = &network{
+		eventChan: make(chan NetEvent, 256),
+		tcp: peer.NewGenericPeer("tcp.Acceptor", "server-cat", appinfo.ServerAddr, nil),
+	}
 	proc.BindProcessorHandler(n.tcp, "tcp.ltv", func(event cellnet.Event) {
 		msgId := cellnet.MessageToID(event.Message())
-		n.eventChan <- &RecNetEvent{Event: event, msgId: msgId}
+		n.eventChan <- &recNetEvent{Event: event, msgId: msgId}
 	})
+	return
 }
 
-func (n *Network) Start() {
+func (n *network) Start() {
 	n.tcp.Start()
 }
 
-func (n *Network) Stop() {
+func (n *network) Stop() {
 	n.tcp.Stop() // 阻塞直到accept线程退出，ses的工作线程不一定全退出了
 }
 
 
-func (n *Network) NetEventChan() chan NetEvent {
+func (n *network) NetEventChan() chan NetEvent {
 	return n.eventChan
 }
 
-//func (n *Network) Call(handler func()) {
+//func (n *network) Call(handler func()) {
 //	handler()
 //}
 //
 //// 处理完队列里的消息
-//func (n *Network) Flush() {
+//func (n *network) Flush() {
 //	for {
 //		select {
 //		case handler := <-n.eventChan:
@@ -65,9 +67,9 @@ func (n *Network) NetEventChan() chan NetEvent {
 //	}
 //}
 
-//var Instance *Network
+//var Instance *network
 //
-//func New() *Network {
-//	Instance = &Network{}
+//func New() *network {
+//	Instance = &network{}
 //	return Instance
 //}

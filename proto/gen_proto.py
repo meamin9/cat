@@ -37,7 +37,7 @@ def genGo():
 	subprocess.call(cmd.split(' '))
 
 def genMsgInfo():
-	remsg = re.compile(r"(?P<com>(//.*\s)+)message\s+(?P<msg>\w+)\s*\{")
+	remsg = re.compile(r"(?P<com>(//.*\s)*)message\s+(?P<msg>[a-zA-Z]+)\s*\{")
 	msgs = []
 	coms = {}
 	for name in proto_list:
@@ -51,8 +51,10 @@ def genMsgInfo():
 				while i < n:
 					if c[i] == '{':
 						b += 1
+						#print('b=',b)
 					elif c[i] == '}':
 						b -= 1
+						#print('b=',b)
 					i += 1
 					if b == 0:
 						break
@@ -61,7 +63,7 @@ def genMsgInfo():
 					break
 				msg = m.group('msg')
 				com = m.group('com')
-				# print("com", com)
+				#print("com", com, msg)
 				msgs.append(msg)
 				if com :
 					coms[msg] = com#'\n	'.join(com.split('\n'))
@@ -91,8 +93,7 @@ func init() {{
 {reg}
 }}
 '''
-	Tem_const = u'''	{com}
-	Key{name} int = {msgid}'''
+	Tem_const = u'''	{com}Key{name} int = {msgid}'''
 	Tem_reg = u'''		cellnet.RegisterMessageMeta(&cellnet.MessageMeta{{
 			Codec: codec.MustGetCodec("gogopb"),
 			Type:  reflect.TypeOf((*{name})(nil)).Elem(),
@@ -106,8 +107,11 @@ func init() {{
 		const = []
 		for m in msgs:
 			d = {'name':m, 'msgid':id(m), 'com':'\n	'.join(coms[m].strip().split('\n'))}
+			if d['com']:
+				d['com'] = d['com']+'\n\t'
 			reg.append(Tem_reg.format(**d))
 			const.append(Tem_const.format(**d))
+			# print(d, Tem_const.format(**d))
 		c = Tem.format(**{'time':time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), 
 			'reg':'\n'.join(reg), 'const':'\n'.join(const)})
 		f.write(c)
@@ -147,6 +151,7 @@ namespace Proto {{
 			reg.append(Tem_reg.format(**d))
 			# d['com'] = ','.join(coms[m].strip().split('\n//'))
 			const.append(Tem_const.format(**d))
+			# print(Tem_const.format(**d))
 		c = Tem.format(**{'time':time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), 
 			'reg':'\n'.join(reg), 'const':'\n'.join(const)})
 		f.write(c)

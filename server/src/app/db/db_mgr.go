@@ -28,6 +28,17 @@ type DbMgr struct {
 	Dbname string
 }
 
+var (
+	Mgr = &DbMgr{
+		session:  nil,
+		queue:    nil,
+		cbqueue:  nil,
+		exitSync: sync.WaitGroup{},
+		url:      "",
+		Dbname:   "",
+	}
+)   
+
 func (self *DbMgr) SetCfg(username, pwd, addrs, dbname string) {
 	// 格式 mongodb://username:password@addr1:port1,...,addrN:portN/dbname?key1=value1&key2=value2
 	self.url = fmt.Sprintf("%v:%v@%v/%v", username, pwd, addrs, dbname)

@@ -540,6 +540,9 @@ namespace Proto {
 
   }
 
+  /// <summary>
+  /// 创建账号
+  /// </summary>
   public sealed partial class AccountCreate : pb::IMessage<AccountCreate> {
     private static readonly pb::MessageParser<AccountCreate> _parser = new pb::MessageParser<AccountCreate>(() => new AccountCreate());
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]

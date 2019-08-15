@@ -10,7 +10,7 @@ import (
 )
 
 func init() {
-	network.RegisterProto("chatproto.CSChatText", dispatchChatText)
+	consts.RegisterProto("chatproto.CSChatText", dispatchChatText)
 }
 
 func dispatchChatText(ev *cellnet.Event) {

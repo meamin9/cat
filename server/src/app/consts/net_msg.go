@@ -1,4 +1,4 @@
-package network
+package consts
 
 import (
 	"app/user"
