@@ -41,7 +41,7 @@ func (self *RoleMgr) AddRole(role *Role) {
 //			if err == nil {
 //				role := newRole()
 //				role.Unpack(data.(map[string]interface{}))
-//				self.roles[role.Id()] = role
+//				self.roles[role.MsgId()] = role
 //			}
 //		},
 //	})

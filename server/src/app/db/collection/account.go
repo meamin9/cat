@@ -11,7 +11,7 @@ var accountCName = "accounts"
 
 /*
 type dbAccountTrue struct {
-	Id    string          `bson:"_id"`
+	MsgId    string          `bson:"_id"`
 	Pwd   string          `bson:"Pwd"`
 	Ctime time.Time       `bson:"ctime"`
 	Roles []uint64 `bson:"roles"`

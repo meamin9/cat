@@ -13,7 +13,7 @@ const (
 
 // MARK: user data
 type Account struct {
-	//	Id      string `redis:"id"`
+	//	MsgId      string `redis:"id"`
 	Pwd     string  `json:"pwd"`
 	RegDate string  `json:"reg"`
 	Roles   []int64 `json:"rls"`

@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package proto;
+
+message RoleInfo_ {
+  uint64 id = 1;
+  string name = 2;
+  int32 gender = 3;
+  int32 job = 4;
+  int32 level = 5;
+  int64 logoutTime = 6;
+}
+
+message RPCMsg {
+	int32 session = 1;
+	int32 msgId = 2;
+	bytes req = 3;
+	bytes rsp = 4;
+	int32 err = 5;
+}
+
+message AccountCreate {
+	message Req {
+		string id = 1;
+		string pwd = 2;
+	}
+	int32 session = 1;
+	int32 err = 2;
+	Req req = 3;
+}
+
+message AccountLogin {
+	message Req {
+		string id = 1;
+		string pwd = 2;
+	}
+	message Rsp {
+		repeated RoleInfo_ roles = 1;
+	}
+	int32 session = 1;
+	int32 err = 2;
+	Req req = 3;
+	Rsp rsp = 4;
+}
+
+message RoleCreate {
+	message Req {
+		string name = 1;
+		int32 gender = 2;
+		int32 job = 3;
+	}
+	int32 session = 1;
+	int32 err = 2;
+	Req req = 3;
+	RoleInfo_ rsp = 4;
+}
+
+
+// 角色进入游戏
+message CSRoleEnter {
+	uint64 id = 1;
+}

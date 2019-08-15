@@ -2,7 +2,7 @@ package util
 
 import "github.com/davyxu/golog"
 
-var log = NewLog("util")
+var Log = NewLog("util")
 
 
 type Logger struct {

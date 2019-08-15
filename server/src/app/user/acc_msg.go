@@ -26,6 +26,10 @@ var (
 )
 
 func regProp() {
+	m := proto.RPCCreate{
+		Req: &proto.RPCCreate_Req{},
+	}
+
 	Instance.RegProto()
 	Instance.RegProto(proto.KeyCSAccountReg, recvAccountReg)
 	Instance.RegProto(proto.KeyCSAccountLogin, recvAccountLogin)
