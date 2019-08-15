@@ -47,6 +47,7 @@ func init() {
 	ServerName = res.ServerName
 	// db & net
 	dbcfg := res.Db
+	// 格式 mongodb://username:password@addr1:port1,...,addrN:portN/dbname?key1=value1&key2=value2
 	Dburl = fmt.Sprintf("%v:%v@%v/%v", dbcfg.Username, dbcfg.Password, dbcfg.Addrs, dbcfg.Dbname)
 	Dbname = dbcfg.Dbname
 }

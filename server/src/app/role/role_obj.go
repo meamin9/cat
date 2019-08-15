@@ -1,7 +1,7 @@
 package role
 
 import (
-	"app/db/collection"
+	"app/db"
 	"app/mosaic"
 	"app/user"
 	"time"
@@ -28,8 +28,8 @@ func newRole(name string, gender mosaic.EGender, job mosaic.EJob) *Role {
 	}
 }
 
-func (self *Role) Pack() *collection.DbRole {
-	return &collection.DbRole{
+func (self *Role) Pack() *db.DbRole {
+	return &db.DbRole{
 		Id:         self.Id,
 		Name:       self.Name,
 		Gender:     int(self.Gender),

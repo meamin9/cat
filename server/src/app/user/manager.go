@@ -31,7 +31,7 @@ var (
 	}
 )
 
-func (m *manager) ProcNetEvent(event NetEvent) {
+func (m *manager) ProcNetEvent(event cellnet.Event, msgId int) {
 	defer func() {
 		if err := recover(); err != nil {
 			log.Errorf("panic:%+v", err)
@@ -42,13 +42,13 @@ func (m *manager) ProcNetEvent(event NetEvent) {
 	switch msg.(type) {
 	default:
 		if user, ok := m.userBySid[ses.ID()]; ok {
-			if proc, ok := m.procById[event.MsgId()]; ok {
+			if proc, ok := m.procById[msgId]; ok {
 				proc(user, event.Message())
 			} else {
-				log.Warnf("unknown net msgId=%v", event.MsgId())
+				log.Warnf("unknown net msgId=%v", msgId)
 			}
 		} else {
-			log.Errorf("not found user sessionId=%v, msgId=%v", ses.ID(), event.MsgId())
+			log.Errorf("not found user sessionId=%v, msgId=%v", ses.ID(), msgId)
 			ses.Close()
 		}
 	case cellnet.SessionAccepted:

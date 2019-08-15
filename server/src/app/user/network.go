@@ -23,17 +23,19 @@ func (r *recNetEvent) MsgId() int {
 
 type network struct {
 	tcp cellnet.Peer
-	eventChan chan NetEvent
+	eventChan chan func()
 }
 
 func newNetWork() (n *network) {
 	n = &network{
-		eventChan: make(chan NetEvent, 256),
+		eventChan: make(chan func(), 256),
 		tcp: peer.NewGenericPeer("tcp.Acceptor", "server-cat", appinfo.ServerAddr, nil),
 	}
 	proc.BindProcessorHandler(n.tcp, "tcp.ltv", func(event cellnet.Event) {
 		msgId := cellnet.MessageToID(event.Message())
-		n.eventChan <- &recNetEvent{Event: event, msgId: msgId}
+		n.eventChan <- func() {
+			Mgr.ProcNetEvent(event, msgId)
+		}
 	})
 	return
 }
@@ -47,7 +49,7 @@ func (n *network) Stop() {
 }
 
 
-func (n *network) NetEventChan() chan NetEvent {
+func (n *network) NetEventChan() chan func() {
 	return n.eventChan
 }
 

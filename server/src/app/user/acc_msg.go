@@ -3,7 +3,6 @@ package user
 import (
 	"app/consts"
 	"app/db"
-	"app/db/collection"
 	"app/mosaic"
 	"app/notice"
 	"app/util"
@@ -45,8 +44,8 @@ func accountCreate(user User, netMsg interface{}) {
 		msg.Err = 2
 		goto ERROR
 	}
-	db.Instance.Send(&db.Mail{
-		Sql: &collection.SqlAccountCreate{id, pwd},
+	db.Instance.Send(&db.dbEvent{
+		Sql: &db.SqlAccountCreate{id, pwd},
 		Cb: func(data interface{}, err error) {
 			if err != nil { // 注册失败，可能是用户名已存在
 				notice.SendNotice(ses, notice.CNameRepeated)
@@ -86,8 +85,8 @@ func recvAccountReg(ses Session, data interface{}) {
 	if !checkValidity(id, pwd) {
 		return
 	}
-	db.Instance.Send(&db.Mail{
-		Sql: &collection.SqlAccountCreate{id, pwd},
+	db.Instance.Send(&db.dbEvent{
+		Sql: &db.SqlAccountCreate{id, pwd},
 		Cb: func(data interface{}, err error) {
 			if err != nil { // 注册失败，可能是用户名已存在
 				notice.SendNotice(ses, notice.CNameRepeated)
@@ -110,8 +109,8 @@ func recvAccountLogin(ses Session, data interface{}) {
 	if !checkValidity(id, pwd) {
 		return
 	}
-	db.Instance.Send(&db.Mail{
-		Sql: &collection.SqlAccountLogin{id, pwd},
+	db.Instance.Send(&db.dbEvent{
+		Sql: &db.SqlAccountLogin{id, pwd},
 		Cb: func(data interface{}, err error) {
 			if err != nil {
 				notice.SendNotice(ses, notice.CLoginInvalid)

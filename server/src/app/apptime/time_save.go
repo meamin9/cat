@@ -31,7 +31,7 @@ func (self *TimeSaveHelper) Stop() {
 func (self *TimeSaveHelper) Save() {
 	if self.dirty {
 		sql := self.master.Pack()
-		db.Instance.Send(&db.Mail{
+		db.Instance.Send(&db.dbEvent{
 			Sql: sql,
 		})
 	}

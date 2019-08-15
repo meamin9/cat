@@ -2,7 +2,6 @@ package role
 
 import (
 	"app/db"
-	"app/db/collection"
 	"app/mosaic"
 	"app/notice"
 	"app/user"
@@ -30,8 +29,8 @@ func recvRoleCreate(s user.Session, data interface{}) {
 	role.Account = acc.Id
 	role.Session = s
 	dbrole := role.Pack()
-	db.Instance.Send(&db.Mail{
-		Sql: &collection.SqlRoleCreate{Role: dbrole},
+	db.Instance.Send(&db.dbEvent{
+		Sql: &db.SqlRoleCreate{Role: dbrole},
 		Cb: func(i interface{}, e error) {
 			if e != nil {
 				notice.SendNotice(s, notice.CNameRepeated)

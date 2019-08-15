@@ -4,7 +4,6 @@ import (
 	_ "app/appinfo"
 	"app/apptime"
 	"app/db"
-	"app/db/collection"
 	"app/mosaic"
 	"app/role"
 	"app/user"
@@ -34,7 +33,7 @@ func (app *App) initPackage() {
 	db.New()
 	// 统一管理的module
 	app.packList = []interface{}{
-		collection.New(),
+		db.New(),
 		apptime.New(),
 		mosaic.New(),
 		user.New(),
