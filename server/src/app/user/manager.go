@@ -1,20 +1,21 @@
 package user
 
 import (
-	"app/util"
+	"app/apptime"
+	"app/glog"
 	"github.com/davyxu/cellnet"
 	"time"
 )
 
-type User interface {
-	cellnet.Session
-}
+type User *implementUser
 
 type implementUser struct {
 	cellnet.Session
 	ctime time.Time
-	Account    Account
+	account    *Account
 }
+
+
 
 type manager struct {
 	userBySid map[int64]User
@@ -23,8 +24,8 @@ type manager struct {
 }
 
 var (
-	log = util.NewLog("user")
-	Mgr = &manager{
+	log     = glog.NewLog("user")
+	Manager = &manager{
 		userBySid: make(map[int64]User),
 		procById:  make(map[int]func(User, interface{})),
 		network: newNetWork(),
@@ -52,14 +53,14 @@ func (m *manager) ProcNetEvent(event cellnet.Event, msgId int) {
 			ses.Close()
 		}
 	case cellnet.SessionAccepted:
-		log.Debugf("session accepted sid=%v time=%v", ses.ID(), time.Now())
-		m.userBySid[ses.ID()] = &implementUser{Session:ses, ctime: time.Now()}
+		log.Debugf("session accepted sid=%v time=%v", ses.ID(), apptime.Now())
+		m.userBySid[ses.ID()] = &implementUser{Session:ses, ctime: apptime.Now()}
 	case cellnet.SessionClosed:
 		if user, ok := m.userBySid[ses.ID()]; ok {
 			log.Warnf("session closed user=%v", user)
 			ses.Close()
 		} else {
-			log.Errorf("not found user sessionId=%v, msgId=%v", ses.ID(), event.MsgId())
+			log.Errorf("not found user sessionId=%v, msgId=%v", ses.ID(), msgId)
 			ses.Close()
 		}
 	}

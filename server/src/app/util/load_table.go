@@ -1,11 +1,11 @@
 package util
 
 import (
-	"encoding/json"
-	"os"
 	"encoding/csv"
-	"reflect"
+	"encoding/json"
 	"errors"
+	"os"
+	"reflect"
 	"strconv"
 )
 

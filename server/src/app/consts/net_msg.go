@@ -64,7 +64,7 @@ func recvEntryToken(s user.Session, data interface{}) {
 	//entry, ok := s.(peer.ICoreContextSet).RawGetContext("token")
 	//if ok {
 	//	en := entry.(*entryToken)
-	//	en.Timeout.Stop()
+	//	en.Timeout.Cancel()
 	//	if en.Token == data.(*proto.CSEntryToken).Token {
 	//		//Instance.sesInToken.Delete(s.ID())
 	//		en.Ok = true

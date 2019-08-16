@@ -5,8 +5,6 @@ import (
 	"app/db"
 	"app/mosaic"
 	"app/notice"
-	"app/util"
-	"github.com/davyxu/cellnet/util"
 	"proto"
 	"strings"
 	"time"
@@ -20,15 +18,8 @@ type entryToken struct {
 	Ok      bool // 合法的连接这个值要为true
 }
 
-var (
-	CodeSessionAccepted = int(util.StringHash("cellnet.SessionAccepted"))
-	CodeSessionClosed   = int(util.StringHash("cellnet.SessionClosed"))
-)
 
-func init() {
-	Mgr.RegNetMsg(proto.KeyAccountCreate, accountCreate)
-	Mgr.RegNetMsg(proto.KeyAccountLogin, accountLogin)
-}
+
 
 func accountCreate(user User, netMsg interface{}) {
 	msg := netMsg.(proto.AccountCreate)
@@ -44,28 +35,39 @@ func accountCreate(user User, netMsg interface{}) {
 		msg.Err = 2
 		goto ERROR
 	}
-	db.Instance.Send(&db.dbEvent{
-		Sql: &db.SqlAccountCreate{id, pwd},
-		Cb: func(data interface{}, err error) {
-			if err != nil { // 注册失败，可能是用户名已存在
-				notice.SendNotice(ses, notice.CNameRepeated)
-				return
-			}
-			acc := &Account{
-				Id:    id,
-				Roles: make([]*mosaic.RoleInfo, 0),
-			}
-			Instance.AddLoginAccount(acc, ses.ID())
-			sendAccountInfo(ses, acc)
-		},
+	db.Manager.Send(&db.SqlAccountCreate{Id: id, Pwd: pwd}, func(data interface{}, err error) {
+		if err != nil { // 注册失败，可能是用户名已存在
+			msg.Err = 3
+			user.Send(msg)
+			return
+		}
+		acc := &Account{
+			Id:    id,
+			Roles: make([]*mosaic.RoleInfo, 0),
+		}
+		user.account = acc
+		user.Send(msg)
 	})
 ERROR:
 	user.Send(msg)
 }
 
-func accountLogin(user User, msg interface{}) {
+func accountLogin(user User, netMsg interface{}) {
+	msg := netMsg.(proto.AccountLogin)
+	req := msg.Req
+	msg.Req = nil
+	db.Manager.Send(&db.SqlAccountLogin{Id:req.Id, Pwd:req.Pwd}, func(data interface{}, err error) {
+		if err != nil {
+			msg.Err = 1
+			user.Send(msg)
+			return
+		}
+		
+	})
 	ERROR:
 }
+
+
 func sendAccountInfo(sender ISender, account *Account) {
 	msg := &proto.SCAccountInfo{
 		Id: account.Id,
@@ -121,4 +123,9 @@ func recvAccountLogin(ses Session, data interface{}) {
 			sendAccountInfo(ses, acc)
 		},
 	})
+}
+
+func init() {
+	Manager.RegNetMsg(proto.KeyAccountCreate, accountCreate)
+	Manager.RegNetMsg(proto.KeyAccountLogin, accountLogin)
 }

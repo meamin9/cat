@@ -12,15 +12,6 @@ type NetEvent interface {
 	MsgId() int
 }
 
-type recNetEvent struct {
-	cellnet.Event
-	msgId int
-}
-
-func (r *recNetEvent) MsgId() int {
-	return r.msgId
-}
-
 type network struct {
 	tcp cellnet.Peer
 	eventChan chan func()
@@ -34,7 +25,7 @@ func newNetWork() (n *network) {
 	proc.BindProcessorHandler(n.tcp, "tcp.ltv", func(event cellnet.Event) {
 		msgId := cellnet.MessageToID(event.Message())
 		n.eventChan <- func() {
-			Mgr.ProcNetEvent(event, msgId)
+			Manager.ProcNetEvent(event, msgId)
 		}
 	})
 	return
@@ -49,7 +40,7 @@ func (n *network) Stop() {
 }
 
 
-func (n *network) NetEventChan() chan func() {
+func (n *network) EventChan() chan func() {
 	return n.eventChan
 }
 
