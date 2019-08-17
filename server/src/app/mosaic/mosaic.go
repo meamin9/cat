@@ -2,7 +2,7 @@ package mosaic
 
 import (
 	"app/fw"
-	"app/util"
+	util2 "app/fw/util"
 	"path/filepath"
 )
 
@@ -11,7 +11,7 @@ type Mosaic struct {
 
 func (mos *Mosaic) Load() {
 	path := filepath.Join(fw.Datapath, "constants.csv")
-	util.LoadCsvTranspose(path, &Const)
+	util2.LoadCsvTranspose(path, &Const)
 }
 
 func New() *Mosaic {

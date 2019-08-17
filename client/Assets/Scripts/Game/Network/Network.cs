@@ -2,17 +2,26 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AM.Base;
+using UnityEngine;
 
 // 网络
 namespace AM.Game
 {
 	public static class Network
 	{
-		static Connector _conn;
+        struct RpcContext
+        {
+            public Action<object> callback;
+            public Timer timeout;
+        }
+        static Connector _conn;
 		static List<MsgEvent> _recvList = new List<MsgEvent>();
 		static Dictionary<UInt16, Action<object>> _protoHandles = new Dictionary<UInt16, Action<object>>();
 
-		public static void Connect() {
+        static Dictionary<UInt16, Queue<RpcContext>> _rpcs = new Dictionary<UInt16, Queue<RpcContext>>();
+
+
+        public static void Connect() {
 			_conn = new Connector("127.0.0.1", 7001);
 			Task.Run(_conn.Connect);
 			MonoProxy.Instance.Adapter.update += Update;
@@ -55,6 +64,24 @@ namespace AM.Game
 		{
 			_conn.Session.Send(new SendEvent(msg));
 		}
+
+        public static void Send<T>(T msg, Action<T> callback)
+        {
+            var meta = MsgMetaSet.MetaByType(typeof(T));
+            if (meta.IsEmpty()) {
+                Log.Error("unknown protocol: {}", typeof(T));
+                return;
+            }
+            var msgId = meta.MsgId;
+            var context = new RpcContext { callback = callback, timeout = Timer.DelayCall(15, callback) };
+
+            if (_rpcs.TryGetValue(msgId, out Queue<RpcContext> queue) {
+
+            }
+            
+            
+
+        }
 	}
 }
 

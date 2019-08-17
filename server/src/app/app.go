@@ -1,9 +1,10 @@
-package app
+package main
 
 import (
 	"app/db"
-	"app/fw"
 	_ "app/fw/appinfo"
+	"app/fw/apptime"
+	"app/fw/glog"
 	"app/user"
 	"sync"
 )
@@ -16,9 +17,9 @@ type App struct {
 	signal   chan bool
 }
 
-var log *fw.Logger
+var log = glog.NewLog("app")
 func newApp() *App {
-	log = fw.NewLog("app")
+
 	return &App{
 		signal: make(chan bool),
 	}
@@ -70,7 +71,7 @@ func (app *App) Start() {
 
 	// 启动网络
 	user.Manager.Start()
-	fw.Manager.Start()
+	apptime.Manager.Start()
 	// main loop
 Loop:
 	for {
@@ -79,8 +80,8 @@ Loop:
 			proc()
 		case proc := <-db.Manager.EventChan():
 			proc()
-		case t := <-fw.Manager.TickChan():
-			fw.Manager.Tick(t)
+		case t := <-apptime.Manager.TickChan():
+			apptime.Manager.Tick(t)
 		case <-app.signal:
 			break Loop
 		}

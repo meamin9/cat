@@ -1,6 +1,7 @@
 package util
 
 import (
+	"app/fw/glog"
 	"encoding/csv"
 	"encoding/json"
 	"errors"
@@ -9,21 +10,33 @@ import (
 	"strconv"
 )
 
-// 打印错误，外面不要检测错误了
+var log = glog.NewLog("util")
+
+
 func LoadJson(path string, result interface{}) {
-	f, err := os.Open(path)
-	if err == nil {
-		defer f.Close()
-		size, _ := f.Seek(0, 2)
-		b := make([]byte, size)
-		f.Seek(0, 0)
-		f.Read(b)
-		if err = json.Unmarshal(b, result); err != nil {
-			log.Errorf("load json(%v) error: %v", path, err)
-		}
-	} else {
-		log.Errorf("open json(%v) error: %v", path, err)
+	if err := loadJson(path, result); err != nil {
+		log.Errorf("LoadJson Error:%v, path=%v", err, path)
 	}
+}
+
+func loadJson(path string, result interface{}) (err error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return
+	}
+	size, err := f.Seek(0, 2)
+	if err != nil {
+		return
+	}
+	b := make([]byte, size)
+	if _, err = f.Seek(0, 0); err != nil {
+		return
+	}
+	if _, err = f.Read(b); err != nil {
+		return
+	}
+	err = json.Unmarshal(b, result)
+	return
 }
 
 

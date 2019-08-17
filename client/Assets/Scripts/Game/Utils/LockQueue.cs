@@ -23,7 +23,7 @@ namespace AM.Game
         public void Peek(ref List<T> list) {
             Monitor.Enter(_queue);
             try {
-                if (_queue.Count == 0) {
+                while (_queue.Count == 0) {
                     Monitor.Wait(_queue);
                 }
                 list.AddRange(_queue);

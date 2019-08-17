@@ -1,7 +1,7 @@
 package appinfo
 
 import (
-	"app/util"
+	util2 "app/fw/util"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -42,7 +42,7 @@ func init() {
 	}
 	res := appjson{}
 	path := filepath.Join(ServerDatapath, "appcfg.json")
-	util.LoadJson(path, &res)
+	util2.LoadJson(path, &res)
 	ServerId = res.ServerId
 	ServerName = res.ServerName
 	// db & net

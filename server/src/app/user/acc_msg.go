@@ -3,10 +3,8 @@ package user
 import (
 	"app/db"
 	"app/fw/consts"
-	"app/mosaic"
-	"app/notice"
+	"app/fw/util"
 	"proto"
-	"strings"
 )
 
 //var cryptoKey = "milan, milan go!"
@@ -22,16 +20,24 @@ func accountCreate(user User, netMsg interface{}) {
 	msg := netMsg.(proto.AccountCreate)
 	req := msg.Req
 	msg.Req = nil
-	id := strings.TrimSpace(req.Id)
-	pwd := strings.TrimSpace(req.Pwd)
+	id, pwd := req.Id, req.Pwd
+	//id := strings.TrimSpace(req.Id)
+	//pwd := strings.TrimSpace(req.Pwd)
+	if !util.IsAsciiName(id) {
+		msg.Err = consts.ErrAccountId
+		user.Send(msg)
+		return
+	}
 	idLen := len(id)
 	if idLen < consts.AccountMinLen || consts.AccountMaxLen < idLen {
 		msg.Err = consts.ErrAccountIdLen
-		goto ERROR
+		user.Send(msg)
+		return
 	}
 	if idLen < consts.AccountMinLen || consts.AccountMaxLen < idLen {
 		msg.Err = consts.ErrAccountPwdLen
-		goto ERROR
+		user.Send(msg)
+		return
 	}
 	db.Manager.Send(&db.SqlAccountCreate{Id: id, Pwd: pwd}, func(data interface{}, err error) {
 		if err != nil { // 注册失败，可能是用户名已存在
@@ -39,94 +45,71 @@ func accountCreate(user User, netMsg interface{}) {
 			user.Send(msg)
 			return
 		}
-		acc := &Account{
-			Id:    id,
-			Roles: make([]*mosaic.RoleInfo, 0),
-		}
-		user.account = acc
+		user.account = id
 		user.Send(msg)
 	})
-ERROR:
-	user.Send(msg)
 }
 
 func accountLogin(user User, netMsg interface{}) {
 	msg := netMsg.(proto.AccountLogin)
 	req := msg.Req
 	msg.Req = nil
+	id := req.Id
 	db.Manager.Send(&db.SqlAccountLogin{Id:req.Id, Pwd:req.Pwd}, func(data interface{}, err error) {
 		if err != nil {
 			msg.Err = consts.ErrRoleLogin
 			user.Send(msg)
 			return
 		}
-		roleinfo := proto.RoleInfo_{}
-		rsp := &proto.AccountLogin_Rsp{
-
+		roles := data.([]*db.RoleLoginInfo)
+		rsp := &proto.AccountLogin_Rsp{}
+		for _, r := range roles {
+			rsp.Roles = append(rsp.Roles, &proto.RoleInfo_{
+				Id: r.Id,
+				Name: r.Name,
+				Gender: int32(r.Gender),
+				Job: int32(r.Job),
+				Level: int32(r.Level),
+				LogoutTime: r.LogoutTime.Unix(),
+			})
 		}
-
+		msg.Rsp = rsp
+		user.account = id
+		user.Send(msg)
 	})
 }
 
-
-func sendAccountInfo(sender ISender, account *Account) {
-	msg := &proto.SCAccountInfo{
-		Id: account.Id,
-	}
-	infos := make([]*proto.RoleInfo, len(account.Roles))
-	for i, info := range account.Roles {
-		infos[i] = info.PackMsg()
-	}
-	msg.Roles = infos
-	sender.Send(msg)
-}
-
-func recvAccountReg(ses Session, data interface{}) {
-	msg := data.(*proto.CSAccountReg)
-	id := strings.TrimSpace(msg.Id)
-	pwd := strings.TrimSpace(msg.Pwd) // 这是个md5码值
-	if !checkValidity(id, pwd) {
+func roleCreate(user User, netMsg interface{}) {
+	msg := netMsg.(proto.RoleCreate)
+	req := msg.Req
+	msg.Req = nil
+	name, gender, job := req.Name, int(req.Gender), int(req.Job)
+	if !util.IsUnicodeName(name) {
+		msg.Err = consts.ErrRoleNameInvalid
+		user.Send(msg)
 		return
 	}
-	db.Instance.Send(&db.dbEvent{
-		Sql: &db.SqlAccountCreate{id, pwd},
-		Cb: func(data interface{}, err error) {
-			if err != nil { // 注册失败，可能是用户名已存在
-				notice.SendNotice(ses, notice.CNameRepeated)
-				return
-			}
-			acc := &Account{
-				Id:    id,
-				Roles: make([]*mosaic.RoleInfo, 0),
-			}
-			Instance.AddLoginAccount(acc, ses.ID())
-			sendAccountInfo(ses, acc)
-		},
-	})
-}
-
-func recvAccountLogin(ses Session, data interface{}) {
-	msg := data.(*proto.CSAccountLogin)
-	id := strings.TrimSpace(msg.Id)
-	pwd := strings.TrimSpace(msg.Pwd) // 这是个md5码值
-	if !checkValidity(id, pwd) {
+	nameLen := len(name)
+	if nameLen < consts.RoleNameMinLen || nameLen > consts.RoleNameMaxLen {
+		msg.Err = consts.ErrRoleNameLen
+		user.Send(msg)
 		return
 	}
-	db.Instance.Send(&db.dbEvent{
-		Sql: &db.SqlAccountLogin{id, pwd},
-		Cb: func(data interface{}, err error) {
-			if err != nil {
-				notice.SendNotice(ses, notice.CLoginInvalid)
-				return
-			}
-			acc := data.(*Account)
-			Instance.AddAccount(acc)
-			sendAccountInfo(ses, acc)
-		},
+	id := newRoleId()
+	db.Manager.Send(&db.SqlCreateRole{
+		Id:id, Name:name, Gender:gender, Job:job, Account:user.account,
+	}, func(ret interface{}, err error) {
+		if err != nil {
+			msg.Err = consts.ErrRoleNameExist
+			user.Send(msg)
+			return
+		}
+		user.Send(msg)
 	})
 }
 
 func init() {
 	Manager.RegNetMsg(proto.KeyAccountCreate, accountCreate)
 	Manager.RegNetMsg(proto.KeyAccountLogin, accountLogin)
+	Manager.RegNetMsg(proto.KeyRoleCreate, roleCreate)
 }

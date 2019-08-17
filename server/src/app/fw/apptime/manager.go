@@ -6,9 +6,6 @@ import (
 
 // 游戏时间和系统时间不一定相同, 时间是最基本的，不要包含其他包
 
-type Time time.Time
-type Duration time.Duration
-
 type manager struct {
 	offset time.Duration
 	now    time.Time
