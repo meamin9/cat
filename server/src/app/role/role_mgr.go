@@ -1,7 +1,7 @@
 package role
 
 import (
-	"app/appinfo"
+	"app/fw"
 	"time"
 )
 
@@ -22,7 +22,7 @@ func (self *RoleMgr) Stop()  {}
 
 func (self *RoleMgr) NewId() uint64 {
 	time := time.Now().Unix() // 时间不回调基本不会冲突
-	serverId := uint16(appinfo.ServerId)
+	serverId := uint16(fw.ServerId)
 	self.idCounter = self.idCounter + 1
 	return uint64(time)<<32 | uint64(serverId)<<16 | uint64(self.idCounter)
 }

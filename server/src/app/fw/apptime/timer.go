@@ -74,7 +74,7 @@ func (t *timerHeap) IntervalCall(interval time.Duration, cb func()) Timer {
 	timer := &timer{
 		trigTime:  Now().Add(interval),
 		trigEvent: cb,
-		loopTime: interval,
+		loopTime:  interval,
 	}
 	heap.Push(t, timer)
 	return timer

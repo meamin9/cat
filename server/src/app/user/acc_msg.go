@@ -1,25 +1,22 @@
 package user
 
 import (
-	"app/consts"
 	"app/db"
+	"app/fw/consts"
 	"app/mosaic"
 	"app/notice"
 	"proto"
 	"strings"
-	"time"
 )
 
-var cryptoKey = "milan, milan go!"
-
-type entryToken struct {
-	Token   string
-	Timeout *time.Timer
-	Ok      bool // 合法的连接这个值要为true
-}
-
-
-
+//var cryptoKey = "milan, milan go!"
+//
+//type entryToken struct {
+//	Token   string
+//	Timeout *time.Timer
+//	Ok      bool // 合法的连接这个值要为true
+//}
+//
 
 func accountCreate(user User, netMsg interface{}) {
 	msg := netMsg.(proto.AccountCreate)
@@ -27,17 +24,18 @@ func accountCreate(user User, netMsg interface{}) {
 	msg.Req = nil
 	id := strings.TrimSpace(req.Id)
 	pwd := strings.TrimSpace(req.Pwd)
-	if !consts.AccountLen.In(len(id)) {
-		msg.Err = 1
+	idLen := len(id)
+	if idLen < consts.AccountMinLen || consts.AccountMaxLen < idLen {
+		msg.Err = consts.ErrAccountIdLen
 		goto ERROR
 	}
-	if !consts.AccountLen.In(len(pwd)) {
-		msg.Err = 2
+	if idLen < consts.AccountMinLen || consts.AccountMaxLen < idLen {
+		msg.Err = consts.ErrAccountPwdLen
 		goto ERROR
 	}
 	db.Manager.Send(&db.SqlAccountCreate{Id: id, Pwd: pwd}, func(data interface{}, err error) {
 		if err != nil { // 注册失败，可能是用户名已存在
-			msg.Err = 3
+			msg.Err = consts.ErrAccountExist
 			user.Send(msg)
 			return
 		}
@@ -58,13 +56,16 @@ func accountLogin(user User, netMsg interface{}) {
 	msg.Req = nil
 	db.Manager.Send(&db.SqlAccountLogin{Id:req.Id, Pwd:req.Pwd}, func(data interface{}, err error) {
 		if err != nil {
-			msg.Err = 1
+			msg.Err = consts.ErrRoleLogin
 			user.Send(msg)
 			return
 		}
-		
+		roleinfo := proto.RoleInfo_{}
+		rsp := &proto.AccountLogin_Rsp{
+
+		}
+
 	})
-	ERROR:
 }
 
 

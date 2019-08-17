@@ -1,8 +1,7 @@
 package user
 
 import (
-	"app/apptime"
-	"app/glog"
+	"app/fw/glog"
 	"github.com/davyxu/cellnet"
 	"time"
 )
@@ -53,8 +52,8 @@ func (m *manager) ProcNetEvent(event cellnet.Event, msgId int) {
 			ses.Close()
 		}
 	case cellnet.SessionAccepted:
-		log.Debugf("session accepted sid=%v time=%v", ses.ID(), apptime.Now())
-		m.userBySid[ses.ID()] = &implementUser{Session:ses, ctime: apptime.Now()}
+		log.Debugf("session accepted sid=%v time=%v", ses.ID(), fw.Now())
+		m.userBySid[ses.ID()] = &implementUser{Session:ses, ctime: fw.Now()}
 	case cellnet.SessionClosed:
 		if user, ok := m.userBySid[ses.ID()]; ok {
 			log.Warnf("session closed user=%v", user)
@@ -73,4 +72,20 @@ func (m *manager) RegNetMsg(msgId int, proc func(User, interface{})) {
 	m.procById[msgId] = proc
 }
 
+//func newEntryTokenPair() (alias, token string) {
+//	var b [8]byte
+//	binary.BigEndian.PutUint32(b[:], rand.Uint32())
+//	binary.BigEndian.PutUint32(b[4:], uint32(time.Now().Unix()))
+//	alias = string(b[:])
+//	// 计算规则
+//	var hexb []byte
+//	hex.Encode(hexb, b[:])
+//	t := md5.Sum(hexb)
+//	for i, c := range t {
+//		t[i] = c ^ cryptoKey[i]
+//	}
+//	token = string(t[:])
+//	binary.BigEndian.PutUint16(b[8:], 60)
+//	return alias, token
+//}
 

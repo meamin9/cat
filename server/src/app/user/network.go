@@ -1,7 +1,7 @@
 package user
 
 import (
-	"app/appinfo"
+	"app/fw/appinfo"
 	"github.com/davyxu/cellnet"
 	"github.com/davyxu/cellnet/peer"
 	"github.com/davyxu/cellnet/proc"
