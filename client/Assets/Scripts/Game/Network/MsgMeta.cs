@@ -40,7 +40,7 @@ namespace AM.Game
 			}
 		}
 
-		public static MsgMeta MetaById(UInt16 msgId) {
+		public static MsgMeta MetaById(ushort msgId) {
 			try {
 				return metaById[msgId];
 			} catch (KeyNotFoundException) {

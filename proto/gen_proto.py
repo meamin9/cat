@@ -9,6 +9,7 @@ serverDir = '../server/src/proto'
 clientDir = '../client/Assets/Scripts/Game/Proto'
 
 proto_list = []
+session_msg = {}
 
 def id(name):
 	n = 0
@@ -55,12 +56,17 @@ def genMsgInfo():
 					elif c[i] == '}':
 						b -= 1
 						#print('b=',b)
+					elif c[i] == 'u':
+						s = 'uint32 session'
+						if c[i:i+len(s)] == s:
+							session_msg[m.group('msg')] = True
 					i += 1
 					if b == 0:
 						break
 				if b != 0:
 					print('syntax error')
 					break
+
 				msg = m.group('msg')
 				com = m.group('com')
 				#print("com", com, msg)
@@ -134,17 +140,27 @@ namespace Proto {{
 {reg}
 		}}
 	}}
+	
+	public interface ISession {{
+		uint Session {{ get; set; }}
+		uint Err {{ get; set; }}
+	}}
+
+{interface}
+
 }}
 '''
 	Tem_const = u'''		{com}
 		{name} = {msgid},'''
 	Tem_reg = u'''			MsgMetaSet.RegMsg({msgid}, typeof({name}), ()=>new {name}());'''
-
+	Tem_interface = u'''	public partial class {name} : ISession {{}}'''
 	w = '{}/Proto.msg.cs'.format(clientDir)
 	print('gen ' + w)
 	with open(w, 'w', encoding='utf-8') as f:
 		reg = []
 		const = []
+		interface = []
+		# print(session_msg)
 		for m in msgs:
 			d = {'name':m, 'msgid':id(m), 'com':'\n		'.join(coms[m].strip().split('\n'))}
 			# print(Tem_reg.format(**d))
@@ -152,8 +168,12 @@ namespace Proto {{
 			# d['com'] = ','.join(coms[m].strip().split('\n//'))
 			const.append(Tem_const.format(**d))
 			# print(Tem_const.format(**d))
-		c = Tem.format(**{'time':time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), 
-			'reg':'\n'.join(reg), 'const':'\n'.join(const)})
+			if (m in session_msg):
+				interface.append(Tem_interface.format(**d))
+				# print(interface[len(interface)-1])
+		d = {'time':time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), 
+			'reg':'\n'.join(reg), 'const':'\n'.join(const), 'interface':'\n'.join(interface)}
+		c = Tem.format(**d)
 		f.write(c)
 
 def genCsharp():

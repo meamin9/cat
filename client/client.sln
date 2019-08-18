@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2042
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio for Mac
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Third.EasyTouch", "Third.EasyTouch.csproj", "{9379DA08-3880-7584-C595-5C3C980B9453}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AM.Game", "AM.Game.csproj", "{3DAEC964-2801-BA12-8A64-01A035B96F02}"
@@ -20,8 +18,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AM.Patch", "AM.Patch.csproj", "{962A795E-32BB-E287-0677-33AE56E5C4AF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "Assembly-CSharp-Editor.csproj", "{2FC59FCE-BCB1-13D3-FB79-5DD1AF79A2AF}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AM.GameTests", "..\AM.GameTests\AM.GameTests.csproj", "{A05171B1-D60F-4F41-9F1A-FD73A76B50F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,15 +61,8 @@ Global
 		{2FC59FCE-BCB1-13D3-FB79-5DD1AF79A2AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FC59FCE-BCB1-13D3-FB79-5DD1AF79A2AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FC59FCE-BCB1-13D3-FB79-5DD1AF79A2AF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A05171B1-D60F-4F41-9F1A-FD73A76B50F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A05171B1-D60F-4F41-9F1A-FD73A76B50F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A05171B1-D60F-4F41-9F1A-FD73A76B50F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A05171B1-D60F-4F41-9F1A-FD73A76B50F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {6113278B-EDF7-4416-B8FF-AB737F68FACF}
 	EndGlobalSection
 EndGlobal

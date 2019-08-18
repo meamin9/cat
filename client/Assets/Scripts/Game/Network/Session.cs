@@ -20,11 +20,8 @@ namespace AM.Game
 	}
 	// 发送
 	public struct SendEvent {
+        public UInt32 MsgId;
 		public object Msg;
-		public SendEvent(object msg) {
-			Msg = msg;
-		}
-
 	}
 
 	public class Session
@@ -91,14 +88,13 @@ namespace AM.Game
 					for (var i = 0; i < n; ++i)
 					{
 						var msg = list[i].Msg;
+                        var msgId = list[i].MsgId;
 						// 长度占位
 						stream.WriteByte(0);
 						stream.WriteByte(0);
 						// 大端写入msgid
-						var meta = MsgMetaSet.MetaByType(msg.GetType());
-						UInt16 id = meta.MsgId;
-						stream.WriteByte((byte)(id >> 8));
-						stream.WriteByte((byte)id);
+						stream.WriteByte((byte)(msgId >> 8));
+						stream.WriteByte((byte)msgId);
 						Codec.EncodeMsg(msg, stream);
 						// 大端写入长度
 						var dataSize = (UInt16)stream.Length - HEAD_SIZE;
@@ -116,8 +112,8 @@ namespace AM.Game
 			}
 		}
 
-		public void Send(object msg) {
-			_sendBox.Post(new SendEvent(msg));
+		public void Send(SendEvent e) {
+			_sendBox.Post(e);
 		}
 
 		public void Wait() {

@@ -232,7 +232,7 @@ namespace AM.Base
             };
             _cacheAssets.Add(assetName, info);
 
-            var coroutine = LoadBundleAssetAsync(entry, null, assetName);
+            var coroutine = MonoProxy.Instance.StartCoroutine(_loadAssetCoroutine(entry, assetName));
             if (coroutine != null) {
                 info.Coroutine = coroutine; // 记录下，在重复load时再次返回这个协程
                 _cacheAssets[assetName] = info;
@@ -240,42 +240,51 @@ namespace AM.Base
             return coroutine;
         }
 
-        //private IEnumerator _loadAssetCoroutine(AssetBundle bundle, string assetName)
-        //{
-        //    //Log.Infof("bundle:{0}>>", bundle);
-        //    var req = bundle.LoadAssetAsync(assetName);
-        //    yield return req;
-        //    var asset = req.asset;
-        //    if (asset == null) {
-        //        Debug.LogErrorFormat("Failed to load asset:{0}", assetName);
-        //    }
-        //    AsyncInfo info;
-        //    if (_cacheAssets.TryGetValue(assetName, out info)) {
-        //        info.Asset = asset;
-        //        info.State = AsyncState.Finish;
-        //        var callback = info.Callback;
-        //        info.Callback = null;
-        //        info.Coroutine = null;
-        //        _cacheAssets[assetName] = info; // 先处理完再回调
+        private IEnumerator _loadAssetCoroutine(BundleInfo bundleEntry, string assetName) {
+            var coroutine = LoadBundleAsync(bundleEntry, null);
+            if (coroutine != null) {
+                yield return coroutine;
+            }
+            AsyncInfo info;
+            AssetBundle bundle = null;
+            if (_cacheBundles.TryGetValue(bundleEntry.Name, out info)) {
+                if (info.State == AsyncState.Finish) {
+                    bundle = info.Asset as AssetBundle;
+                }
+            }
+            if (null == bundle) {
+                Debug.LogErrorFormat("Error AssetBundles not loaded:{0}", bundleEntry.Name);
+                yield break;
+            }
+            var assetReq = bundle.LoadAssetAsync(assetName);
+            yield return assetReq;
+            var asset = assetReq.asset;
+            if (asset == null) {
+                Debug.LogErrorFormat("Failed to load asset:{0}", assetName);
+            }
+            if (_cacheAssets.TryGetValue(assetName, out info)) {
+                _cacheAssets[assetName] = new AsyncInfo() {
+                    State = AsyncState.Finish,
+                    Asset = asset
+                };
+                info.Callback?.Invoke(info);
+            }
+        }
 
-        //        callback?.Invoke(info);
-        //    }
-        //}
-
-        public Coroutine LoadBundleAssetAsync(string bundleName, System.Action<AsyncInfo> handle)
+        public Coroutine LoadBundleAsync(string bundleName, System.Action<AsyncInfo> handle)
         {
             BundleInfo entry;
             if (!_bundleEntryC.TryGetValue(bundleName, out entry)) {
                 Debug.LogErrorFormat("Not Found AssetBundles:{0}", bundleName);
                 return null;
             }
-            return LoadBundleAssetAsync(entry, handle);
+            return LoadBundleAsync(entry, handle);
         }
 
         /// <summary>
         /// 加载的协程，如果返回Coroutine的完成
         /// </summary>
-        public Coroutine LoadBundleAssetAsync(BundleInfo bundleEntry, System.Action<AsyncInfo> callback, string assetName=null)
+        public Coroutine LoadBundleAsync(BundleInfo bundleEntry, System.Action<AsyncInfo> callback)
         {
             string name = bundleEntry.Name;
 #if UNITY_EDITOR
@@ -302,7 +311,7 @@ namespace AM.Base
                 Callback = callback
             };
             _cacheBundles.Add(name, info);
-            var coroutine = MonoProxy.Instance.StartCoroutine(_loadBundleAssetCoroutine(bundleEntry, assetName));
+            var coroutine = MonoProxy.Instance.StartCoroutine(_loadBundleAssetCoroutine(bundleEntry));
             if (coroutine != null) {
                 info.Coroutine = coroutine; // 记录下，在重复load时再次返回这个协程
                 _cacheAssets[name] = info;
@@ -310,14 +319,14 @@ namespace AM.Base
             return coroutine;
         }
 
-        private IEnumerator _loadBundleAssetCoroutine(BundleInfo entry, string assetName)
+        private IEnumerator _loadBundleAssetCoroutine(BundleInfo entry)
         {
             var name = entry.Name;
             if (_manifest != null) {
                 string[] dependencies = _manifest.GetAllDependencies(name);
                 var c = dependencies.Length;
                 for (var i = 0; i < c; ++i) {
-                    yield return LoadBundleAssetAsync(dependencies[i], null);
+                    yield return LoadBundleAsync(dependencies[i], null);
                 }
             }
             var req = AssetBundle.LoadFromFileAsync(entry.Url);
@@ -333,25 +342,6 @@ namespace AM.Base
                     Asset = bundle
                 };
                 info.Callback?.Invoke(info);
-                //if (assetName != null) { // 继续加载asset
-                //    yield return MonoProxy.Instance.StartCoroutine(_loadAssetCoroutine(bundle, assetName));
-                //}
-                if (assetName != null) {
-                    var assetReq = bundle.LoadAssetAsync(assetName);
-                    yield return assetReq;
-                    var asset = assetReq.asset;
-                    if (asset == null) {
-                        Debug.LogErrorFormat("Failed to load asset:{0}", assetName);
-                    }
-                    if (_cacheAssets.TryGetValue(assetName, out info)) {
-                        _cacheAssets[assetName] = new AsyncInfo() {
-                            State = AsyncState.Finish,
-                            Asset = asset
-                        };
-                        info.Callback?.Invoke(info);
-                    }
-                }
-
             }
         }
 

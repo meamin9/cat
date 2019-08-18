@@ -15,6 +15,7 @@ tools/bin/
 tools/pkg/
 server/src/proto/
 client/Assets/Scripts/proto/
+client/Assets/Scripts/Game/Proto/
 client/ProjectSettings/
 client/obj/
 client/.vs/
@@ -36,6 +37,7 @@ obj/
 */bin/
 */obj/
 db
+client/client.sln
 
 *.suo
 *.suo.*

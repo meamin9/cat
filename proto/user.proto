@@ -11,21 +11,13 @@ message RoleInfo_ {
   int64 logoutTime = 6;
 }
 
-message RPCMsg {
-	int32 session = 1;
-	int32 msgId = 2;
-	bytes req = 3;
-	bytes rsp = 4;
-	int32 err = 5;
-}
-
 // 创建账号
 message AccountCreate {
 	message Req {
 		string id = 1;
 		string pwd = 2;
 	}
-	int32 session = 1;
+	uint32 session = 1;
 	int32 err = 2;
 	Req req = 3;
 }
@@ -38,7 +30,7 @@ message AccountLogin {
 	message Rsp {
 		repeated RoleInfo_ roles = 1;
 	}
-	int32 session = 1;
+	uint32 session = 1;
 	int32 err = 2;
 	Req req = 3;
 	Rsp rsp = 4;
@@ -50,7 +42,7 @@ message RoleCreate {
 		int32 gender = 2;
 		int32 job = 3;
 	}
-	int32 session = 1;
+	uint32 session = 1;
 	int32 err = 2;
 	Req req = 3;
 	RoleInfo_ rsp = 4;

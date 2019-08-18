@@ -9,10 +9,11 @@ public class Launcher : MonoBehaviour
 {
     private const string VERSION_NAME = "VERSION";
     public const string VERSION_INFO = "VERSION.json";
+    //这个目录要跟AssetManager里的一样
     public static string PatchDir {
         get { return Path.Combine(Application.persistentDataPath, "Patch"); }
     }
-        
+    //出包时的资源目录，和AssetManager里保持一致
     public static string DefaultDir {
         get {
 #if UNITY_IOS

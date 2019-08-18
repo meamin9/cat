@@ -13,6 +13,8 @@ namespace AM.Game
         private static IEnumerator Initialize()
         {
             yield return AssetMgr.InitAsync();
+            yield return AssetMgr.Instance.LoadAssetAsync(nameof(GameSetting) + ".asset", GameSetting.Load);
+
 
             Log.Info("Game Start");
             // base moudle

@@ -23,6 +23,8 @@ namespace AM.Base
         public string PatchUrl = "http://127.0.0.1/";
         [Header("读取Resource目录资源")]
         public bool LoadInResource = false;
+        [Header("服务器连接地址")]
+        public string ServerIpPort = "127.0.0.1:7000";
 
     }
 

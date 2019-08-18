@@ -2,27 +2,22 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AM.Base;
-using UnityEngine;
 
 // 网络
 namespace AM.Game
 {
 	public static class Network
 	{
-        struct RpcContext
-        {
-            public Action<object> callback;
-            public Timer timeout;
-        }
         static Connector _conn;
 		static List<MsgEvent> _recvList = new List<MsgEvent>();
 		static Dictionary<UInt16, Action<object>> _protoHandles = new Dictionary<UInt16, Action<object>>();
 
-        static Dictionary<UInt16, Queue<RpcContext>> _rpcs = new Dictionary<UInt16, Queue<RpcContext>>();
-
+        // 使用类似请求响应的方式发服务端，不加超时处理了
+        static uint _sid; 
+        static Dictionary<uint, Action<object>> _rspHandles = new Dictionary<uint, Action<object>>();
 
         public static void Connect() {
-			_conn = new Connector("127.0.0.1", 7001);
+			_conn = new Connector(GameSetting.Instance.ServerIp, GameSetting.Instance.Port);
 			Task.Run(_conn.Connect);
 			MonoProxy.Instance.Adapter.update += Update;
 		}
@@ -36,51 +31,36 @@ namespace AM.Game
 			if (n > 0) {
 				for (var i = 0; i < n; ++i) {
 					var evt = _recvList[i];
+                    var msg = evt.Msg as Proto.ISession;
+
 					try {
 						_protoHandles[evt.MsgId](evt.Msg);
 					}
 					finally {
-						Log.Error("协议处理出错：{}", evt.MsgId);
+						Log.Error("协议处理出错：{0}", evt.MsgId);
 					}
 				}
 				_recvList.Clear();
 			}
 		}
 
-		public static void RegProto<T>(Action<T> handle) where T: class {
-			var meta = MsgMetaSet.MetaByType(typeof(T));
-			if (meta.IsEmpty()) {
-				Log.Error("unknown protocol: {}", typeof(T));
-				return;
-			}
-			if (_protoHandles.ContainsKey(meta.MsgId)) {
-				Log.Error("proto already registed! :{}", meta.MsgId);
-				return;
-			}
-			_protoHandles[meta.MsgId] = (Action<object>)handle;
+		public static void RegProto(UInt16 msgId, Action<object> handle) {
+            _protoHandles.Add(msgId, handle);
 		}
 
-		public static void Send(object msg)
+		public static void Send(UInt16 msgId, object msg)
 		{
-			_conn.Session.Send(new SendEvent(msg));
+			_conn.Session.Send(new SendEvent { MsgId=msgId, Msg=msg});
 		}
 
-        public static void Send<T>(T msg, Action<T> callback)
+        public static void Send(UInt16 msgId, Proto.ISession msg, Action<object> callback)
         {
-            var meta = MsgMetaSet.MetaByType(typeof(T));
-            if (meta.IsEmpty()) {
-                Log.Error("unknown protocol: {}", typeof(T));
-                return;
+            msg.Session = ++_sid;
+            if (_rspHandles.ContainsKey(msg.Session)) {
+                Log.Error("not get proto respond:msgId={0}", msgId);
             }
-            var msgId = meta.MsgId;
-            var context = new RpcContext { callback = callback, timeout = Timer.DelayCall(15, callback) };
-
-            if (_rpcs.TryGetValue(msgId, out Queue<RpcContext> queue) {
-
-            }
-            
-            
-
+            _rspHandles[msg.Session] = callback;
+            Send(msgId, msg);
         }
 	}
 }

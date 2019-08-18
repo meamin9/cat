@@ -8,9 +8,9 @@ import (
 	"github.com/davyxu/cellnet/proc"
 )
 
-type NetEvent interface {
-	cellnet.Event
-	MsgId() int
+type RPCMsg struct {
+	SessionId uint16
+	Message interface{}
 }
 
 type network struct {
