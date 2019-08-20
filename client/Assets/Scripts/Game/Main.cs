@@ -1,33 +1,27 @@
 ﻿using AM.Base;
 using System.Collections;
 
-namespace AM.Game
-{
-    public class Main
-    {
-        public static void Start()
-        {
+namespace AM.Game {
+    public class Main {
+        public static void Start() {
             MonoProxy.Instance.StartCoroutine(Initialize());
         }
 
-        private static IEnumerator Initialize()
-        {
-            yield return AssetMgr.InitAsync();
-            yield return AssetMgr.Instance.LoadAssetAsync(nameof(GameSetting) + ".asset", GameSetting.Load);
-
-
+        private static IEnumerator Initialize() {
             Log.Info("Game Start");
-            // base moudle
+            yield return AssetMgr.InitAsync();
+            // 加载所有setting
+            yield return MonoProxy.Instance.StartCoroutine(Setting.LoadSetting());
             RandomExt.Init();
             TimeExt.Init();
-
             UIManager.Init();
-            //Network.Connect();
+            // 连接网络
+            Network.Connect();
             // 加载配表1
             yield return MonoProxy.Instance.StartCoroutine(Conf.LoadBaseConfig());
 
             //Initialize();
-            
+
         }
     }
 }

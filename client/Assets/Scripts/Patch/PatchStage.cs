@@ -36,7 +36,7 @@ namespace AM.Patch
         {
             yield return Base.AssetMgr.InitAsync();
             AppVersion version;
-            var versionUrl = AppConfig.Instance.PatchUrl + AssetMgr.VERSION_FILE;
+            var versionUrl = AppSetting.Instance.PatchUrl + AssetMgr.VERSION_FILE;
             using (var www = new WWW(versionUrl))
             {
                 yield return www;
@@ -62,7 +62,7 @@ namespace AM.Patch
                 Directory.CreateDirectory(patchDir);
             }
             Dictionary<string, BundleEntry> assets;
-            var assetsUrl = AppConfig.Instance.PatchUrl + AssetMgr.ASSETS_FILE;
+            var assetsUrl = AppSetting.Instance.PatchUrl + AssetMgr.ASSETS_FILE;
             using (var www = new WWW(assetsUrl))
             {
                 yield return www;
@@ -114,7 +114,7 @@ namespace AM.Patch
             for (var i = beginIndex; i < endIndex; ++i)
             {
                 var asset = assets[i];
-                var url = AppConfig.Instance.PatchUrl + asset.Key;
+                var url = AppSetting.Instance.PatchUrl + asset.Key;
                 var info = asset.Value;
                 var fileName = asset.Key + asset.Value.Version.ToString();
                 var filePath = Path.Combine(AssetMgr.PatchDir, fileName);
@@ -172,8 +172,8 @@ namespace AM.Patch
         {
             AssetMgr.Instance.Clear();
             AssetMgr.Instance.LoadAssetsTable();
-            AssetMgr.Instance.LoadAsync("AM.Game.bytes", (req) => {
-                var textAsset = req.Asset as TextAsset;
+            AssetMgr.Instance.LoadAsync("AM.Game.bytes", (asset) => {
+                var textAsset = asset as TextAsset;
                 var game = Assembly.Load(textAsset.bytes);
                 var type = game.GetType("AM.Game.GameStage");
                 //var ins = Activator.CreateInstance(type);

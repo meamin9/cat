@@ -4,47 +4,39 @@ using System.Text;
 using UnityEngine;
 using AM.Base;
 
-namespace AM.Game
-{
+namespace AM.Game {
 
-    public static class CameraManager
-    {
+    public static class CameraManager {
         private static TargetFollow _follow;
 
-        static CameraManager()
-        {
+        static CameraManager() {
             var camera = Camera.main;
             var adapter = camera.gameObject.AddComponent<LateUpdateAdapter>();
             adapter.lateUpdate += LateUpdate;
         }
 
-        public static void StopFollow()
-        {
+        public static void StopFollow() {
             _follow = null;
         }
 
-        public static void FollowTarget(Transform target)
-        {
+        public static void FollowTarget(Transform target) {
             var camera = Camera.main;
-            camera.fieldOfView = AppSetting.Instance.FOV;
-            _follow = new TargetFollow(camera.transform, target, AppSetting.Instance.RelativePosition);
+            camera.fieldOfView = Setting.Game.FOV;
+            _follow = new TargetFollow(camera.transform, target, Setting.Game.RelativePosition);
         }
 
-        public static void LateUpdate()
-        {
+        public static void LateUpdate() {
             _follow?.Update();
         }
     }
 
 
-    public class TargetFollow
-    {
+    public class TargetFollow {
         public Transform _target;
         public Vector3 _offset;
         public Transform _source;
 
-        public TargetFollow(Transform source, Transform target, Vector3 offset)
-        {
+        public TargetFollow(Transform source, Transform target, Vector3 offset) {
             _source = source;
             _target = target;
             _offset = offset;
@@ -52,8 +44,7 @@ namespace AM.Game
         }
 
 
-        public void Update()
-        {
+        public void Update() {
             _source.position = _target.position + _offset;
         }
     }

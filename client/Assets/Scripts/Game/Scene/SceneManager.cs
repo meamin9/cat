@@ -84,7 +84,7 @@ namespace AM.Game
             }
 
             var bundleInfo = AssetMgr.Instance.GetBundleInfo(sceneAsset);
-            yield return AssetMgr.Instance.LoadBundleAssyync(bundleInfo, null);
+            yield return AssetMgr.Instance.LoadBundleAsync(bundleInfo, null);
             if (hasWaitLoadScene()) {
                 //TODO: unload bundle
                 _EndSwitchScene();

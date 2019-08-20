@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio for Mac
+# Visual Studio 15
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Third.EasyTouch", "Third.EasyTouch.csproj", "{9379DA08-3880-7584-C595-5C3C980B9453}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AM.Game", "AM.Game.csproj", "{3DAEC964-2801-BA12-8A64-01A035B96F02}"

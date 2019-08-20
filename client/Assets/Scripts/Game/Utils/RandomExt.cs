@@ -4,13 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AM.Game
-{
+namespace AM.Game {
     /**unity**/
-    public static class RandomExt
-    {
-        public static void Init()
-        {
+    public static class RandomExt {
+        public static void Init() {
             UnityEngine.Random.InitState((int)System.DateTime.Now.ToFileTime());
         }
     }

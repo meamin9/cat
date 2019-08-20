@@ -2,12 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using AssetMgr = AM.Base.AssetMgr;
 
-namespace AM.Game
-{
-    public static class UIManager
-    {
-        struct LoadingInfo
-        {
+namespace AM.Game {
+    public static class UIManager {
+        struct LoadingInfo {
             public UIType UIType;
             public System.Action<IBaseUI> Callback;
         }
@@ -16,22 +13,19 @@ namespace AM.Game
         static List<IBaseUI> _uiList = new List<IBaseUI>();
         static List<LoadingInfo> _uiLoadings = new List<LoadingInfo>(); //正在加载的界面
         static Dictionary<UIType, IBaseUI> _uiCache = new Dictionary<UIType, IBaseUI>();
-        
-        public static void Init()
-        {
+
+        public static void Init() {
             var ui = GameObject.Find("Canvas");
             Log.ErrorIf(!ui, "not found Canvas");
             _root = ui.transform;
             InitLayer();
             UIConfig.LoadUIConfig();
         }
-        public static Transform Layer(UILayer layer)
-        {
+        public static Transform Layer(UILayer layer) {
             return _root.GetChild((int)layer);
         }
 
-        private static void InitLayer()
-        {
+        private static void InitLayer() {
             var count = (int)UILayer.Count;
             for (var i = 0; i < count; ++i) {
                 var layer = new GameObject("Layer_" + i);
@@ -39,8 +33,7 @@ namespace AM.Game
             }
         }
 
-        public static void Show(UIType uitype, System.Action<IBaseUI> callback=null)
-        {
+        public static void Show(UIType uitype, System.Action<IBaseUI> callback = null) {
             var ui = Find(uitype);
             if (ui != null) {
                 ui.gameObject.SetActive(true);
@@ -68,12 +61,12 @@ namespace AM.Game
                 }
             }
             var info = UIConfig.All[uitype];
-            _uiLoadings.Add(new LoadingInfo() {UIType=uitype, Callback=callback});
-            AssetMgr.Instance.LoadAsync(info.PrefabPath, (req) => {
+            _uiLoadings.Add(new LoadingInfo() { UIType = uitype, Callback = callback });
+            AssetMgr.Instance.LoadAsync(info.PrefabPath, (asset) => {
                 for (var i = 0; i < _uiLoadings.Count; ++i) {
                     if (_uiLoadings[i].UIType == uitype) {
                         ui = info.creator();
-                        ui.gameObject = GameObject.Instantiate(req.Asset as GameObject, Layer(info.Layer));
+                        ui.gameObject = GameObject.Instantiate(asset as GameObject, Layer(info.Layer));
                         ui.UIType = info.UIType;
                         _uiList.Add(ui);
                         ui.OnAttach();
@@ -87,8 +80,7 @@ namespace AM.Game
             });
         }
 
-        public static IBaseUI Find(UIType type)
-        {
+        public static IBaseUI Find(UIType type) {
             var n = _uiList.Count;
             for (var i = 0; i < n; ++i) {
                 if (_uiList[i].UIType == type) {
@@ -98,17 +90,16 @@ namespace AM.Game
             return null;
         }
 
-        public static void Close(UIType uitype)
-        {
+        public static void Close(UIType uitype) {
             var n = _uiLoadings.Count;
-            for (var i = n - 1; i >=0; --i) {
+            for (var i = n - 1; i >= 0; --i) {
                 if (_uiLoadings[i].UIType == uitype) {
                     _uiLoadings.RemoveAt(i);
                     return;
                 }
             }
             n = _uiList.Count;
-            for (var i = n-1; i >= 0; --i) {
+            for (var i = n - 1; i >= 0; --i) {
                 if (_uiList[i].UIType == uitype) {
                     DestroyUI(_uiList[i]);
                     _uiList.RemoveAt(i);
@@ -117,14 +108,12 @@ namespace AM.Game
             }
         }
 
-        private static void DestroyUI(IBaseUI ui)
-        {
+        private static void DestroyUI(IBaseUI ui) {
             ui.OnHide();
             if (ui.gameObject.transform.parent == Layer(UILayer.Main)) {
                 ui.gameObject.SetActive(false);
                 _uiCache[ui.UIType] = ui;
-            }
-            else {
+            } else {
                 ui.OnDetach();
                 GameObject.Destroy(ui.gameObject);
             }

@@ -5,21 +5,21 @@ using System.Collections.Generic;
 
 namespace AM.Base
 {
-    public enum AsyncState
-    {
-        Processing,
-        Finish,
-    }
-    public struct AsyncInfo
-    {
-        public AsyncState State;
-        public System.Action<AsyncInfo> Callback;
-        public Object Asset;
-        public Coroutine Coroutine;
-
-    }
     public class AssetMgr
     {
+        private enum AsyncState {
+            Processing,
+            Finish,
+        }
+
+        private struct AsyncInfo {
+            public AsyncState State;
+            public System.Action<Object> Callback;
+            public Object Asset;
+            public Coroutine Coroutine;
+
+        }
+
         public static readonly AssetMgr Instance = new AssetMgr();
 
         AssetBundleManifest _manifest;
@@ -49,12 +49,12 @@ namespace AM.Base
         {
             yield return AssetMgr.Instance.LoadAssetManifest();
 #if UNITY_EDITOR
-            var asset = Resources.Load("Config/" + nameof(AppConfig));
-            AppConfig.Load(asset);
+            var asset = Resources.Load("Config/" + nameof(AppSetting));
+            AppSetting.Load(asset);
 #endif
-            if (!AppConfig.IsLoaded() || !AppConfig.Instance.LoadInResource) {
-                yield return AssetMgr.Instance.LoadAssetAsync(nameof(AppConfig) + ".asset", (req) => {
-                    AppConfig.Load(req.Asset);
+            if (!AppSetting.IsLoaded() || !AppSetting.Instance.LoadInResource) {
+                yield return AssetMgr.Instance.LoadAssetAsync(nameof(AppSetting) + ".asset", (ret) => {
+                    AppSetting.Load(ret);
                 });
             }
         }
@@ -89,19 +89,9 @@ namespace AM.Base
         public void Clear()
         {
             _manifest = null;
-            //foreach(var it in _cacheBundles)
-            //{
-            //    it.Value.Unload(false);
-            //}
             _cacheBundles.Clear();
-            //_bundleHandles.Clear();
-
             _cacheAssets.Clear();
-            //_assetHandles.Clear();
-
             _cacheRes.Clear();
-            //_resHandles.Clear();
-
             _asset2BundleInfoT.Clear();
             _bundleEntryC.Clear();
 
@@ -109,7 +99,7 @@ namespace AM.Base
             Resources.UnloadUnusedAssets();
         }
 
-
+        // 加载资源表
         public void LoadAssetsTable()
         {
             // 1. read current version
@@ -150,69 +140,21 @@ namespace AM.Base
                     _asset2BundleInfoT[conf.Assets[i]] = bundle;
                 }
             }
-            //            LoadAssetAsync("AssetBundleManifest", (asset) =>
-            //            {
-            //                _manifest = asset as AssetBundleManifest;
-            //            });
-            //#if UNITY_EDITOR
-            //            AppConfig.Load(Resources.Load("AppConfig"));
-            //#else
-            //            LoadAssetAsync("AppConfig.asset", (asset) => {
-            //                AppConfig.Load(asset);
-            //            });
-            //#endif
         }
-        public Coroutine LoadAssetManifest()
+        private Coroutine LoadAssetManifest()
         {
-            return LoadAssetAsync("AssetBundleManifest", (req) => {
-                _manifest = req.Asset as AssetBundleManifest;
+            return LoadAssetAsync("AssetBundleManifest", (asset) => {
+                _manifest = asset as AssetBundleManifest;
             });
         }
         #endregion
 
-        //private List<AsyncOperation> _sceneAsyncList = new List<AsyncOperation>();
-        //public void LoadSceneAsync(string sceneName, System.Action callback)
-        //{
-        //    BundleInfo entry;
-        //    if (!_asset2BundleEntryT.TryGetValue(sceneName, out entry))
-        //    {
-        //        Log.Errorf("Not Found Bundle for:{0}", sceneName);
-        //        callback?.Invoke();
-        //        return;
-        //    }
-        //    LoadBundleAsync(entry, (bundle) =>
-        //    {
-        //        MonoProxy.Instance.StartCoroutine(_loadSceneCoroutine(sceneName, callback));
-        //    });
-        //}
-
-        //private IEnumerator _loadSceneCoroutine(string sceneName, System.Action callback)
-        //{
-        //    AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-        //    _sceneAsyncList.Add(operation);
-        //    yield return operation;
-        //    _sceneAsyncList.Remove(operation);
-        //    callback?.Invoke();
-        //}
-        //public float SceneLoadProgress()
-        //{
-        //    if (_sceneAsyncList.Count == 0)
-        //    {
-        //        return 1.0f;
-        //    }
-        //    return _sceneAsyncList[_sceneAsyncList.Count - 1].progress;
-        //}
-
-        //public int LoadingCount()
-        //{
-        //    return _cacheAssets.Count;
-        //}
-        public Coroutine LoadAssetAsync(string assetName, System.Action<AsyncInfo> callback)
+        private Coroutine LoadAssetAsync(string assetName, System.Action<Object> callback)
         {
             AsyncInfo info;
             if (_cacheAssets.TryGetValue(assetName, out info)) {
                 if (info.State == AsyncState.Finish) {
-                    callback?.Invoke(info);
+                    callback?.Invoke(info.Asset);
                     return null;
                 }
                 else {
@@ -267,11 +209,11 @@ namespace AM.Base
                     State = AsyncState.Finish,
                     Asset = asset
                 };
-                info.Callback?.Invoke(info);
+                info.Callback?.Invoke(asset);
             }
         }
 
-        public Coroutine LoadBundleAsync(string bundleName, System.Action<AsyncInfo> handle)
+        private Coroutine LoadBundleAsync(string bundleName, System.Action<Object> handle)
         {
             BundleInfo entry;
             if (!_bundleEntryC.TryGetValue(bundleName, out entry)) {
@@ -284,7 +226,7 @@ namespace AM.Base
         /// <summary>
         /// 加载的协程，如果返回Coroutine的完成
         /// </summary>
-        public Coroutine LoadBundleAsync(BundleInfo bundleEntry, System.Action<AsyncInfo> callback)
+        public Coroutine LoadBundleAsync(BundleInfo bundleEntry, System.Action<Object> callback)
         {
             string name = bundleEntry.Name;
 #if UNITY_EDITOR
@@ -297,7 +239,7 @@ namespace AM.Base
             AsyncInfo info;
             if (_cacheBundles.TryGetValue(name, out info)) {
                 if (info.State == AsyncState.Finish) {
-                    callback?.Invoke(info);
+                    callback?.Invoke(info.Asset);
                     return null;
                 }
                 else {
@@ -311,7 +253,7 @@ namespace AM.Base
                 Callback = callback
             };
             _cacheBundles.Add(name, info);
-            var coroutine = MonoProxy.Instance.StartCoroutine(_loadBundleAssetCoroutine(bundleEntry));
+            var coroutine = MonoProxy.Instance.StartCoroutine(_loadBundleCoroutine(bundleEntry));
             if (coroutine != null) {
                 info.Coroutine = coroutine; // 记录下，在重复load时再次返回这个协程
                 _cacheAssets[name] = info;
@@ -319,7 +261,7 @@ namespace AM.Base
             return coroutine;
         }
 
-        private IEnumerator _loadBundleAssetCoroutine(BundleInfo entry)
+        private IEnumerator _loadBundleCoroutine(BundleInfo entry)
         {
             var name = entry.Name;
             if (_manifest != null) {
@@ -341,17 +283,17 @@ namespace AM.Base
                     State = AsyncState.Finish,
                     Asset = bundle
                 };
-                info.Callback?.Invoke(info);
+                info.Callback?.Invoke(bundle);
             }
         }
 
-        public Coroutine LoadResourceAsync(string assetName, System.Action<AsyncInfo> callback)
+        private Coroutine LoadResourceAsync(string assetName, System.Action<Object> callback)
         {
             //var assetName = assetName;
             AsyncInfo info;
             if (_cacheRes.TryGetValue(assetName, out info)) {
                 if (info.State == AsyncState.Finish) {
-                    callback?.Invoke(info);
+                    callback?.Invoke(info.Asset);
                     return null;
                 }
                 else {
@@ -380,7 +322,7 @@ namespace AM.Base
                     State = AsyncState.Finish,
                     Asset = req.asset
                 };
-                info.Callback?.Invoke(info);
+                info.Callback?.Invoke(req.asset);
             }
         }
 
@@ -409,7 +351,7 @@ namespace AM.Base
         /// <summary>
         /// 加载asset资源统一接口
         /// </summary>
-        public Coroutine LoadAsync(string path, System.Action<AsyncInfo> handle)
+        public Coroutine LoadAsync(string path, System.Action<Object> handle)
         {
 #if UNITY_EDITOR
             Debug.LogFormat("Begin Load Asset:{0}", path);
@@ -418,7 +360,7 @@ namespace AM.Base
                 Debug.LogFormat("End Load Asset:{0}, Cost Time:{1}", path, Time.time - begin);
             };
 #endif
-            if (AppConfig.Instance.LoadInResource) {
+            if (AppSetting.Instance.LoadInResource) {
                 path = ResFullPaths[path];
                 return LoadResourceAsync(path, handle);
             }

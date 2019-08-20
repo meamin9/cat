@@ -20,9 +20,9 @@ namespace AM.Game
         public string Asset { get; }
 
         public static Dictionary<int, SceneConf> All { get; private set; }
-        public static void Parse(AsyncInfo info)
+        public static void Parse(Object info)
         {
-            All = JsonMapper.ToObject<Dictionary<int, SceneConf>>((info.Asset as TextAsset).text);
+            All = JsonMapper.ToObject<Dictionary<int, SceneConf>>((info as TextAsset).text);
         }
     }
 

@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace AM.Game
-{
-    public class LockQueue<T>
-    {
+namespace AM.Game {
+    public class LockQueue<T> {
         private List<T> _queue = new List<T>();
 
         public void Post(T mail) {
@@ -13,8 +11,7 @@ namespace AM.Game
             try {
                 _queue.Add(mail);
                 Monitor.Pulse(_queue);
-            }
-            finally {
+            } finally {
                 Monitor.Exit(_queue);
             }
         }
@@ -28,8 +25,7 @@ namespace AM.Game
                 }
                 list.AddRange(_queue);
                 _queue.Clear();
-            }
-            finally {
+            } finally {
                 Monitor.Exit(_queue);
             }
 
@@ -41,8 +37,7 @@ namespace AM.Game
                 try {
                     list.AddRange(_queue);
                     _queue.Clear();
-                }
-                finally {
+                } finally {
                     Monitor.Exit(_queue);
                 }
             }

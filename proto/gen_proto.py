@@ -143,7 +143,7 @@ namespace Proto {{
 	
 	public interface ISession {{
 		uint Session {{ get; set; }}
-		uint Err {{ get; set; }}
+		int Err {{ get; set; }}
 	}}
 
 {interface}
