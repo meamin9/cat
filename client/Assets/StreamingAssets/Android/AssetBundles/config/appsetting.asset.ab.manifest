@@ -1,18 +1,16 @@
 ManifestFileVersion: 0
-CRC: 3275891808
+CRC: 821547947
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 8e2bfb9c254016b2f7c56d267ef41932
+    Hash: ee99b43cd344531d3ebea8a5181cf936
   TypeTreeHash:
     serializedVersion: 2
-    Hash: a73569320d5aea1097bbfdc6131926ee
+    Hash: 7dfb045827e1bc42b15dd84b6536b54c
 HashAppended: 0
 ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: c5d1725b8e506a0409b074c0413401ac, type: 3}
-- Class: 115
-  Script: {instanceID: 0}
 Assets:
 - Assets/Resources/Config/AppSetting.asset
 Dependencies: []

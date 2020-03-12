@@ -1,9 +1,9 @@
 ManifestFileVersion: 0
-CRC: 2843704767
+CRC: 83201443
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 9bd960e982b8eace5e219f344ea4aa2e
+    Hash: 81cf95a1e4ca218aa54336a94d6a4c0e
   TypeTreeHash:
     serializedVersion: 2
     Hash: 5ad585dd02dfb5016c0dad519eab8f49
@@ -12,5 +12,7 @@ ClassTypes:
 - Class: 49
   Script: {instanceID: 0}
 Assets:
-- Assets/Resources/Tables/SceneCfg.json
+- Assets/Resources/Tables/entity.json
+- Assets/Resources/Tables/UI.json
+- Assets/Resources/Tables/SceneConf.json
 Dependencies: []

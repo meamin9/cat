@@ -9,18 +9,18 @@ namespace AM.Game
     public class SceneObject
     {
 
-        public SceneConf Conf { get; private set;}
+        public SceneEntry Conf { get; private set;}
 
         public static SceneObject CreateScene(int sceneId)
         {
-            if (!SceneConf.All.TryGetValue(sceneId, out SceneConf conf)) {
+            if (!Entry<SceneEntry>.All.TryGetValue(sceneId, out SceneEntry conf)) {
                 Log.Error($"not Found Scene: {sceneId}");
                 return null;
             }
             return new SceneObject(conf);
         }
 
-        protected SceneObject(SceneConf conf)
+        protected SceneObject(SceneEntry conf)
         {
             Conf = conf;
         }

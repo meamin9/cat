@@ -1,70 +1,67 @@
 ManifestFileVersion: 0
-CRC: 499793341
+CRC: 379718003
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
-      Name: views/uiloading.prefab.ab
-      Dependencies: {}
-    Info_1:
-      Name: scenes/testscene/s_test.unity.ab
-      Dependencies:
-        Dependency_0: scenes/materials/floor1.mat.ab
-        Dependency_1: scenes/testscene/s_test/lightmap-0_comp_dir.png.ab
-        Dependency_2: scenes/testscene/s_test/lightmap-1_comp_dir.png.ab
-        Dependency_3: scenes/testscene/s_test/lightmap-0_comp_shadowmask.png.ab
-        Dependency_4: scenes/testscene/s_test/lightmap-1_comp_shadowmask.png.ab
-    Info_2:
-      Name: tables.ab
-      Dependencies: {}
-    Info_3:
-      Name: avatar/entity.prefab.ab
-      Dependencies: {}
-    Info_4:
-      Name: ui/canvas.prefab.ab
-      Dependencies: {}
-    Info_5:
-      Name: ui/loginui.prefab.ab
-      Dependencies: {}
-    Info_6:
-      Name: ui/startui.prefab.ab
-      Dependencies: {}
-    Info_7:
-      Name: ui/joystickui.prefab.ab
-      Dependencies: {}
-    Info_8:
-      Name: config/baseconfig.asset.ab
-      Dependencies: {}
-    Info_9:
       Name: config/appsetting.asset.ab
       Dependencies: {}
+    Info_1:
+      Name: ui/loginui.prefab.ab
+      Dependencies: {}
+    Info_2:
+      Name: scenes/testscene/s_test/lightmap-0_comp_shadowmask.png.ab
+      Dependencies: {}
+    Info_3:
+      Name: ui/canvas.prefab.ab
+      Dependencies: {}
+    Info_4:
+      Name: scenes/testscene/s_test/lightmap-0_comp_dir.png.ab
+      Dependencies: {}
+    Info_5:
+      Name: views/uiloading.prefab.ab
+      Dependencies: {}
+    Info_6:
+      Name: scenes/testscene/s_test/lightmap-1_comp_shadowmask.png.ab
+      Dependencies: {}
+    Info_7:
+      Name: texture/rare.png.ab
+      Dependencies: {}
+    Info_8:
+      Name: scenes/testscene/s_test.unity.ab
+      Dependencies:
+        Dependency_0: scenes/testscene/s_test/lightmap-0_comp_shadowmask.png.ab
+        Dependency_1: scenes/testscene/s_test/lightmap-0_comp_dir.png.ab
+        Dependency_2: scenes/testscene/s_test/lightmap-1_comp_shadowmask.png.ab
+        Dependency_3: scenes/testscene/s_test/lightmap-1_comp_dir.png.ab
+        Dependency_4: scenes/materials/floor1.mat.ab
+    Info_9:
+      Name: scenes/textures/floor2.jpg.ab
+      Dependencies: {}
     Info_10:
-      Name: avatar/unitychan.prefab.ab
+      Name: config/baseconfig.asset.ab
       Dependencies: {}
     Info_11:
+      Name: ui/startui.prefab.ab
+      Dependencies: {}
+    Info_12:
+      Name: scenes/testscene/s_test/lightmap-1_comp_dir.png.ab
+      Dependencies: {}
+    Info_13:
+      Name: ui/joystickui.prefab.ab
+      Dependencies: {}
+    Info_14:
       Name: scenes/materials/floor1.mat.ab
       Dependencies:
         Dependency_0: scenes/textures/floor1.jpg.ab
-    Info_12:
-      Name: scenes/textures/floor1.jpg.ab
-      Dependencies: {}
-    Info_13:
-      Name: scenes/textures/floor2.jpg.ab
-      Dependencies: {}
-    Info_14:
-      Name: scenes/textures/floor_1.jpg.ab
-      Dependencies: {}
     Info_15:
-      Name: scenes/testscene/s_test/lightmap-0_comp_dir.png.ab
+      Name: avatar/entity.prefab.ab
       Dependencies: {}
     Info_16:
-      Name: scenes/testscene/s_test/lightmap-1_comp_dir.png.ab
+      Name: scenes/textures/floor_1.jpg.ab
       Dependencies: {}
     Info_17:
-      Name: texture/rare.png.ab
+      Name: scenes/textures/floor1.jpg.ab
       Dependencies: {}
     Info_18:
-      Name: scenes/testscene/s_test/lightmap-0_comp_shadowmask.png.ab
-      Dependencies: {}
-    Info_19:
-      Name: scenes/testscene/s_test/lightmap-1_comp_shadowmask.png.ab
+      Name: tables.ab
       Dependencies: {}
