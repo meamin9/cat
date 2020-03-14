@@ -34,12 +34,17 @@ namespace AM.Game
         }
 
         private IEnumerator DoLoadAvatar() {
+            GameObject skeleton;
             yield return AssetMgr.Instance.LoadAsync(SkeletonPath, (asset) => {
-                //entity.gameObject = GameObject.Instantiate<GameObject>(asset as GameObject);
+                skeleton = GameObject.Instantiate<GameObject>(asset as GameObject);
             });
             yield return AssetMgr.Instance.LoadAsync(SkinPath, (asset) => {
                 //entity.gameObject = GameObject.Instantiate<GameObject>(asset as GameObject);
             });
+        }
+
+        private void InitSkeleton(GameObject skeleton) {
+
         }
     }
 }
