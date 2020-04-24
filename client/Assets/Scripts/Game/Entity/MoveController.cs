@@ -51,9 +51,6 @@ namespace AM.Game
             }
         }
 
-
-
-
         public void OnAnimatorMove()
         {
             // 转向
