@@ -3,6 +3,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Animations;
+using UnityEngine.Playables;
 
 namespace AM.Game
 {
@@ -60,6 +62,30 @@ namespace AM.Game
     #endregion
     public class AnimController
     {
+
+        PlayableGraph mGraph;
+        PlayableOutput mOutput;
+
+        AnimationClip[] mClips;
+        
+
+        public void Create(GameObject go) {
+            var animator = go.GetComponent<Animator>();
+            if (animator == null) {
+                animator = go.AddComponent<Animator>();
+            }
+            mGraph = new PlayableGraph();
+            mOutput = AnimationPlayableOutput.Create(mGraph, "Animation", animator);
+        }
+
+        public void PlayAnimation(AnimationClip clip) {
+            var clipPlayable = AnimationClipPlayable.Create(mGraph, clip);
+            mOutput.SetSourcePlayable(clipPlayable);
+            mGraph.Play();
+        }
+
+
+
         public Animator _anim;
         public int TransId { get; private set; }
         public ERoleAnimState AnimState { get; private set; }
