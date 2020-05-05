@@ -1,25 +1,41 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Animations;
+using UnityEngine.Audio;
 using UnityEngine.Playables;
 
+public enum ETrack {
+    BGM,
+    Sounds,
 
-public class AnimationController : PlayableBehaviour {
+    Count
+}
+
+public class SoundManager : PlayableBehaviour {
     private Playable mMixer;
     private Action<int> mFinishCb;
-    private ScriptPlayable<AnimationController> mPlayable;
+    private ScriptPlayable<SoundManager> mPlayable;
     private PlayableGraph mGraph;
     public PlayableGraph Graph => mGraph;
 
-    public static AnimationController Create(GameObject go) {
-        var animator = go.GetComponent<Animator>() ?? go.AddComponent<Animator>();
-        var graph = PlayableGraph.Create("Action");
-        var playable = ScriptPlayable<AnimationController>.Create(graph);
-        var animOut = AnimationPlayableOutput.Create(graph, "Animation", animator);
-        animOut.SetSourcePlayable(playable, 0);
+    private Playable[] mTracks;
+    public static SoundManager Create(GameObject go) {
+        var audioSource = go.GetComponent<AudioSource>() ?? go.AddComponent<AudioSource>();
+        var graph = PlayableGraph.Create("AudioPlayable");
+        var audioOut = AudioPlayableOutput.Create(graph, "Audio", audioSource);
 
-        var mixer = AnimationMixerPlayable.Create(graph);
+        var playable = ScriptPlayable<SoundManager>.Create(graph);
+        audioOut.SetSourcePlayable(playable, 0);
+
+        var trackCount = (int)ETrack.Count;
+        var mixer = AudioMixerPlayable.Create(graph, trackCount);
         playable.AddInput(mixer, 0, 1);
+        for (var i = 0; i < trackCount; ++i) {
+            mixer.AddInput(AudioMixerPlayable.Create(graph), i, 1);
+        }
 
         var behaviour = playable.GetBehaviour();
         behaviour.mGraph = graph;
@@ -34,44 +50,6 @@ public class AnimationController : PlayableBehaviour {
     private float mActionTime;
 
     private ulong mFinishFrameId;
-    public void PlayAnimation(AnimationClip clip, Action<int> finishCb) {
-        mFinishCb?.Invoke(-1);
-        mFinishCb = finishCb;
-        PlayAnimation(clip);
-    }
-    public void PlayAnimation(AnimationClip clip, AnimationClip clip2, Action<int> finishCb) {
-        mFinishCb?.Invoke(-1);
-        mFinishCb = (code) => {
-            if (code == 0) {
-                mFinishCb = finishCb;
-                PlayAnimation(clip2);
-            }
-        };
-        PlayAnimation(clip);
-    }
-
-    private void PlayAnimation(AnimationClip clip) {
-        mFinishFrameId = 0;
-        mActionTime = clip.length;
-        var count = mMixer.GetInputCount();
-        if (count == 0) {
-            mMixer.AddInput(AnimationClipPlayable.Create(mGraph, clip), 0, 1);
-        } else {
-            mTransitionTime = mTransitionDuration;
-            mMixer.AddInput(AnimationClipPlayable.Create(mGraph, clip), 0, 0);
-        }
-        if (!mGraph.IsPlaying()) {
-            mGraph.Play();
-        }
-    }
-    public void ClearAnimation() {
-        var count = mMixer.GetInputCount();
-        for (var i = 0; i < count; ++i) {
-            mMixer.GetInput(i).Destroy();
-        }
-        mMixer.SetInputCount(0);
-        mGraph.Stop();
-    }
 
     override public void PrepareFrame(Playable owner, FrameData info) {
         if (mFinishFrameId == info.frameId) {
@@ -112,8 +90,31 @@ public class AnimationController : PlayableBehaviour {
             }
         }
     }
+    public void LoadSound(string audioName) {
 
-    public void Destory() {
-        mGraph.Destroy();
     }
+
+    public void Play(ETrack track, string audioName) {
+
+    }
+
+    public void Play(ETrack track, AudioClip audioClip) {
+        var playable = mMixer.GetInput((int)track);
+        if (track == ETrack.BGM) {
+            //playable.GetInputCount()
+            //foreach (var p in ) {
+
+            //}
+        }
+    }
+
+    public void SetVolume(ETrack track, float volume) {
+        mMixer.SetInputWeight((int)track, volume);
+    }
+
+    public void SetMute(ETrack track, bool mute) {
+        SetVolume(track, mute ? 1 : 0);
+    }
+    
 }
+ 
