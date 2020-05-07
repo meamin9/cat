@@ -51,14 +51,29 @@ public class AnimationController : PlayableBehaviour {
     }
 
     private void PlayAnimation(AnimationClip clip) {
-        mFinishFrameId = 0;
-        mActionTime = clip.length;
         var count = mMixer.GetInputCount();
+        if (count > 0) {
+            var animPlayable = (AnimationClipPlayable)mMixer.GetInput(count - 1);
+            if (animPlayable.GetAnimationClip() == clip) {
+                if (!clip.isLooping) {
+                    animPlayable.SetTime(0);
+                    mActionTime = clip.length;
+                }
+                if (!mGraph.IsPlaying()) {
+                    mGraph.Play();
+                }
+                return;
+            }
+        }
+        var playable = AnimationClipPlayable.Create(mGraph, clip);
+        if (!clip.isLooping) {
+            mActionTime = clip.length;
+        }
         if (count == 0) {
-            mMixer.AddInput(AnimationClipPlayable.Create(mGraph, clip), 0, 1);
+            mMixer.AddInput(playable, 0, 1);
         } else {
             mTransitionTime = mTransitionDuration;
-            mMixer.AddInput(AnimationClipPlayable.Create(mGraph, clip), 0, 0);
+            mMixer.AddInput(playable, 0, 0);
         }
         if (!mGraph.IsPlaying()) {
             mGraph.Play();
@@ -75,7 +90,6 @@ public class AnimationController : PlayableBehaviour {
 
     override public void PrepareFrame(Playable owner, FrameData info) {
         if (mFinishFrameId == info.frameId) {
-            mFinishFrameId = 0;
             var cb = mFinishCb;
             mFinishCb = null;
             cb.Invoke(0);
@@ -108,7 +122,6 @@ public class AnimationController : PlayableBehaviour {
             mActionTime -= info.deltaTime;
             if (mActionTime <= 0 && mFinishCb != null) {
                 mFinishFrameId = info.frameId + 2;
-
             }
         }
     }

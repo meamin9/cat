@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Playables;
 
-public enum ETrack {
+public enum EAudioChannel {
     BGM,
     Sounds,
 
@@ -16,12 +16,10 @@ public enum ETrack {
 
 public class SoundManager : PlayableBehaviour {
     private Playable mMixer;
-    private Action<int> mFinishCb;
     private ScriptPlayable<SoundManager> mPlayable;
     private PlayableGraph mGraph;
     public PlayableGraph Graph => mGraph;
 
-    private Playable[] mTracks;
     public static SoundManager Create(GameObject go) {
         var audioSource = go.GetComponent<AudioSource>() ?? go.AddComponent<AudioSource>();
         var graph = PlayableGraph.Create("AudioPlayable");
@@ -30,7 +28,7 @@ public class SoundManager : PlayableBehaviour {
         var playable = ScriptPlayable<SoundManager>.Create(graph);
         audioOut.SetSourcePlayable(playable, 0);
 
-        var trackCount = (int)ETrack.Count;
+        var trackCount = (int)EAudioChannel.Count;
         var mixer = AudioMixerPlayable.Create(graph, trackCount);
         playable.AddInput(mixer, 0, 1);
         for (var i = 0; i < trackCount; ++i) {
@@ -44,76 +42,107 @@ public class SoundManager : PlayableBehaviour {
         return behaviour;
     }
 
-    private float mTransitionDuration = 0.2f;
-    private float mTransitionTime;
+    #region BGM
+    private float mSingleTransitionOut;
+    private float mSingleTransitionIn;
+    private const float mSingleTransitionTime = 1.5f;
+    private AudioClip mBgmAudioClip;
 
-    private float mActionTime;
-
-    private ulong mFinishFrameId;
-
-    override public void PrepareFrame(Playable owner, FrameData info) {
-        if (mFinishFrameId == info.frameId) {
-            mFinishFrameId = 0;
-            var cb = mFinishCb;
-            mFinishCb = null;
-            cb.Invoke(0);
+    public void PlayBGM(AudioClip audioClip) {
+        mBgmAudioClip = audioClip;
+        var bgm = mMixer.GetInput((int)EAudioChannel.BGM);
+        if (IsMute(EAudioChannel.BGM)) {
             return;
         }
+        if (bgm.GetInputCount() == 0) {
+            bgm.AddInput(AudioClipPlayable.Create(mGraph, audioClip, true), 0, 0);
+            mSingleTransitionIn = mSingleTransitionTime;
+            return;
+        }
+        mSingleTransitionOut = mSingleTransitionIn = mSingleTransitionTime;
+    }
+
+    private void PrepareSingleTrack(Playable owner, float deltaTime) {
+        var count = owner.GetInputCount();
+        if (count == 0) {
+            return;
+        }
+        if (mSingleTransitionOut > 0f) {
+            mSingleTransitionOut -= deltaTime;
+            var t = Mathf.Clamp01(1 - mSingleTransitionOut / mSingleTransitionTime);
+            var weight = owner.GetInputWeight(0);
+            owner.SetInputWeight(0, Mathf.Lerp(weight, 0, t));
+        }
+        else if (mSingleTransitionIn > 0f && mBgmAudioClip != null) {
+            var playable = (AudioClipPlayable)owner.GetInput(0);
+            if (playable.GetClip() != mBgmAudioClip) {
+                playable.SetClip(mBgmAudioClip);
+                playable.SetTime(0);
+            }
+            mSingleTransitionIn -= deltaTime;
+            var t = Mathf.Clamp01(1 - mSingleTransitionIn / mSingleTransitionTime);
+            var weight = owner.GetInputWeight(0);
+            owner.SetInputWeight(0, Mathf.Lerp(weight, 1, t));
+        }
+    }
+
+    override public void PrepareFrame(Playable owner, FrameData info) {
         var count = mMixer.GetInputCount();
         if (count == 0) {
             return;
         }
-        if (count > 1 && mTransitionTime >= 0f) {
-            mTransitionTime -= info.deltaTime;
-            if (mTransitionTime > 0f) {
-                var rate = mTransitionTime / mTransitionDuration;
-                for (var i = 0; i < count - 1; ++i) {
-                    mMixer.SetInputWeight(i, Mathf.Lerp(mMixer.GetInputWeight(i), 0f, rate));
-                }
-                mMixer.SetInputWeight(count - 1, Mathf.Lerp(mMixer.GetInputWeight(count - 1), 1f, 1f - rate));
-            } else {
-                for (var i = 0; i < count - 1; ++i) {
-                    mMixer.GetInput(i).Destroy();
-                }
-                var clipPlayable = mMixer.GetInput(count - 1);
-                mMixer.DisconnectInput(count - 1);
-                mMixer.SetInputCount(1);
-                mMixer.ConnectInput(0, clipPlayable, 0);
-                mMixer.SetInputWeight(0, 1.0f);
+        PrepareSingleTrack(mMixer.GetInput((int)EAudioChannel.BGM), info.deltaTime);
+    }
+    #endregion
+
+
+
+    public void Play(EAudioChannel channel, string audioName) {
+
+    }
+
+    public void Play(EAudioChannel channel, AudioClip audioClip) {
+        if (channel == EAudioChannel.BGM) {
+            PlayBGM(audioClip);
+            return;
+        }
+        if (IsMute(channel)) {
+            return;
+        }
+        var playable = mMixer.GetInput((int)channel);
+        var count = playable.GetInputCount();
+        for(var i = 0; i < count; ++i) {
+            var t = (AudioClipPlayable)playable.GetInput(i);
+            if (t.IsDone()) {
+                t.SetClip(audioClip);
+                t.SetTime(0);
+                t.SetDuration(audioClip.length);
+                t.SetDone(false);
+                return;
             }
         }
-        if (mActionTime > 0) {
-            mActionTime -= info.deltaTime;
-            if (mActionTime <= 0 && mFinishCb != null) {
-                mFinishFrameId = info.frameId + 2;
+        var p = AudioClipPlayable.Create(mGraph, audioClip, false);
+        p.SetDuration(audioClip.length);
+        playable.AddInput(p, 0, 1);
+    }
 
-            }
+    public void SetVolume(EAudioChannel channel, float volume) {
+        mMixer.SetInputWeight((int)channel, volume);
+    }
+
+    public void SetMute(EAudioChannel channel, bool mute) {
+        var playable = mMixer.GetInput((int)channel);
+        if (mute) {
+            playable.DestoryAllInput();
+            playable.Pause();
         }
-    }
-    public void LoadSound(string audioName) {
-
-    }
-
-    public void Play(ETrack track, string audioName) {
-
-    }
-
-    public void Play(ETrack track, AudioClip audioClip) {
-        var playable = mMixer.GetInput((int)track);
-        if (track == ETrack.BGM) {
-            //playable.GetInputCount()
-            //foreach (var p in ) {
-
-            //}
+        else {
+            mMixer.GetInput((int)channel).Play();
         }
     }
 
-    public void SetVolume(ETrack track, float volume) {
-        mMixer.SetInputWeight((int)track, volume);
-    }
-
-    public void SetMute(ETrack track, bool mute) {
-        SetVolume(track, mute ? 1 : 0);
+    public bool IsMute(EAudioChannel channel) {
+        return mMixer.GetInput((int)channel).GetPlayState() == PlayState.Paused;
     }
     
 }
