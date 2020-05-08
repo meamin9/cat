@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AM.Base;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,7 +42,12 @@ public class SoundManager : PlayableBehaviour {
         behaviour.mMixer = mixer;
         return behaviour;
     }
-
+    #region AudioClip Load
+    public void LoadAudio(string name) {
+        AssetMgr.Instance.LoadAsync(name, (asset) => {
+        });
+    }
+    #endregion
     #region BGM
     private float mSingleTransitionOut;
     private float mSingleTransitionIn;
