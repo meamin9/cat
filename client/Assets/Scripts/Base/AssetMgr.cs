@@ -55,7 +55,7 @@ namespace AM.Base
             if (!AppSetting.IsLoaded() || !AppSetting.Instance.LoadInResource) {
                 yield return AssetMgr.Instance.LoadAssetAsync(nameof(AppSetting) + ".asset", (ret) => {
                     AppSetting.Load(ret);
-                });
+                }, true);
             }
         }
 
@@ -145,11 +145,11 @@ namespace AM.Base
         {
             return LoadAssetAsync("AssetBundleManifest", (asset) => {
                 _manifest = asset as AssetBundleManifest;
-            });
+            }, true);
         }
         #endregion
 
-        private Coroutine LoadAssetAsync(string assetName, System.Action<Object> callback, bool unloadBundle=false)
+        private Coroutine LoadAssetAsync(string assetName, System.Action<Object> callback, bool unloadBundle)
         {
             AsyncInfo info;
             if (_cacheAssets.TryGetValue(assetName, out info)) {
@@ -174,7 +174,7 @@ namespace AM.Base
             };
             _cacheAssets.Add(assetName, info);
 
-            var coroutine = MonoProxy.Instance.StartCoroutine(_loadAssetCoroutine(entry, assetName));
+            var coroutine = MonoProxy.Instance.StartCoroutine(_loadAssetCoroutine(entry, assetName, unloadBundle));
             if (coroutine != null) {
                 info.Coroutine = coroutine; // 记录下，在重复load时再次返回这个协程
                 _cacheAssets[assetName] = info;
@@ -214,19 +214,35 @@ namespace AM.Base
                 _cacheAssets.Remove(assetName);
                 info.Callback?.Invoke(asset);
                 if (unloadBundle) {
-                    UnLoadAssetBundle(bundleEntry.Name);
+                    UnloadAssetBundle(bundleEntry.Name, false);
                 }
             }
             else {
-                UnLoadAssetBundle(bundleEntry.Name);
+                UnloadAssetBundle(bundleEntry.Name, false);
             }
         }
 
-        public void UnLoadAssetBundle(string bundleName) {
+        public void UnloadByAssetName(string assetName) {
+            BundleInfo entry;
+            if (!_asset2BundleInfoT.TryGetValue(assetName, out entry)) {
+                Debug.LogErrorFormat("Not Found Bundle for:{0}", assetName);
+                return;
+            }
+            UnloadAssetBundle(entry.Name, true);
+        }
+
+        private void UnloadAssetBundle(string bundleName, bool unloadLoaded) {
             if (_cacheBundles.TryGetValue(bundleName, out AsyncInfo async)) {
                 _cacheBundles.Remove(bundleName);
-                (async.Asset as AssetBundle).Unload(false);
+                (async.Asset as AssetBundle).Unload(unloadLoaded);
             }
+        }
+
+        public void UnloadAllAssetBundle(bool force) {
+            foreach(var info in _cacheBundles.Values) {
+                ((AssetBundle)info.Asset).Unload(force);
+            }
+            _cacheBundles.Clear();
         }
 
         private Coroutine LoadBundleAsync(string bundleName, System.Action<Object> handle, bool noDependence)
@@ -370,7 +386,7 @@ namespace AM.Base
         /// <summary>
         /// 加载asset资源统一接口
         /// </summary>
-        public Coroutine LoadAsync(string path, System.Action<Object> handle)
+        public Coroutine LoadAsync(string path, System.Action<Object> handle, bool clear=false)
         {
 #if UNITY_EDITOR
             Debug.LogFormat("Begin Load Asset:{0}", path);
@@ -383,9 +399,17 @@ namespace AM.Base
                 path = ResFullPaths[path];
                 return LoadResourceAsync(path, handle);
             }
-            return LoadAssetAsync(path, handle);
+            return LoadAssetAsync(path, handle, clear);
         }
 
+        public void Unload(string path) {
+            if (AppSetting.Instance.LoadInResource) {
+                //Resources.Unl
+            }
+            else {
+
+            }
+        }
     }
 
 }
