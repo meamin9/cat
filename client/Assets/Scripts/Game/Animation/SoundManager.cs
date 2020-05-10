@@ -1,9 +1,4 @@
 ﻿using AM.Base;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Playables;
@@ -17,7 +12,6 @@ public enum EAudioChannel {
 
 public class SoundManager : PlayableBehaviour {
     private Playable mMixer;
-    private ScriptPlayable<SoundManager> mPlayable;
     private PlayableGraph mGraph;
     public PlayableGraph Graph => mGraph;
 
@@ -38,28 +32,22 @@ public class SoundManager : PlayableBehaviour {
 
         var behaviour = playable.GetBehaviour();
         behaviour.mGraph = graph;
-        behaviour.mPlayable = playable;
         behaviour.mMixer = mixer;
         return behaviour;
     }
-    #region AudioClip Load
-    public void LoadAudio(string name) {
-        AssetMgr.Instance.LoadAsync(name, (asset) => {
-        });
-    }
-    #endregion
     #region BGM
     private float mSingleTransitionOut;
     private float mSingleTransitionIn;
     private const float mSingleTransitionTime = 1.5f;
     private AudioClip mBgmAudioClip;
+    private string mBgm;
 
-    public void PlayBGM(AudioClip audioClip) {
+    private void PlayBGM(AudioClip audioClip) {
         mBgmAudioClip = audioClip;
         var bgm = mMixer.GetInput((int)EAudioChannel.BGM);
-        if (IsMute(EAudioChannel.BGM)) {
-            return;
-        }
+        //if (IsMute(EAudioChannel.BGM)) {
+        //    return;
+        //}
         if (bgm.GetInputCount() == 0) {
             bgm.AddInput(AudioClipPlayable.Create(mGraph, audioClip, true), 0, 0);
             mSingleTransitionIn = mSingleTransitionTime;
@@ -92,7 +80,7 @@ public class SoundManager : PlayableBehaviour {
         }
     }
 
-    override public void PrepareFrame(Playable owner, FrameData info) {
+    override public void PrepareFrame(Playable playable, FrameData info) {
         var count = mMixer.GetInputCount();
         if (count == 0) {
             return;
@@ -103,18 +91,26 @@ public class SoundManager : PlayableBehaviour {
 
 
 
-    public void Play(EAudioChannel channel, string audioName) {
-
-    }
-
-    public void Play(EAudioChannel channel, AudioClip audioClip) {
+    public void Play(EAudioChannel channel, string audioPath) {
         if (channel == EAudioChannel.BGM) {
-            PlayBGM(audioClip);
-            return;
+            mBgm = audioPath;
         }
         if (IsMute(channel)) {
             return;
         }
+        AssetMgr.Instance.LoadAsync(audioPath, (asset) => {
+            Play(channel, (AudioClip)asset);
+        });
+    }
+
+    private void Play(EAudioChannel channel, AudioClip audioClip) {
+        if (channel == EAudioChannel.BGM) {
+            PlayBGM(audioClip);
+            return;
+        }
+        //if (IsMute(channel)) {
+        //    return;
+        //}
         var playable = mMixer.GetInput((int)channel);
         var count = playable.GetInputCount();
         for(var i = 0; i < count; ++i) {
@@ -144,11 +140,18 @@ public class SoundManager : PlayableBehaviour {
         }
         else {
             mMixer.GetInput((int)channel).Play();
+            if (channel == EAudioChannel.BGM && mBgm != null) {
+                Play(channel, mBgm);
+            }
         }
     }
 
     public bool IsMute(EAudioChannel channel) {
         return mMixer.GetInput((int)channel).GetPlayState() == PlayState.Paused;
+    }
+
+    public void Destroy() {
+        mGraph.Destroy();
     }
     
 }

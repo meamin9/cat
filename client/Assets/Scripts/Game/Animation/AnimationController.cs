@@ -7,7 +7,6 @@ using UnityEngine.Playables;
 public class AnimationController : PlayableBehaviour {
     private Playable mMixer;
     private Action<int> mFinishCb;
-    private ScriptPlayable<AnimationController> mPlayable;
     private PlayableGraph mGraph;
     public PlayableGraph Graph => mGraph;
 
@@ -23,12 +22,11 @@ public class AnimationController : PlayableBehaviour {
 
         var behaviour = playable.GetBehaviour();
         behaviour.mGraph = graph;
-        behaviour.mPlayable = playable;
         behaviour.mMixer = mixer;
         return behaviour;
     }
 
-    private float mTransitionDuration = 0.2f;
+    private const float mTransitionDuration = 0.2f;
     private float mTransitionTime;
 
     private float mActionTime;
@@ -88,7 +86,7 @@ public class AnimationController : PlayableBehaviour {
         mGraph.Stop();
     }
 
-    override public void PrepareFrame(Playable owner, FrameData info) {
+    override public void PrepareFrame(Playable playable, FrameData info) {
         if (mFinishFrameId == info.frameId) {
             var cb = mFinishCb;
             mFinishCb = null;
