@@ -9,6 +9,12 @@ using AM.Base;
 namespace AM.Game
 {
 
+    public class Entity {
+        private ActController mActCtrl;
+        private AnimationController mAnimCtrl;
+
+    }
+
     public class EntityObject
     {
         public GameObject gameObject { get; set; }

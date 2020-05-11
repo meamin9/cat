@@ -15,6 +15,8 @@ public class SoundManager : PlayableBehaviour {
     private PlayableGraph mGraph;
     public PlayableGraph Graph => mGraph;
 
+    public static SoundManager Instance { get; private set; }
+
     public static SoundManager Create(GameObject go) {
         var audioSource = go.GetComponent<AudioSource>() ?? go.AddComponent<AudioSource>();
         var graph = PlayableGraph.Create("AudioPlayable");
@@ -33,6 +35,7 @@ public class SoundManager : PlayableBehaviour {
         var behaviour = playable.GetBehaviour();
         behaviour.mGraph = graph;
         behaviour.mMixer = mixer;
+        Instance = behaviour;
         return behaviour;
     }
     #region BGM

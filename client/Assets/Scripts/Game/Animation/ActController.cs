@@ -20,10 +20,32 @@ public enum EActStatus
     /// </summary>
     YingZhi = 0x10,
 
+    InputBusy = 0x20,
+
 
 } 
 public class ActController
 {
-    public ActController() {
+
+    public uint mStatus;
+
+    public bool IsStatus(EActStatus s) {
+        return (mStatus & (uint)s) != 0;
+    }
+
+    public bool OnNormalAttackInput() {
+        var state = (uint)EActStatus.InputBusy | (uint)EActStatus.YingZhi;
+        if ((mStatus & state) != 0) {
+            return false;
+        }
+        return true;
+    }
+
+    public void SetStatus(uint s) {
+        mStatus |= (uint)s;
+    }
+
+    public void ResetStatus(uint s) {
+        mStatus &= ~(uint)s;
     }
 }
