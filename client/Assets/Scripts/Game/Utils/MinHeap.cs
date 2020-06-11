@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AM.Game {
+namespace Game {
     public class MinHeap<T> where T : IComparable<T> {
         private List<T> _array = new List<T>();
 

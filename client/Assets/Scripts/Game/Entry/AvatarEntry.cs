@@ -1,4 +1,4 @@
-﻿using AM.Base;
+﻿using Base;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace AM.Game
+namespace Game
 {
     /// <summary>
     /// 实体配置

@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
 
-namespace AM.Game
+namespace Game
 {
     #region 动画常量
     public class AnimNameHash

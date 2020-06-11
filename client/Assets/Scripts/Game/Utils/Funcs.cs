@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 
-namespace AM.Game {
+namespace Game {
     public static class Funcs {
         public static string MD5Hex(string source) {
             using (var md5Hash = MD5.Create()) {

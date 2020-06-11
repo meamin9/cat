@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
-using AssetMgr = AM.Base.AssetMgr;
+using AssetMgr = Base.AssetMgr;
 
-namespace AM.Game {
+namespace Game {
     public static class UIManager {
         struct LoadingInfo {
             public UIType UIType;

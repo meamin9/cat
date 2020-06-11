@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AM.Game.Fight
+namespace Game.Fight
 {
     public class FightProp
     {

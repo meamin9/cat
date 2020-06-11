@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Net.Sockets;
 
-namespace AM.Game
+namespace Game
 {
 	// 网络事件
 	public struct MsgEvent

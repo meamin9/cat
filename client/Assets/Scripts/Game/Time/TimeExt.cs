@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using AM.Base;
+using Base;
 using UnityEngine;
 
-namespace AM.Game
+namespace Game
 {
     /// <summary>
     /// 对UnityEngine.Time的扩展和封装

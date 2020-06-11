@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using AM.Base;
-using LitJson;
+using Base;
 
 
-
-namespace AM.Game
+namespace Game
 {
     /// <summary>
     /// 场景配置

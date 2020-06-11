@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AM.Game
+namespace Game
 {
     public class Timer : IComparable<Timer>
     {

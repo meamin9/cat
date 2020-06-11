@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace AM.Base
+namespace Base
 {
     public class LateUpdateAdapter : MonoBehaviour
     {

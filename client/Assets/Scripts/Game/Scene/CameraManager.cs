@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using AM.Base;
+using Base;
 
-namespace AM.Game {
+namespace Game {
 
     public static class CameraManager {
         private static TargetFollow _follow;

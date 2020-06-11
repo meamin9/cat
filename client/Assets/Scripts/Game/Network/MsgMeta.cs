@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Google.Protobuf;
 
-namespace AM.Game
+namespace Game
 {
 	public struct MsgMeta {
 		public UInt16 MsgId;

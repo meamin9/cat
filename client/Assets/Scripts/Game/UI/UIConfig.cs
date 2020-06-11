@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using AM.Base;
+using Base;
 using UnityEngine;
 
-namespace AM.Game {
+namespace Game {
     public class UIConfig {
         public UIType UIType;
         public string PrefabPath;

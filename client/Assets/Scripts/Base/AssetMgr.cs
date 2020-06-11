@@ -2,8 +2,9 @@
 using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
-namespace AM.Base
+namespace Base
 {
     public class AssetMgr
     {
@@ -37,26 +38,19 @@ namespace AM.Base
         public const string ASSETS_FILE = "VERSION.json";
 
         public AppVersion CurrentVersion;
-        public AppVersion OriginVersion;
+        /// <summary>
+        /// 包版本
+        /// </summary>
+        public AppVersion PackageVersion;
 
-        public static Coroutine InitAsync()
+        public Coroutine InitAsync()
         {
-            AssetMgr.Instance.LoadAssetsTable();
-            return MonoProxy.Instance.StartCoroutine(LoadAppConfig());
-        }
-
-        private static IEnumerator LoadAppConfig()
-        {
-            yield return AssetMgr.Instance.LoadAssetManifest();
-#if UNITY_EDITOR
-            var asset = Resources.Load("Config/" + nameof(AppSetting));
-            AppSetting.Load(asset);
-#endif
-            if (!AppSetting.IsLoaded() || !AppSetting.Instance.LoadInResource) {
-                yield return AssetMgr.Instance.LoadAssetAsync(nameof(AppSetting) + ".asset", (ret) => {
-                    AppSetting.Load(ret);
-                }, true);
+            if (!AppSetting.Instance.LoadInResource) {
+                LoadAssetsTable();
+                return LoadAssetManifest();
             }
+            return null;
+            
         }
 
         public BundleInfo GetBundleInfo(string asset)
@@ -104,38 +98,38 @@ namespace AM.Base
         {
             // 1. read current version
             var verPath = Path.Combine(DefaultDir, VERSION_FILE);
-            OriginVersion = AppVersion.Parse(File.ReadAllText(verPath));
+            PackageVersion = new AppVersion(File.ReadAllText(verPath));
             verPath = Path.Combine(PatchDir, VERSION_FILE);
             if (File.Exists(verPath)) {
-                CurrentVersion = AppVersion.Parse(File.ReadAllText(verPath));
+                CurrentVersion = new AppVersion(File.ReadAllText(verPath));
             }
             else {
-                CurrentVersion = OriginVersion;
+                CurrentVersion = PackageVersion;
             }
 
             // 2. 所有资源信息
             var defaultPath = Path.Combine(DefaultDir, ASSETS_FILE);
-            var defaultAssets = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, BundleEntry>>(File.ReadAllText(defaultPath));
+            var packageAssets = JsonConvert.DeserializeObject<Dictionary<string, BundleEntry>>(File.ReadAllText(defaultPath));
 
             Dictionary<string, BundleEntry> patchBundle = null;
             string patchPath = Path.Combine(PatchDir, ASSETS_FILE + CurrentVersion.ToString());
             if (!File.Exists(patchPath)) {
-                patchBundle = defaultAssets;
+                patchBundle = packageAssets;
             }
             else {
-                patchBundle = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, BundleEntry>>(File.ReadAllText(patchPath));
+                patchBundle = JsonConvert.DeserializeObject<Dictionary<string, BundleEntry>>(File.ReadAllText(patchPath));
             }
             BundleEntry defaultConf;
             foreach (var it in patchBundle) {
                 var name = it.Key;
                 var conf = it.Value;
                 bool isPatch = true;
-                if (defaultAssets.TryGetValue(name, out defaultConf) && defaultConf.Version == conf.Version) {
+                if (packageAssets.TryGetValue(name, out defaultConf) && defaultConf.Version == conf.Version) {
                     isPatch = false;
                 }
                 var bundle = new BundleInfo(name, conf, isPatch);
                 _bundleEntryC.Add(name, bundle);
-                var assetsCount = conf.Assets != null ? conf.Assets.Length : 0; ;
+                var assetsCount = conf.Assets != null ? conf.Assets.Length : 0;
                 for (int i = 0; i < assetsCount; ++i) {
                     _asset2BundleInfoT[conf.Assets[i]] = bundle;
                 }

@@ -1,11 +1,8 @@
 ﻿using UnityEngine;
 using System;
 
-namespace AM.Base
+namespace Base
 {
-
-
-
     public class MonoBehaviourAdapter : MonoBehaviour
     {
         public event Action awake;

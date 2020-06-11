@@ -4,7 +4,7 @@ using UnityEngine;
 using Newtonsoft.Json.Bson;
 using Newtonsoft.Json;
 
-namespace AM.Base {
+namespace Base {
     public class SerializeBehaviour : MonoBehaviour {
             public void Serialize<T>(T data) {
 #if DEBUG

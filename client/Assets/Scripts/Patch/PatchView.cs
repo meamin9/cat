@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AM.Base;
+using Base;
 using UnityEngine.UI;
 
-namespace AM.Patch
+namespace Patch
 {
     public class PatchUI
     {

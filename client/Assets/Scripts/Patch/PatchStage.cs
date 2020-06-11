@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using AM.Base;
+using Base;
 using UnityEngine;
 using System;
 using System.IO;
 using System.Reflection;
 
-namespace AM.Patch
+namespace Patch
 {
     public class PatchStage
     {
@@ -34,13 +34,13 @@ namespace AM.Patch
 
         private IEnumerator Start()
         {
-            yield return Base.AssetMgr.InitAsync();
+            yield return Base.AssetMgr.Instance.InitAsync();
             AppVersion version;
             var versionUrl = AppSetting.Instance.PatchUrl + AssetMgr.VERSION_FILE;
             using (var www = new WWW(versionUrl))
             {
                 yield return www;
-                version = AppVersion.Parse(www.text);
+                version = new AppVersion(www.text);
                 if (AssetMgr.Instance.CurrentVersion < version)
                 {
                     Exit();
@@ -172,10 +172,10 @@ namespace AM.Patch
         {
             AssetMgr.Instance.Clear();
             AssetMgr.Instance.LoadAssetsTable();
-            AssetMgr.Instance.LoadAsync("AM.Game.bytes", (asset) => {
+            AssetMgr.Instance.LoadAsync("Game.bytes", (asset) => {
                 var textAsset = asset as TextAsset;
                 var game = Assembly.Load(textAsset.bytes);
-                var type = game.GetType("AM.Game.GameStage");
+                var type = game.GetType("Game.GameStage");
                 //var ins = Activator.CreateInstance(type);
                 var method = type.GetMethod("Enter");
                 method.Invoke(null, null);

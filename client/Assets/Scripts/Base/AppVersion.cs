@@ -1,12 +1,18 @@
 ﻿using Log = UnityEngine.Debug;
 
-namespace AM.Base
+namespace Base
 {
     public struct AppVersion
     {
         public int Main { get; private set; }
         public int Sub { get; private set; }
+        /// <summary>
+        /// 热更
+        /// </summary>
         public int Fix { get; private set; }
+        /// <summary>
+        /// 预览版
+        /// </summary>
         public string Pre { get; private set; }
         public override string ToString()
         {
@@ -38,10 +44,6 @@ namespace AM.Base
                 Fix = int.Parse(strs[2].Substring(0, index));
                 Pre = strs[2].Substring(index);
             }
-        }
-        public static AppVersion Parse(string versionStr)
-        {
-            return new AppVersion(versionStr);
         }
 
         public static bool operator <(AppVersion lhs, AppVersion rhs)

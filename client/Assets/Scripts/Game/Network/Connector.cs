@@ -2,7 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 
-namespace AM.Game
+namespace Game
 {
 	public class Connector
 	{

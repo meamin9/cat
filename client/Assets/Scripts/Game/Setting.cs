@@ -1,8 +1,8 @@
-﻿using AM.Base;
+﻿using Base;
 using System.Collections;
 using UnityEngine;
 
-namespace AM.Game {
+namespace Game {
     public static class Setting {
         public static GameSetting Game { get; private set; }
 

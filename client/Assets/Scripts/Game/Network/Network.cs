@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using AM.Base;
+using Base;
 
 // 网络
-namespace AM.Game {
+namespace Game {
     public static class Network {
         static Connector _conn;
         static List<MsgEvent> _recvList = new List<MsgEvent>();

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine.AI;
-using AM.Base;
+using Base;
 
-namespace AM.Game
+namespace Game
 {
 
     public class Entity {

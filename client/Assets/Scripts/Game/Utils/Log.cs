@@ -2,7 +2,7 @@
 using System.Diagnostics;
 
 
-namespace AM.Game
+namespace Game
 {
     //public class Error
     //{

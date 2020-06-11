@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
-using AM.Base;
+using Base;
 
-namespace AM.Game
+namespace Game
 {
     public static class SceneManager
     {

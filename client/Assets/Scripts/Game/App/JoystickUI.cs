@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-using AM.Base;
+using Base;
 
-namespace AM.Game
+namespace Game
 {
     public class JoystickUI : BaseUI
     {

@@ -2,7 +2,7 @@
 using System.IO;
 using Google.Protobuf;
 
-namespace AM.Game
+namespace Game
 {
 	public class Codec
 	{

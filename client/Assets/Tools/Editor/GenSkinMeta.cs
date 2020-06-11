@@ -22,7 +22,7 @@ namespace Tools {
                 var asset = AssetDatabase.LoadAssetAtPath<GameObject>(fbx);
             }
             //var smr = GetComponent<SkinnedMeshRenderer>();
-            var bones = smr.bones;
+            //var bones = smr.bones;
 
         }
     }

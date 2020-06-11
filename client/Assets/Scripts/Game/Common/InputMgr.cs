@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AM.Base;
+using Base;
 using System.Threading.Tasks;
 
-namespace AM.Game
+namespace Game
 {
     public class InputMgr : Singleton<InputMgr>
     {

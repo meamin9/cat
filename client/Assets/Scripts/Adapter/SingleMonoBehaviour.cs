@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace AM.Base
+namespace Base
 {
     public class SingleMonoBehaviour<T> : MonoBehaviour where T : MonoBehaviour
     {

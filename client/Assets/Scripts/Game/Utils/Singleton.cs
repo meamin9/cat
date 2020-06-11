@@ -1,5 +1,5 @@
 ﻿
-namespace AM.Game
+namespace Game
 {
     public class Singleton<T> where T : class, new()
     {

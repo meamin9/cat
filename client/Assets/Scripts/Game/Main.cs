@@ -1,7 +1,7 @@
-﻿using AM.Base;
+﻿using Base;
 using System.Collections;
 
-namespace AM.Game {
+namespace Game {
     public class Main {
         public static void Start() {
             MonoProxy.Instance.StartCoroutine(Initialize());
@@ -9,7 +9,7 @@ namespace AM.Game {
 
         private static IEnumerator Initialize() {
             Log.Info("Game Start");
-            yield return AssetMgr.InitAsync();
+            yield return AssetMgr.Instance.InitAsync();
             Log.Info("AssetMgr Init ...ok");
             // 加载所有setting
             yield return MonoProxy.Instance.StartCoroutine(Setting.LoadSetting());

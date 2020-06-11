@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AM.Base;
+using Base;
 
-namespace AM.Game
+namespace Game
 {
     public interface IBaseUI
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace AM.Game {
+namespace Game {
     public class LockQueue<T> {
         private List<T> _queue = new List<T>();
 

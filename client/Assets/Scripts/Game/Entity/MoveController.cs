@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 
-namespace AM.Game
+namespace Game
 {
     public class MoveController
     {

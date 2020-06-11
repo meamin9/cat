@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AM.Game {
+namespace Game {
     /**unity**/
     public static class RandomExt {
         public static void Init() {

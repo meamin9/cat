@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace AM.Base
+namespace Base
 {
     /*
      * assetbundle结构
