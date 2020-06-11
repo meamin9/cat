@@ -9,6 +9,11 @@ using Base;
 namespace Game
 {
 
+    public class Creature {
+        public Avatar avatar;
+
+    }
+
     public class Entity {
         private ActController mActCtrl;
         private AnimationController mAnimCtrl;

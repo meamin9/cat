@@ -1,7 +1,7 @@
 using System.IO;
 using UnityEditor;
 using UnityEngine;
-using AM.Base;
+using Base;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
@@ -11,8 +11,8 @@ namespace Tools {
         public static string AndriodAssetBundlesDir = "Assets/StreamingAssets/Android/AssetBundles/";
         static AssetBundle() {
             string[] paths = {
-            AndriodAssetBundlesDir
-        };
+                AndriodAssetBundlesDir
+            };
             foreach (var path in paths) {
                 if (!Directory.Exists(path)) {
                     Directory.CreateDirectory(path);
@@ -170,11 +170,6 @@ namespace Tools {
             File.WriteAllText(infoPath, content);
             EditorUtility.DisplayProgressBar("Gen Version Info", dir, ++count / total);
             EditorUtility.ClearProgressBar();
-        }
-
-        [System.Serializable]
-        public struct VersionJson {
-            public Dictionary<string, BundleEntry> A;
         }
 
     }

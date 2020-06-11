@@ -5,7 +5,7 @@ using Newtonsoft.Json.Bson;
 using Newtonsoft.Json;
 
 namespace Base {
-    public class SerializeBehaviour : MonoBehaviour {
+    public class SerializeData : MonoBehaviour {
             public void Serialize<T>(T data) {
 #if DEBUG
                 if (Application.isPlaying) {
