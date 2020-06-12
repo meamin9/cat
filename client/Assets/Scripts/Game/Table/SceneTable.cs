@@ -8,7 +8,7 @@ namespace Game
     /// <summary>
     /// 场景配置
     /// </summary>
-    public class SceneEntry
+    public class SceneTable
     {
         #region config data
         public int Id;

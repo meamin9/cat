@@ -9,8 +9,36 @@ using Base;
 namespace Game
 {
 
-    public class Creature {
+    public class FightProperty {
+        public float hp;
+        public float atk;
+        public float def;
+
+    }
+
+    public class Role {
         public Avatar avatar;
+        public MoveController move;
+
+        public int id;
+        public int guid;
+        public RoleTable table;
+        public int skinId;
+
+
+        public Role(int id) {
+            if (!Table<RoleTable>.all.TryGetValue(id, out table)) {
+                Log.Error($"找不到 RoleTable :{id}");
+            }
+            this.id = id;
+            guid = Funcs.NewGuid();
+            skinId = table.skinIds[0];
+            var skin = Table<SkinTable>.Find(skinId);
+            avatar = new Avatar(SceneManager.roleRoot, skin.skeletonPath, skin.skinPath);
+        }
+
+
+
 
     }
 

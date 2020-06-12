@@ -17,12 +17,14 @@ namespace Game {
             RandomExt.Init();
             TimeExt.Init();
             UIManager.Init();
+
             // 连接网络
             //Network.Connect();
             // 加载配表1
-            yield return MonoProxy.Instance.StartCoroutine(Entry.LoadBaseConfig());
+            yield return MonoProxy.Instance.StartCoroutine(Table.LoadBaseConfig());
             Log.Info("Load Table ...ok");
 
+            SceneManager.LoadGloableSceneNode();
             //Initialize();
             SceneManager.SwitchScene(100);
 

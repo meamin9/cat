@@ -9,18 +9,18 @@ namespace Game
     public class SceneObject
     {
 
-        public SceneEntry Conf { get; private set;}
+        public SceneTable Conf { get; private set;}
 
         public static SceneObject CreateScene(int sceneId)
         {
-            if (!Entry<SceneEntry>.All.TryGetValue(sceneId, out SceneEntry conf)) {
+            if (!Table<SceneTable>.all.TryGetValue(sceneId, out SceneTable conf)) {
                 Log.Error($"not Found Scene: {sceneId}");
                 return null;
             }
             return new SceneObject(conf);
         }
 
-        protected SceneObject(SceneEntry conf)
+        protected SceneObject(SceneTable conf)
         {
             Conf = conf;
         }

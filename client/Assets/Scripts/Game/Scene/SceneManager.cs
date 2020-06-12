@@ -8,11 +8,21 @@ namespace Game
 {
     public static class SceneManager
     {
+        #region 全局节点
+        public static Transform roleRoot;
+        //public Transform 
+
+        public static void LoadGloableSceneNode() {
+            roleRoot = new GameObject("gRoleRoot").transform;
+        }
+        #endregion
+
         public static event System.Action OnSceneLoaded;
 
         private static SceneObject _curScene;
 
         public static SceneObject CurrentScene { get => _curScene; }
+
 
         /// <summary>
         /// 加载队列，第1个是正在加载的

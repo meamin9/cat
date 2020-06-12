@@ -18,7 +18,7 @@ namespace Game {
         }
 
         public static int _id = 0;
-        public static int NewId() {
+        public static int NewGuid() {
             return ++_id;
         }
 

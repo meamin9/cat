@@ -5,67 +5,86 @@ namespace Game
 {
     public class MoveController
     {
-        public NavMeshAgent NavAgent { get; set; }
-        public AnimController AnimCtrl { get; set; }
+        private NavMeshAgent mNavAgent;
+        private Transform mTarget;
 
-        public Transform Target { get; set; }
+        //朝向缓动
+        private Vector3 mSteeringPos;
+        private Quaternion mSteeringDir;
+        private Quaternion mSteeringBeginDir;
+        private const float cDirChangeTime = 0.3f;
+        private float mDirChangeTime;
+        //
 
-        public float Speed {
-            get { return NavAgent.speed; }
-            set { NavAgent.speed = value; }
+        private bool mIsMoving;
+
+        public MoveController(Transform target) {
+            mNavAgent = target.GetComponent<NavMeshAgent>();
+            if (mNavAgent == null) {
+                mNavAgent = target.gameObject.AddComponent<NavMeshAgent>();
+                Log.Info($"Add NavMeshAgent To {target.name}");
+            }
+            mTarget = target;
+            mNavAgent.updatePosition = false;
+            mNavAgent.updateRotation = false;
         }
 
-        public Vector3 _steeringPos;
-        private Quaternion _steeringDir;
-
-        public void Init(NavMeshAgent agent, AnimController anim, Transform target)
-        {
-            NavAgent = agent;
-            AnimCtrl = anim;
-            Target = target;
-
-            NavAgent.updatePosition = false;
-            NavAgent.updateRotation = false;
+        public bool IsMoving {
+            get => mIsMoving;
+            set {
+                mIsMoving = value;
+                if (value) {
+                    Log.Info("IsMoving");
+                } else {
+                    Log.Info("Stop Moving");
+                }
+            }
+        }
+        public float Speed {
+            get { return mNavAgent.speed; }
+            set { mNavAgent.speed = value; }
         }
 
         public void Move(Vector3 offset)
         {
-            NavAgent.Move(offset);
+            mNavAgent.Move(offset);
+            IsMoving = true;
         }
 
         public void MoveTo(Vector3 pos)
         {
-            NavAgent.destination = pos;
+            mNavAgent.destination = pos;
+            IsMoving = true;
         }
 
+        public void StopMove() {
+            mNavAgent.ResetPath();
+            IsMoving = false;
+        }
 
         public void Update()
         {
-            Vector3 worldDeltaPosition = NavAgent.nextPosition - Target.position;
-
-            if (worldDeltaPosition.sqrMagnitude > 0f) {
-                AnimCtrl.Run();
+            if (!IsMoving) {
+                return;
             }
-            else {
-                AnimCtrl.Stand();
+            if (mTarget.position == mNavAgent.nextPosition) {
+                mTarget.rotation = mSteeringDir;
+                IsMoving = false;
+                return;
             }
-        }
-
-        public void OnAnimatorMove()
-        {
             // 转向
-            if (_steeringPos != NavAgent.steeringTarget) {
-                _steeringPos = NavAgent.steeringTarget;
-                _steeringDir = Quaternion.LookRotation(_steeringPos - Target.position);
+            if (mSteeringPos != mNavAgent.steeringTarget) {
+                mSteeringPos = mNavAgent.steeringTarget;
+                mSteeringDir = Quaternion.LookRotation(mSteeringPos - mTarget.position);
+                mSteeringBeginDir = mTarget.rotation;
+                mDirChangeTime = 0f;
             }
-            if (Target.position == NavAgent.nextPosition) {
-                Target.rotation = _steeringDir;
+            if (mDirChangeTime < cDirChangeTime) {
+                mDirChangeTime += Time.deltaTime;
+                var r = Mathf.Clamp01(mDirChangeTime / cDirChangeTime);
+                mTarget.rotation = Quaternion.Slerp(mSteeringBeginDir, mSteeringDir, r);
             }
-            else if (_steeringDir != Target.rotation) {
-                Target.rotation = Quaternion.Slerp(Target.rotation, _steeringDir, 0.15f);
-            }
-            // 移动
-            Target.position = NavAgent.nextPosition;
+            mTarget.position = mNavAgent.nextPosition;
         }
     }
 

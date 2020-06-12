@@ -1,16 +1,16 @@
 ﻿using UnityEngine;
 
-namespace Assets.Scripts.Game.Animation {
-    public class AnimationBehaviour : MonoBehaviour {
+namespace Game {
+    public class AnimationEventAdapter : MonoBehaviour {
 
         private ActController mActCtrl;
 
         private void OnEnterStatus(AnimationEvent msg) {
-            mActCtrl.SetStatus((uint)msg.intParameter);
+            mActCtrl?.SetStatus((uint)msg.intParameter);
         }
 
         private void OnExistStatus(AnimationEvent msg) {
-            mActCtrl.ResetStatus((uint)msg.intParameter);
+            mActCtrl?.ResetStatus((uint)msg.intParameter);
         }
 
         private void OnSound(AnimationEvent msg) {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Game {
     /// <summary>
-    /// 外观，包括骨骼，皮肤，挂节点
+    /// 骨骼，皮肤，挂节点, 动画
     /// </summary>
     public class Avatar {
         public GameObject gameObject;
@@ -19,6 +19,7 @@ namespace Game {
         private Transform[] mAttachPositions;
 
         public AnimationController AnimCtrl { get; private set; }
+        public AnimationEventAdapter AnimEventAdapter { get; private set; }
 
 
         private string mSkeletonPath;
@@ -30,6 +31,10 @@ namespace Game {
             gameObject = new GameObject();
             gameObject.transform.SetParent(parent, false);
             gameObject.transform.localPosition = Vector3.zero;
+
+            AnimCtrl = AnimationController.Create(gameObject);
+            AnimEventAdapter = gameObject.AddComponent<AnimationEventAdapter>();
+
             Load(skeletonPath, skinPath);
         }
 
@@ -72,7 +77,7 @@ namespace Game {
             if (mAttachPositions != null) {
                 InitAttachPositions();
             }
-            AnimCtrl = AnimationController.Create(mSkeleton.gameObject);
+            
         }
 
         public void Destory() {
