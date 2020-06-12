@@ -5,6 +5,10 @@ namespace Game {
 
         private ActController mActCtrl;
 
+        private void OnTrigger(AnimationEvent msg) {
+
+        }
+
         private void OnEnterStatus(AnimationEvent msg) {
             mActCtrl?.SetStatus((uint)msg.intParameter);
         }

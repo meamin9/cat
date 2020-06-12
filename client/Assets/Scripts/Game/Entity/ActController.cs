@@ -2,6 +2,7 @@
 
 namespace Game {
     public enum EActStatus {
+        Idle = 0x0,
         /// <summary>
         /// 是否处于霸体，非霸体受到攻击会被打断
         /// </summary>
@@ -21,6 +22,8 @@ namespace Game {
         YingZhi = 0x10,
 
         InputBusy = 0x20,
+
+        Moving = 0x40,
 
 
     }
@@ -52,6 +55,7 @@ namespace Game {
 
 
         public void Spell(int skillId) {
+
 
         }
 

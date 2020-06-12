@@ -15,7 +15,7 @@ namespace Game {
             yield return MonoProxy.Instance.StartCoroutine(Setting.LoadSetting());
             Log.Info("Load Setting ...ok");
             RandomExt.Init();
-            TimeExt.Init();
+            GameTime.Init();
             UIManager.Init();
 
             // 连接网络

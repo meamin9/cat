@@ -52,7 +52,7 @@ namespace Game
     {
         public GameObject gameObject { get; set; }
         //public MoveController MoveCtrl { get; set; }
-        public AnimController AnimCtrl { get; set; }
+        //public AnimController AnimCtrl { get; set; }
 
         public string Name { get; set; }
         public string Id { get; set; }
@@ -64,9 +64,9 @@ namespace Game
         public void OnAttach()
         {
 
-            AnimCtrl = new AnimController();
+            //AnimCtrl = new AnimController();
             var anim = gameObject.GetComponent<Animator>();
-            AnimCtrl.Init(anim);
+            //AnimCtrl.Init(anim);
 
             //MoveCtrl = new MoveController();
             //var navAgent = gameObject.AddComponent<NavMeshAgent>();
