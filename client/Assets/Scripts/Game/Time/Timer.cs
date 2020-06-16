@@ -15,7 +15,7 @@ namespace Game
                 interval = 0.01f;
             }
             this.interval = interval;
-            this.next = GameTime.GameTime + firstInterval >= 0 ? firstInterval : interval;
+            this.next = GameTime.time + firstInterval >= 0 ? firstInterval : interval;
             this.cb = cb;
             this.times = times;
         }
@@ -61,7 +61,7 @@ namespace Game
 
         static public void Update()
         {
-            var now = GameTime.GameTime;
+            var now = GameTime.time;
             for (var min = _timers.Min(); min != null; min = _timers.Min()) {
                 if (min.times == 0) {
                     _timers.Pop();

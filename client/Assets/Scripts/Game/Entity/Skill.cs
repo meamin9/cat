@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace Game
 {
@@ -7,11 +9,17 @@ namespace Game
         public int id;
         public SkillTable table;
         public int level;
-        public float cdOvertTime;
+        public float cdOverTime;
 
         public bool IsCd() {
             return GameTime.time < cdOverTime;
         }
+
+        public void Play() {
+            cdOverTime += table.cd;
+
+        }
     }
+    
 
 }

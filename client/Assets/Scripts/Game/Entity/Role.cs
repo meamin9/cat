@@ -20,10 +20,16 @@ namespace Game
         public Avatar avatar;
         public MoveController move;
 
+        public ActController act;
+
         public int id;
         public int guid;
         public RoleTable table;
         public int skinId;
+
+        public Skill[] skills;
+
+
 
 
         public Role(int id) {
@@ -35,9 +41,28 @@ namespace Game
             skinId = table.skinIds[0];
             var skin = Table<SkinTable>.Find(skinId);
             avatar = new Avatar(SceneManager.roleRoot, skin.skeletonPath, skin.skinPath);
+
+            move = new MoveController(avatar.gameObject.transform);
+            move.onMoveFinished = OnMoveFinished;
+            move.onMoveStart = OnMoveStart;
+
+            act = new ActController(this);
+            avatar.AnimEventAdapter.SetActListener(act);
         }
 
+        public Skill GetSkill(int skillIndex) {
+            return skills[skillIndex];
+        }
 
+        public void OnMoveFinished() {
+            //avatar.AnimCtrl
+
+        }
+
+        public void OnMoveStart() {
+            //avatar.AnimCtrl
+
+        }
 
 
     }

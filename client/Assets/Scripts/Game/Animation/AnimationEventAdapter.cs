@@ -5,6 +5,10 @@ namespace Game {
 
         private ActController mActCtrl;
 
+        public void SetActListener(ActController act) {
+            this.mActCtrl = act;
+        }
+
         private void OnTrigger(AnimationEvent msg) {
 
         }

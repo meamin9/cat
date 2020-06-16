@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace Game
@@ -18,6 +19,9 @@ namespace Game
 
         private bool mIsMoving;
 
+        public Action onMoveFinished;
+        public Action onMoveStart;
+
         public MoveController(Transform target) {
             mNavAgent = target.GetComponent<NavMeshAgent>();
             if (mNavAgent == null) {
@@ -32,12 +36,11 @@ namespace Game
         public bool IsMoving {
             get => mIsMoving;
             set {
+                //var changed = mIsMoving != value;
                 mIsMoving = value;
-                if (value) {
-                    Log.Info("IsMoving");
-                } else {
-                    Log.Info("Stop Moving");
-                }
+                //if (changed) {
+                //    onMoveFinished?.Invoke(value);
+                //}
             }
         }
         public float Speed {
@@ -45,16 +48,18 @@ namespace Game
             set { mNavAgent.speed = value; }
         }
 
-        public void Move(Vector3 offset)
+        public void Move(Vector2 offset)
         {
             mNavAgent.Move(offset);
             IsMoving = true;
+            onMoveStart?.Invoke();
         }
 
         public void MoveTo(Vector3 pos)
         {
             mNavAgent.destination = pos;
             IsMoving = true;
+            onMoveStart?.Invoke();
         }
 
         public void StopMove() {
@@ -70,6 +75,7 @@ namespace Game
             if (mTarget.position == mNavAgent.nextPosition) {
                 mTarget.rotation = mSteeringDir;
                 IsMoving = false;
+                onMoveFinished?.Invoke();
                 return;
             }
             // 转向

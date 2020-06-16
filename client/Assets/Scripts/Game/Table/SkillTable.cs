@@ -9,6 +9,18 @@ using UnityEngine;
 
 namespace Game
 {
+    public class ActTable {
+        public int id;
+        public int type;
+        public string animPath;
+        public string icon;
+
+        public int[] next;
+
+        public float dmgRate;
+
+    }
+
     public class SkillTable
     {
         public int id;

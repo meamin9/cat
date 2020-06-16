@@ -14,6 +14,11 @@ namespace Game
         public string name;
         public int[] skinIds;
 
+        public int[] actIds;
+        public string animWalk;
+
+        //public int[][] actCombos;
+
 
         //private SkinTable[] mSkins;
         //public SkinTable[] skins {
