@@ -31,14 +31,11 @@ namespace Game
 
         public static Coroutine SwitchScene(int sceneId)
         {
-            if (_curScene != null && _curScene.Conf.Id == sceneId) {
+            if (_curScene != null && _curScene.table.id == sceneId) {
                 return null;
             }
             var destScene = SceneObject.CreateScene(sceneId);
-            if (destScene == null) {
-                Log.Error($"create scene error:{sceneId}");
-                return null;
-            }
+            Log.ErrorIf(destScene == null, $"create scene error:{sceneId}");
             var count = _loadingScenes.Count;
             var prevScene = count > 0 ? _loadingScenes[count - 1] : _curScene;
             if (prevScene != null && !prevScene.CanSwitchTo(destScene)) {
@@ -78,10 +75,12 @@ namespace Game
                 _EndSwitchScene();
                 yield break;
             }
-            var sceneAsset = scene.Conf.Asset;
+            var sceneAsset = scene.table.asset;
             if (_curScene != null) {
                 _curScene.OnLeave();
-                if (_curScene.Conf.Asset == sceneAsset) { // 同样的资源
+                if (_curScene.table.asset == sceneAsset) { // 同样的资源
+                    _curScene = scene;
+                    _curScene.OnEnter();
                     _EndSwitchScene();
                     yield break;
                 }

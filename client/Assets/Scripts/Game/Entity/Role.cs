@@ -8,11 +8,32 @@ using Base;
 
 namespace Game
 {
+    /// <summary>
+    /// 战斗属性Key
+    /// </summary>
+    public static class FightPropKey {
+        public const int hp = 0;
+        public const int ack = 1;
+        public const int def = 2;
+    }
 
     public class FightProperty {
         public float hp;
         public float atk;
         public float def;
+        // 属性伤害，火，水，雷，毒
+        public float[] extAtk;
+        public float[] extDef;
+
+
+        public float CalcDamage(FightProperty t) {
+            return 100f;
+            //var dmg = atk - t.def;
+            //if (dmg < 0) {
+            //    dmg = 1f;
+            //}
+            //return dmg;
+        }
 
     }
 
@@ -24,23 +45,29 @@ namespace Game
 
         public int id;
         public int guid;
-        public RoleTable table;
+        public tRole table;
         public int skinId;
+        public tSkin skinTable;
 
         public Skill[] skills;
 
 
+        private AnimationClip animWalk;
+        private AnimationClip animStand;
+
+        public int level;
+        public FightProperty fightProps;
+
 
 
         public Role(int id) {
-            if (!Table<RoleTable>.all.TryGetValue(id, out table)) {
-                Log.Error($"找不到 RoleTable :{id}");
-            }
+            table = Table<tRole>.Find(id);
+            Log.ErrorIf(table == null, $"找不到 RoleTable :{id}");
             this.id = id;
             guid = Funcs.NewGuid();
             skinId = table.skinIds[0];
-            var skin = Table<SkinTable>.Find(skinId);
-            avatar = new Avatar(SceneManager.roleRoot, skin.skeletonPath, skin.skinPath);
+            var skin = Table<tSkin>.Find(skinId);
+            avatar = new Avatar(SceneManager.roleRoot, skin.skeleton, skin.skin);
 
             move = new MoveController(avatar.gameObject.transform);
             move.onMoveFinished = OnMoveFinished;
@@ -48,6 +75,23 @@ namespace Game
 
             act = new ActController(this);
             avatar.AnimEventAdapter.SetActListener(act);
+
+            //加载动画
+            skinTable = skin;
+            var dir = skin.animDir;
+            AssetMgr.Instance.LoadAsync(dir + "/Stand.anim", (anim) => { animWalk = anim as AnimationClip; });
+            AssetMgr.Instance.LoadAsync(dir + "/Stand.anim", (anim) => { animStand = anim as AnimationClip; });
+            LoadAnimationClips(act.actCombos);
+        }
+
+        public void LoadAnimationClips(Act[] acts) {
+            var dir = skinTable.animDir;
+            foreach (var act in acts) {
+                AssetMgr.Instance.LoadAsync(dir + act.anim, (anim) => act.anim = anim as AnimationClip);
+                if (act.next != null) {
+                    LoadAnimationClips(act.next);
+                }
+            }
         }
 
         public Skill GetSkill(int skillIndex) {
@@ -55,21 +99,17 @@ namespace Game
         }
 
         public void OnMoveFinished() {
-            //avatar.AnimCtrl
-
+            avatar.AnimCtrl.PlayAnimation(animStand);
         }
 
         public void OnMoveStart() {
-            //avatar.AnimCtrl
-
+            avatar.AnimCtrl.PlayAnimation(animWalk);
         }
 
+        public bool CanSelected() {
+            return true;
+        }
 
-    }
-
-    public class Entity {
-        private ActController mActCtrl;
-        private AnimationController mAnimCtrl;
 
     }
 
@@ -83,24 +123,7 @@ namespace Game
         public string Id { get; set; }
 
         public Dictionary<string, object> Extra;
-
-        //protected MonoBehaviourAdapter _adapter;
-
-        public void OnAttach()
-        {
-
-            //AnimCtrl = new AnimController();
-            var anim = gameObject.GetComponent<Animator>();
-            //AnimCtrl.Init(anim);
-
-            //MoveCtrl = new MoveController();
-            //var navAgent = gameObject.AddComponent<NavMeshAgent>();
-            //MoveCtrl.Init(navAgent, AnimCtrl, gameObject.transform);
-
-            //var adapter = gameObject.AddComponent<MonoBehaviourAdapter>();
-            //adapter.update += Update;
-            //adapter.onAnimatorMove += MoveCtrl.OnAnimatorMove;
-        }
+        
 
 
         public void Update()
@@ -114,27 +137,7 @@ namespace Game
             //        _navAgent.destination = hitInfo.point;
             //}
         }
-
-
-
-        //private float _speed = 0;
-        //private float _moveSpeed = 1f;
-        //public void CheckSpeed()
-        //{
-        //    var spd = _speed;
-        //    if (_anim.IsInTransition(0)) {
-        //        var trans = _anim.GetAnimatorTransitionInfo(0);
-        //        if (trans.fullPathHash == AnimNameHash.Idle2Run) {
-        //            spd = Mathf.Lerp(0, _speed, trans.normalizedTime);
-        //        }
-        //        else if (trans.fullPathHash == AnimNameHash.Run2Idle) {
-        //            spd = Mathf.Lerp(_speed, 0, trans.normalizedTime);
-        //        }
-        //    }
-        //    _navAgent.speed = spd;
-        //}
-
-   
+        
 
     }
 }

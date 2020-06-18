@@ -7,7 +7,7 @@ namespace Game {
         public static GameSetting Game { get; private set; }
 
         public static IEnumerator LoadSetting() {
-            yield return AssetMgr.Instance.LoadAsync(nameof(GameSetting) + ".asset", (asset) => Game = asset as GameSetting);
+            yield return null;// AssetMgr.Instance.LoadAsync("Config/" + nameof(GameSetting) + ".asset", (asset) => Game = asset as GameSetting);
         }
     }
 

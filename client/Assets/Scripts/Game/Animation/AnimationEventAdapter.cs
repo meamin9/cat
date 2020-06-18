@@ -9,8 +9,8 @@ namespace Game {
             this.mActCtrl = act;
         }
 
-        private void OnTrigger(AnimationEvent msg) {
-
+        private void OnDamage(AnimationEvent msg) {
+            mActCtrl?.OnActJudge(msg.intParameter);
         }
 
         private void OnEnterStatus(AnimationEvent msg) {

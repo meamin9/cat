@@ -7,7 +7,7 @@ namespace Game
     public class Skill
     {
         public int id;
-        public SkillTable table;
+        public tSkill table;
         public int level;
         public float cdOverTime;
 

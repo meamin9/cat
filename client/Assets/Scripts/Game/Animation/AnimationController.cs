@@ -32,7 +32,7 @@ namespace Game {
         private float mActionTime;
 
         private ulong mFinishFrameId;
-        public void PlayAnimation(AnimationClip clip, Action<int> finishCb) {
+        public void PlayAnimation(AnimationClip clip, Action<int> finishCb=null) {
             mFinishCb?.Invoke(-1);
             mFinishCb = finishCb;
             PlayAnimation(clip);

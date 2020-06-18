@@ -9,6 +9,7 @@ namespace Game {
 
         private static IEnumerator Initialize() {
             Log.Info("Game Start");
+            AppSetting.Load();
             yield return AssetMgr.Instance.InitAsync();
             Log.Info("AssetMgr Init ...ok");
             // 加载所有setting
@@ -26,7 +27,9 @@ namespace Game {
 
             SceneManager.LoadGloableSceneNode();
             //Initialize();
-            SceneManager.SwitchScene(100);
+            SceneManager.SwitchScene(0);
+
+            SceneManager.OnSceneLoaded += () => { EntityManager.Instance.CreateRole(0); };
 
         }
     }

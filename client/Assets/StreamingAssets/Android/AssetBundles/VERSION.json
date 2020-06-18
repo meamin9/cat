@@ -1,1 +1,544 @@
-{"AssetBundles":{"Version":0,"Size":2324,"Assets":["AssetBundleManifest"]},"fgdfgd":{"Version":0,"Size":3910,"Assets":["NavMesh.asset"]},"tables.ab":{"Version":0,"Size":1390,"Assets":["entity.json","UI.json","SceneConf.json"]},"avatar/entity.prefab.ab":{"Version":0,"Size":116985,"Assets":["Entity.prefab"]},"avatar/unitychan.prefab.ab":{"Version":0,"Size":8107900,"Assets":["unitychan.prefab"]},"config/appsetting.asset.ab":{"Version":0,"Size":1257,"Assets":["AppSetting.asset"]},"config/baseconfig.asset.ab":{"Version":0,"Size":1854,"Assets":["BaseConfig.asset"]},"scenes/materials/floor1.mat.ab":{"Version":0,"Size":38569,"Assets":["Floor1.mat"]},"scenes/testscene/s_test.unity.ab":{"Version":0,"Size":533330,"Assets":["S_Test"]},"scenes/testscene/s_test/lightmap-0_comp_dir.png.ab":{"Version":0,"Size":29407,"Assets":["Lightmap-0_comp_dir.png"]},"scenes/testscene/s_test/lightmap-0_comp_shadowmask.png.ab":{"Version":0,"Size":27276,"Assets":["Lightmap-0_comp_shadowmask.png"]},"scenes/testscene/s_test/lightmap-1_comp_dir.png.ab":{"Version":0,"Size":27521,"Assets":["Lightmap-1_comp_dir.png"]},"scenes/testscene/s_test/lightmap-1_comp_shadowmask.png.ab":{"Version":0,"Size":8473,"Assets":["Lightmap-1_comp_shadowmask.png"]},"scenes/textures/floor1.jpg.ab":{"Version":0,"Size":86469,"Assets":["floor1.jpg"]},"scenes/textures/floor2.jpg.ab":{"Version":0,"Size":146061,"Assets":["floor2.jpg"]},"scenes/textures/floor_1.jpg.ab":{"Version":0,"Size":135621,"Assets":["floor_1.jpg"]},"texture/rare.png.ab":{"Version":0,"Size":2936,"Assets":["rare.png"]},"ui/canvas.prefab.ab":{"Version":0,"Size":8295,"Assets":["Canvas.prefab"]},"ui/joystickui.prefab.ab":{"Version":0,"Size":138482,"Assets":["JoystickUI.prefab"]},"ui/loginui.prefab.ab":{"Version":0,"Size":13395,"Assets":["LoginUI.prefab"]},"ui/startui.prefab.ab":{"Version":0,"Size":9886,"Assets":["StartUI.prefab"]},"views/uiloading.prefab.ab":{"Version":0,"Size":13105,"Assets":["UILoading.prefab"]},"views/uiroot.prefab.ab":{"Version":0,"Size":4200,"Assets":["UIRoot.prefab"]}}
+{
+  "AssetBundles": {
+    "Version": 0,
+    "Size": 4235,
+    "Assets": [
+      "AssetBundleManifest"
+    ]
+  },
+  "fgdfgd": {
+    "Version": 0,
+    "Size": 3910,
+    "Assets": [
+      "NavMesh.asset"
+    ]
+  },
+  "tables.ab": {
+    "Version": 0,
+    "Size": 1525,
+    "Assets": [
+      "tSkin.json",
+      "tScene.json",
+      "UI.json",
+      "tRole.json"
+    ]
+  },
+  "appearence/model/player/c002/materials/c002_0111.mat.ab": {
+    "Version": 0,
+    "Size": 14836,
+    "Assets": [
+      "C002_0111.mat"
+    ]
+  },
+  "appearence/model/player/c002/prefabs/c002_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 90137,
+    "Assets": [
+      "C002_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/w001/materials/w001_0111.mat.ab": {
+    "Version": 0,
+    "Size": 14879,
+    "Assets": [
+      "W001_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/w001/prefabs/w001_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 17120,
+    "Assets": [
+      "W001_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/w002/materials/w002_0111.mat.ab": {
+    "Version": 0,
+    "Size": 15784,
+    "Assets": [
+      "W002_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/w002/prefabs/w002_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 13622,
+    "Assets": [
+      "W002_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/w004/materials/w004_0111.mat.ab": {
+    "Version": 0,
+    "Size": 19636,
+    "Assets": [
+      "W004_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/w004/prefabs/w004_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 15744,
+    "Assets": [
+      "W004_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/w005/materials/w005_0111.mat.ab": {
+    "Version": 0,
+    "Size": 16888,
+    "Assets": [
+      "W005_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/w005/prefabs/w005_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 33236,
+    "Assets": [
+      "W005_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/w006/materials/w006_0111.mat.ab": {
+    "Version": 0,
+    "Size": 17059,
+    "Assets": [
+      "W006_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/w006/prefabs/w006_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 20861,
+    "Assets": [
+      "W006_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/w007/materials/w007_0111.mat.ab": {
+    "Version": 0,
+    "Size": 20222,
+    "Assets": [
+      "W007_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/w007/prefabs/w007_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 15216,
+    "Assets": [
+      "W007_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/w008/materials/w008_0111.mat.ab": {
+    "Version": 0,
+    "Size": 17069,
+    "Assets": [
+      "W008_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/w008/prefabs/w008_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 19001,
+    "Assets": [
+      "W008_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/w009/materials/w009_0111.mat.ab": {
+    "Version": 0,
+    "Size": 61931,
+    "Assets": [
+      "W009_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/w009/prefabs/w009_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 24977,
+    "Assets": [
+      "W009_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/w011/materials/w011_0111.mat.ab": {
+    "Version": 0,
+    "Size": 52833,
+    "Assets": [
+      "W011_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/w011/prefabs/w011_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 27050,
+    "Assets": [
+      "W011_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/w012/materials/w012_0111.mat.ab": {
+    "Version": 0,
+    "Size": 35517,
+    "Assets": [
+      "W012_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/w012/prefabs/w012_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 43741,
+    "Assets": [
+      "W012_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/w013/materials/w013_0111.mat.ab": {
+    "Version": 0,
+    "Size": 93077,
+    "Assets": [
+      "W013_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/w013/prefabs/w013_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 49722,
+    "Assets": [
+      "W013_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/w014/materials/w014_0111.mat.ab": {
+    "Version": 0,
+    "Size": 39775,
+    "Assets": [
+      "W014_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/w014/prefabs/w014_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 13665,
+    "Assets": [
+      "W014_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/w015/materials/w015_0111.mat.ab": {
+    "Version": 0,
+    "Size": 60462,
+    "Assets": [
+      "W015_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/w015/prefabs/w015_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 28920,
+    "Assets": [
+      "W015_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/w016/materials/w016_0111.mat.ab": {
+    "Version": 0,
+    "Size": 94168,
+    "Assets": [
+      "W016_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/w016/prefabs/w016_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 22225,
+    "Assets": [
+      "W016_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/w017/materials/w017_0111.mat.ab": {
+    "Version": 0,
+    "Size": 143050,
+    "Assets": [
+      "W017_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/w017/prefabs/w017_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 23950,
+    "Assets": [
+      "W017_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/z001/materials/z001_0111.mat.ab": {
+    "Version": 0,
+    "Size": 66150,
+    "Assets": [
+      "Z001_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/z001/prefabs/z001_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 19512,
+    "Assets": [
+      "Z001_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/z002/materials/z002_0111.mat.ab": {
+    "Version": 0,
+    "Size": 79843,
+    "Assets": [
+      "Z002_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/z002/prefabs/z002_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 19954,
+    "Assets": [
+      "Z002_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/z003/materials/z003_0111.mat.ab": {
+    "Version": 0,
+    "Size": 92121,
+    "Assets": [
+      "Z003_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/z003/prefabs/z003_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 46086,
+    "Assets": [
+      "Z003_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/z004/materials/z004_0111.mat.ab": {
+    "Version": 0,
+    "Size": 76190,
+    "Assets": [
+      "Z004_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/z004/prefabs/z004_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 20411,
+    "Assets": [
+      "Z004_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/z005/materials/z005_0111.mat.ab": {
+    "Version": 0,
+    "Size": 27592,
+    "Assets": [
+      "Z005_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/z005/prefabs/z005_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 30494,
+    "Assets": [
+      "Z005_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/z006/materials/z006_0111.mat.ab": {
+    "Version": 0,
+    "Size": 66689,
+    "Assets": [
+      "Z006_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/z006/prefabs/z006_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 92538,
+    "Assets": [
+      "Z006_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/z007/materials/z007_0111.mat.ab": {
+    "Version": 0,
+    "Size": 31621,
+    "Assets": [
+      "Z007_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/z007/prefabs/z007_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 29067,
+    "Assets": [
+      "Z007_0111_Skin.prefab"
+    ]
+  },
+  "appearence/model/weapon/z008/materials/z008_0111.mat.ab": {
+    "Version": 0,
+    "Size": 30767,
+    "Assets": [
+      "Z008_0111.mat"
+    ]
+  },
+  "appearence/model/weapon/z008/prefabs/z008_0111_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 21209,
+    "Assets": [
+      "Z008_0111_Skin.prefab"
+    ]
+  },
+  "appearence/player/c001/materials/c001_0111.mat.ab": {
+    "Version": 0,
+    "Size": 14845,
+    "Assets": [
+      "C001_0111.mat"
+    ]
+  },
+  "appearence/player/c002/prefabs/c002_001_skin.prefab.ab": {
+    "Version": 0,
+    "Size": 153882,
+    "Assets": [
+      "C002_001_skin.prefab"
+    ]
+  },
+  "appearence/player/c002/prefabs/c002_skeleton.prefab.ab": {
+    "Version": 0,
+    "Size": 8473,
+    "Assets": [
+      "C002_Skeleton.prefab"
+    ]
+  },
+  "appearence/skeleton/player/c001/c001_skeleton_animcontrollers": {
+    "Version": 0,
+    "Size": 6039,
+    "Assets": [
+      "C001_Skeleton.controller"
+    ]
+  },
+  "avatar/entity.prefab.ab": {
+    "Version": 0,
+    "Size": 117265,
+    "Assets": [
+      "Entity.prefab"
+    ]
+  },
+  "avatar/unitychan.prefab.ab": {
+    "Version": 0,
+    "Size": 8107900,
+    "Assets": [
+      "unitychan.prefab"
+    ]
+  },
+  "config/appsetting.asset.ab": {
+    "Version": 0,
+    "Size": 1257,
+    "Assets": [
+      "AppSetting.asset"
+    ]
+  },
+  "config/baseconfig.asset.ab": {
+    "Version": 0,
+    "Size": 1854,
+    "Assets": [
+      "BaseConfig.asset"
+    ]
+  },
+  "config/gamesetting.asset.ab": {
+    "Version": 0,
+    "Size": 1449,
+    "Assets": [
+      "GameSetting.asset"
+    ]
+  },
+  "config/setting.asset.ab": {
+    "Version": 0,
+    "Size": 1866,
+    "Assets": [
+      "Setting.asset"
+    ]
+  },
+  "scenes/materials/floor1.mat.ab": {
+    "Version": 0,
+    "Size": 39262,
+    "Assets": [
+      "Floor1.mat"
+    ]
+  },
+  "scenes/testscene/s_test.unity.ab": {
+    "Version": 0,
+    "Size": 532990,
+    "Assets": [
+      "S_Test"
+    ]
+  },
+  "scenes/testscene/s_test/lightmap-0_comp_dir.png.ab": {
+    "Version": 0,
+    "Size": 29407,
+    "Assets": [
+      "Lightmap-0_comp_dir.png"
+    ]
+  },
+  "scenes/testscene/s_test/lightmap-0_comp_shadowmask.png.ab": {
+    "Version": 0,
+    "Size": 27276,
+    "Assets": [
+      "Lightmap-0_comp_shadowmask.png"
+    ]
+  },
+  "scenes/testscene/s_test/lightmap-1_comp_dir.png.ab": {
+    "Version": 0,
+    "Size": 27521,
+    "Assets": [
+      "Lightmap-1_comp_dir.png"
+    ]
+  },
+  "scenes/testscene/s_test/lightmap-1_comp_shadowmask.png.ab": {
+    "Version": 0,
+    "Size": 8473,
+    "Assets": [
+      "Lightmap-1_comp_shadowmask.png"
+    ]
+  },
+  "scenes/textures/floor1.jpg.ab": {
+    "Version": 0,
+    "Size": 86469,
+    "Assets": [
+      "floor1.jpg"
+    ]
+  },
+  "scenes/textures/floor2.jpg.ab": {
+    "Version": 0,
+    "Size": 146061,
+    "Assets": [
+      "floor2.jpg"
+    ]
+  },
+  "scenes/textures/floor_1.jpg.ab": {
+    "Version": 0,
+    "Size": 135615,
+    "Assets": [
+      "floor_1.jpg"
+    ]
+  },
+  "texture/rare.png.ab": {
+    "Version": 0,
+    "Size": 2936,
+    "Assets": [
+      "rare.png"
+    ]
+  },
+  "ui/canvas.prefab.ab": {
+    "Version": 0,
+    "Size": 8318,
+    "Assets": [
+      "Canvas.prefab"
+    ]
+  },
+  "ui/joystickui.prefab.ab": {
+    "Version": 0,
+    "Size": 138434,
+    "Assets": [
+      "JoystickUI.prefab"
+    ]
+  },
+  "ui/loginui.prefab.ab": {
+    "Version": 0,
+    "Size": 13379,
+    "Assets": [
+      "LoginUI.prefab"
+    ]
+  },
+  "ui/startui.prefab.ab": {
+    "Version": 0,
+    "Size": 9894,
+    "Assets": [
+      "StartUI.prefab"
+    ]
+  },
+  "views/uiloading.prefab.ab": {
+    "Version": 0,
+    "Size": 13102,
+    "Assets": [
+      "UILoading.prefab"
+    ]
+  },
+  "views/uiroot.prefab.ab": {
+    "Version": 0,
+    "Size": 4200,
+    "Assets": [
+      "UIRoot.prefab"
+    ]
+  }
+}

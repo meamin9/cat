@@ -6,32 +6,38 @@ using Newtonsoft.Json;
 
 namespace Base {
     public class SerializeData : MonoBehaviour {
-            public void Serialize<T>(T data) {
+        public void Serialize<T>(T data) {
 #if DEBUG
-                if (Application.isPlaying) {
-                    throw new Exception("Cant call this in game application!Just only for Editor");
-                }
+            if (Application.isPlaying) {
+                throw new Exception("Cant call this in game application!Just only for Editor");
+            }
 #endif
-                using (var mr = new MemoryStream())
-                using (var bw = new BsonDataWriter(mr)) {
-                    JsonSerializer.CreateDefault().Serialize(bw, data);
-                    contents = mr.GetBuffer();
-                }
+            using (var mr = new MemoryStream())
+            using (var bw = new BsonDataWriter(mr)) {
+                JsonSerializer.CreateDefault().Serialize(bw, data);
+                contents = mr.GetBuffer();
+#if DEBUG
+                contentSize = contents.Length;
+#endif
             }
-            public T Deserialize<T>() {
-                using (var mr = new MemoryStream(contents))
-                using (var br = new BsonDataReader(mr)) {
-                    return JsonSerializer.CreateDefault().Deserialize<T>(br);
-                }
-            }
-            public object Deserialize(Type type) {
-                using (var mr = new MemoryStream(contents))
-                using (var br = new BsonDataReader(mr)) {
-                    return JsonSerializer.CreateDefault().Deserialize(br, type);
-                }
-            }
-            [HideInInspector]
-            [SerializeField]
-            byte[] contents;
         }
+        public T Deserialize<T>() {
+            using (var mr = new MemoryStream(contents))
+            using (var br = new BsonDataReader(mr)) {
+                return JsonSerializer.CreateDefault().Deserialize<T>(br);
+            }
+        }
+        public object Deserialize(Type type) {
+            using (var mr = new MemoryStream(contents))
+            using (var br = new BsonDataReader(mr)) {
+                return JsonSerializer.CreateDefault().Deserialize(br, type);
+            }
+        }
+        [HideInInspector]
+        [SerializeField]
+        private byte[] contents;
+#if DEBUG
+        public int contentSize;
+#endif
+    }
 }

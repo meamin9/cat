@@ -9,20 +9,18 @@ namespace Game
     public class SceneObject
     {
 
-        public SceneTable Conf { get; private set;}
+        public tScene table { get; private set;}
 
         public static SceneObject CreateScene(int sceneId)
         {
-            if (!Table<SceneTable>.all.TryGetValue(sceneId, out SceneTable conf)) {
-                Log.Error($"not Found Scene: {sceneId}");
-                return null;
-            }
-            return new SceneObject(conf);
+            var table = Table<tScene>.Find(sceneId);
+            Log.ErrorIf(table == null, $"not Found Scene: {sceneId}");
+            return new SceneObject(table);
         }
 
-        protected SceneObject(SceneTable conf)
+        protected SceneObject(tScene conf)
         {
-            Conf = conf;
+            table = conf;
         }
 
         public bool CanSwitchTo(SceneObject conf)

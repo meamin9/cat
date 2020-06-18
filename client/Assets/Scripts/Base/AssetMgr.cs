@@ -45,12 +45,8 @@ namespace Base
 
         public Coroutine InitAsync()
         {
-            if (!AppSetting.Instance.LoadInResource) {
-                LoadAssetsTable();
-                return LoadAssetManifest();
-            }
-            return null;
-            
+            LoadAssetsTable();
+            return LoadAssetManifest();
         }
 
         public BundleInfo GetBundleInfo(string asset)
@@ -335,10 +331,10 @@ namespace Base
                 State = AsyncState.Processing,
                 Callback = callback
             };
-            _cacheAssets.Add(assetName, info);
+            _cacheRes.Add(assetName, info);
             info.Coroutine = MonoProxy.Instance.StartCoroutine(_loadResCoroutine(assetName));
             if (info.Coroutine != null) {
-                _cacheAssets[assetName] = info;
+                _cacheRes[assetName] = info;
             }
             return info.Coroutine;
         }
@@ -371,7 +367,7 @@ namespace Base
                         }
                         var name = Path.GetFileName(file);
                         var v = file.Substring(baseLen, file.Length - baseLen - ext.Length);
-                        _resFullPaths.Add(name, v);
+                        _resFullPaths[name] =  v;
                     }
                 }
                 return _resFullPaths;
@@ -388,12 +384,48 @@ namespace Base
             handle += (obj) => {
                 Debug.LogFormat("End Load Asset:{0}, Cost Time:{1}", path, Time.time - begin);
             };
-#endif
             if (AppSetting.Instance.LoadInResource) {
-                path = ResFullPaths[path];
-                return LoadResourceAsync(path, handle);
+                if (ResFullPaths.TryGetValue(path, out string p)) {
+                    return LoadResourceAsync(p, handle);
+                }
+                else {
+                    var ext = Path.GetExtension(path);
+                    path = path.Substring(0, path.Length - ext.Length);
+                    return LoadResourceAsync(path, handle);
+                }
+                //path = ResFullPaths[path];
             }
+#endif
             return LoadAssetAsync(path, handle, clear);
+        }
+
+        /// <summary>
+        /// 加载asset资源统一接口
+        /// </summary>
+        public void LoadAsync(string[] paths, System.Action<Object[]> handle, bool clear = false) {
+#if UNITY_EDITOR
+            Debug.LogFormat("Begin Load Asset:{0}", paths);
+            var begin = Time.time;
+            handle += (obj) => {
+                Debug.LogFormat("End Load Asset:{0}, Cost Time:{1}", paths, Time.time - begin);
+            };
+            if (AppSetting.Instance.LoadInResource) {
+                var count = paths.Length;
+                var c = 0;
+                var re = new Object[count];
+                for(var i = 0; i < count; ++i) {
+                    var index = i;
+                    LoadResourceAsync(ResFullPaths[paths[i]], (asset)=> {
+                        re[index] = asset;
+                        ++c;
+                        if (c == count) {
+                            handle?.Invoke(re);
+                        }
+                    });
+                }
+            }
+#endif
+            return;// LoadAssetAsync(path, handle, clear);
         }
 
         public void Unload(string path) {

@@ -166,7 +166,7 @@ namespace Tools {
                 }
                 EditorUtility.DisplayProgressBar("Gen Version Info", dir, ++count / total);
             }
-            var content = JsonConvert.SerializeObject(newAssets);
+            var content = JsonConvert.SerializeObject(newAssets, Formatting.Indented);
             File.WriteAllText(infoPath, content);
             EditorUtility.DisplayProgressBar("Gen Version Info", dir, ++count / total);
             EditorUtility.ClearProgressBar();

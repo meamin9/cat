@@ -1,4 +1,5 @@
 ﻿using Base;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace Game {
             var serialize = go.GetComponent<SerializeData>();
             Log.ErrorIf(serialize == null, $"Not Found SerializeData in {go.name}");
             meta = serialize.Deserialize<SkinMeta>();
+            Log.Info(JsonConvert.SerializeObject(meta.bones));
             _skinMetas[path] = meta;
             return meta;
         }

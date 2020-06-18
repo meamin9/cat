@@ -1,32 +1,29 @@
 ManifestFileVersion: 0
-CRC: 379718003
+CRC: 2490190591
 AssetBundleManifest:
   AssetBundleInfos:
     Info_0:
-      Name: config/appsetting.asset.ab
-      Dependencies: {}
-    Info_1:
       Name: ui/loginui.prefab.ab
       Dependencies: {}
-    Info_2:
+    Info_1:
       Name: scenes/testscene/s_test/lightmap-0_comp_shadowmask.png.ab
       Dependencies: {}
-    Info_3:
+    Info_2:
       Name: ui/canvas.prefab.ab
       Dependencies: {}
-    Info_4:
+    Info_3:
       Name: scenes/testscene/s_test/lightmap-0_comp_dir.png.ab
       Dependencies: {}
-    Info_5:
+    Info_4:
       Name: views/uiloading.prefab.ab
       Dependencies: {}
-    Info_6:
+    Info_5:
       Name: scenes/testscene/s_test/lightmap-1_comp_shadowmask.png.ab
       Dependencies: {}
-    Info_7:
+    Info_6:
       Name: texture/rare.png.ab
       Dependencies: {}
-    Info_8:
+    Info_7:
       Name: scenes/testscene/s_test.unity.ab
       Dependencies:
         Dependency_0: scenes/testscene/s_test/lightmap-0_comp_shadowmask.png.ab
@@ -34,34 +31,217 @@ AssetBundleManifest:
         Dependency_2: scenes/testscene/s_test/lightmap-1_comp_shadowmask.png.ab
         Dependency_3: scenes/testscene/s_test/lightmap-1_comp_dir.png.ab
         Dependency_4: scenes/materials/floor1.mat.ab
-    Info_9:
+    Info_8:
       Name: scenes/textures/floor2.jpg.ab
       Dependencies: {}
-    Info_10:
-      Name: config/baseconfig.asset.ab
-      Dependencies: {}
-    Info_11:
+    Info_9:
       Name: ui/startui.prefab.ab
       Dependencies: {}
-    Info_12:
+    Info_10:
       Name: scenes/testscene/s_test/lightmap-1_comp_dir.png.ab
       Dependencies: {}
-    Info_13:
+    Info_11:
       Name: ui/joystickui.prefab.ab
       Dependencies: {}
-    Info_14:
+    Info_12:
       Name: scenes/materials/floor1.mat.ab
       Dependencies:
         Dependency_0: scenes/textures/floor1.jpg.ab
-    Info_15:
+    Info_13:
       Name: avatar/entity.prefab.ab
       Dependencies: {}
-    Info_16:
+    Info_14:
       Name: scenes/textures/floor_1.jpg.ab
       Dependencies: {}
-    Info_17:
+    Info_15:
       Name: scenes/textures/floor1.jpg.ab
       Dependencies: {}
-    Info_18:
+    Info_16:
       Name: tables.ab
+      Dependencies: {}
+    Info_17:
+      Name: appearence/skeleton/player/c001/c001_skeleton_animcontrollers
+      Dependencies: {}
+    Info_18:
+      Name: appearence/model/player/c002/prefabs/c002_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/player/c002/materials/c002_0111.mat.ab
+    Info_19:
+      Name: appearence/model/weapon/w001/prefabs/w001_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/w001/materials/w001_0111.mat.ab
+    Info_20:
+      Name: appearence/model/weapon/w002/prefabs/w002_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/w002/materials/w002_0111.mat.ab
+    Info_21:
+      Name: appearence/model/weapon/w004/prefabs/w004_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/w004/materials/w004_0111.mat.ab
+    Info_22:
+      Name: appearence/model/weapon/w005/prefabs/w005_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/w005/materials/w005_0111.mat.ab
+    Info_23:
+      Name: appearence/model/weapon/w006/prefabs/w006_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/w006/materials/w006_0111.mat.ab
+    Info_24:
+      Name: appearence/model/weapon/w007/prefabs/w007_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/w007/materials/w007_0111.mat.ab
+    Info_25:
+      Name: appearence/model/weapon/w008/prefabs/w008_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/w008/materials/w008_0111.mat.ab
+    Info_26:
+      Name: appearence/model/weapon/w009/prefabs/w009_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/w009/materials/w009_0111.mat.ab
+    Info_27:
+      Name: appearence/model/weapon/w011/prefabs/w011_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/w011/materials/w011_0111.mat.ab
+    Info_28:
+      Name: appearence/model/weapon/w012/prefabs/w012_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/w012/materials/w012_0111.mat.ab
+    Info_29:
+      Name: appearence/model/weapon/w013/prefabs/w013_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/w013/materials/w013_0111.mat.ab
+    Info_30:
+      Name: appearence/model/weapon/w014/prefabs/w014_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/w014/materials/w014_0111.mat.ab
+    Info_31:
+      Name: appearence/model/weapon/w015/prefabs/w015_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/w015/materials/w015_0111.mat.ab
+    Info_32:
+      Name: appearence/model/weapon/w016/prefabs/w016_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/w016/materials/w016_0111.mat.ab
+    Info_33:
+      Name: appearence/model/weapon/w017/prefabs/w017_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/w017/materials/w017_0111.mat.ab
+    Info_34:
+      Name: appearence/model/weapon/z001/prefabs/z001_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/z001/materials/z001_0111.mat.ab
+    Info_35:
+      Name: appearence/model/weapon/z002/prefabs/z002_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/z002/materials/z002_0111.mat.ab
+    Info_36:
+      Name: appearence/model/weapon/z003/prefabs/z003_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/z003/materials/z003_0111.mat.ab
+    Info_37:
+      Name: appearence/model/weapon/z004/prefabs/z004_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/z004/materials/z004_0111.mat.ab
+    Info_38:
+      Name: appearence/model/weapon/z005/prefabs/z005_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/z005/materials/z005_0111.mat.ab
+    Info_39:
+      Name: appearence/model/weapon/z006/prefabs/z006_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/z006/materials/z006_0111.mat.ab
+    Info_40:
+      Name: appearence/model/weapon/z007/prefabs/z007_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/z007/materials/z007_0111.mat.ab
+    Info_41:
+      Name: appearence/model/weapon/z008/prefabs/z008_0111_skin.prefab.ab
+      Dependencies:
+        Dependency_0: appearence/model/weapon/z008/materials/z008_0111.mat.ab
+    Info_42:
+      Name: appearence/player/c002/prefabs/c002_001_skin.prefab.ab
+      Dependencies: {}
+    Info_43:
+      Name: appearence/player/c002/prefabs/c002_skeleton.prefab.ab
+      Dependencies: {}
+    Info_44:
+      Name: appearence/model/player/c002/materials/c002_0111.mat.ab
+      Dependencies: {}
+    Info_45:
+      Name: appearence/model/weapon/w001/materials/w001_0111.mat.ab
+      Dependencies: {}
+    Info_46:
+      Name: appearence/model/weapon/w002/materials/w002_0111.mat.ab
+      Dependencies: {}
+    Info_47:
+      Name: appearence/model/weapon/w004/materials/w004_0111.mat.ab
+      Dependencies: {}
+    Info_48:
+      Name: appearence/model/weapon/w005/materials/w005_0111.mat.ab
+      Dependencies: {}
+    Info_49:
+      Name: appearence/model/weapon/w006/materials/w006_0111.mat.ab
+      Dependencies: {}
+    Info_50:
+      Name: appearence/model/weapon/w007/materials/w007_0111.mat.ab
+      Dependencies: {}
+    Info_51:
+      Name: appearence/model/weapon/w008/materials/w008_0111.mat.ab
+      Dependencies: {}
+    Info_52:
+      Name: appearence/model/weapon/w009/materials/w009_0111.mat.ab
+      Dependencies: {}
+    Info_53:
+      Name: appearence/model/weapon/w011/materials/w011_0111.mat.ab
+      Dependencies: {}
+    Info_54:
+      Name: appearence/model/weapon/w012/materials/w012_0111.mat.ab
+      Dependencies: {}
+    Info_55:
+      Name: appearence/model/weapon/w013/materials/w013_0111.mat.ab
+      Dependencies: {}
+    Info_56:
+      Name: appearence/model/weapon/w014/materials/w014_0111.mat.ab
+      Dependencies: {}
+    Info_57:
+      Name: appearence/model/weapon/w015/materials/w015_0111.mat.ab
+      Dependencies: {}
+    Info_58:
+      Name: appearence/model/weapon/w016/materials/w016_0111.mat.ab
+      Dependencies: {}
+    Info_59:
+      Name: appearence/model/weapon/w017/materials/w017_0111.mat.ab
+      Dependencies: {}
+    Info_60:
+      Name: appearence/model/weapon/z001/materials/z001_0111.mat.ab
+      Dependencies: {}
+    Info_61:
+      Name: appearence/model/weapon/z002/materials/z002_0111.mat.ab
+      Dependencies: {}
+    Info_62:
+      Name: appearence/model/weapon/z003/materials/z003_0111.mat.ab
+      Dependencies: {}
+    Info_63:
+      Name: appearence/model/weapon/z004/materials/z004_0111.mat.ab
+      Dependencies: {}
+    Info_64:
+      Name: appearence/model/weapon/z005/materials/z005_0111.mat.ab
+      Dependencies: {}
+    Info_65:
+      Name: appearence/model/weapon/z006/materials/z006_0111.mat.ab
+      Dependencies: {}
+    Info_66:
+      Name: appearence/model/weapon/z007/materials/z007_0111.mat.ab
+      Dependencies: {}
+    Info_67:
+      Name: appearence/model/weapon/z008/materials/z008_0111.mat.ab
+      Dependencies: {}
+    Info_68:
+      Name: appearence/player/c001/materials/c001_0111.mat.ab
+      Dependencies: {}
+    Info_69:
+      Name: config/gamesetting.asset.ab
+      Dependencies: {}
+    Info_70:
+      Name: config/setting.asset.ab
       Dependencies: {}

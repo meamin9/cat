@@ -28,11 +28,11 @@ public class Launcher : MonoBehaviour
 
     private void Start()
     {
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
         Game.Main.Start();
-#else
-    StartCoroutine(LoadAssembly());
-#endif
+//#else
+//    StartCoroutine(LoadAssembly());
+//#endif
     }
 
     //[System.Serializable]

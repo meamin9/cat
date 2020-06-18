@@ -37,11 +37,17 @@ namespace Game {
         Move,
         Attack,
         Dodge,
-        Burst
+        Burst,
+        BeAttack
     }
 
+    public enum RangeType {
+        Circle,
+        Rect,
+        Sector,
+    }
     public class Act {
-        public ActTable table;
+        public tAct table;
         public Act[] next;
 
         public int level;
@@ -51,7 +57,7 @@ namespace Game {
         public bool Enabled => level > 0;
 
         public Act(int id) {
-            table = Table<ActTable>.Find(id);
+            table = Table<tAct>.Find(id);
             Log.ErrorIf(table == null, $"{id} is not in ActTable");
             if (table.next != null) {
                 var len = table.next.Length;
@@ -61,6 +67,43 @@ namespace Game {
                 }
             }
             level = table.type == (int)ActType.Attack ? 1 : 0;
+            //AssetMgr.Instance.LoadAsync(table.anim, (asset) => { anim = asset as AnimationClip; });
+        }
+
+        public void AttackJudge(Role role) {
+            var range = table.range;
+            var rangeType = (RangeType)range[0];
+            List<Role> roles = null;
+            switch (rangeType) {
+            case RangeType.Rect:
+                var w = range[1];
+                var h = range[2];
+                var rect = new Rect(-w / 2f, 0, w, h);
+                roles = EntityManager.Instance.FindRolesInRangeRect(role, rect);
+                break;
+            case RangeType.Sector:
+                var r = range[1];
+                var cosThetaR = Mathf.Cos(range[2]) * r;
+                roles = EntityManager.Instance.FindRolesInRangeSector(role, r, cosThetaR);
+                break;
+            case RangeType.Circle:
+                roles = EntityManager.Instance.FindRolesInRangeCircle(role, range[1]);
+                break;
+            default:
+                Log.Error($"unknown range {range[0]}");
+                return;
+            }
+            foreach(var target in roles) {
+                ApplyAttack(role, target);
+            }
+        }
+
+        private void ApplyAttack(Role role, Role target) {
+            var dmg = 100f;
+            target.fightProps.hp -= dmg * table.dmgRate;
+
+            //target
+
         }
     }
 
@@ -71,6 +114,7 @@ namespace Game {
 
         public ActController(Role role) {
             this.role = role;
+            InitActCombos();
         }
 
         #region 状态
@@ -80,14 +124,6 @@ namespace Game {
             return (mStatus & (uint)s) != 0;
         }
 
-        public bool OnNormalAttackInput() {
-            var state = (uint)EActStatus.InputBusy | (uint)EActStatus.YingZhi;
-            if ((mStatus & state) != 0) {
-                return false;
-            }
-            return true;
-        }
-
         public void SetStatus(uint s) {
             mStatus |= (uint)s;
         }
@@ -95,22 +131,20 @@ namespace Game {
         public void ResetStatus(uint s) {
             mStatus &= ~(uint)s;
         }
+
+        
         #endregion
         #region ACT
         public Act[] actCombos;
 
         public Act curAct;
 
-        public void InitActCombos(Act act) {
+        public void InitActCombos() {
             var ids = role.table.actIds;
             actCombos = new Act[ids.Length];
             for (var i = 0; i < ids.Length; ++i) {
                 actCombos[i] = new Act(ids[i]);
             }
-        }
-
-        public bool CheckAct(ActType actType) {
-            return true;
         }
 
         public void PlayAct(ActType actType) {
@@ -137,6 +171,11 @@ namespace Game {
                 role.move.StopMove();
             }
             role.avatar.AnimCtrl.PlayAnimation(act.anim, null);
+        }
+
+        public void OnActJudge(int p) {
+
+
         }
         #endregion
 
@@ -176,14 +215,6 @@ namespace Game {
                 return;
             }
             role.move.Move(offset);
-            PlayAct(ActType.Move);
-        }
-
-        public void Stand() {
-            var state = (uint)EActStatus.AttackBusy | (uint)EActStatus.YingZhi;
-            if ((mStatus & state) != 0) {
-                return;
-            }
         }
 
         /// <summary>
@@ -191,6 +222,13 @@ namespace Game {
         /// </summary>
         public void Dodge() {
 
+        }
+
+        public void BeAttack(Role role) {
+            var state = (uint)EActStatus.Stoic;
+            if ((mStatus & state) == 0) {
+                PlayAct(ActType.BeAttack);
+            }
         }
     }
 }

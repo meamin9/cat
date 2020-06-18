@@ -1,0 +1,90 @@
+[
+  {
+    "id": 0,
+    "type": 0,
+    "next": [
+      1
+    ],
+    "dmg": 1.0,
+    "range": [
+      0,
+      5
+    ],
+    "name": "普通1",
+    "anim": "Appearence/Player/C002/Anims/C002_Attack1.anim"
+  },
+  {
+    "id": 1,
+    "type": 0,
+    "next": [
+      2
+    ],
+    "dmg": 1.2,
+    "range": [
+      0,
+      5
+    ],
+    "name": "普通2",
+    "anim": "Appearence/Player/C002/Anims/C002_Attack2.anim"
+  },
+  {
+    "id": 2,
+    "type": 0,
+    "next": [
+      3
+    ],
+    "dmg": 1.3,
+    "range": [
+      0,
+      5
+    ],
+    "name": "普通3",
+    "anim": "Appearence/Player/C002/Anims/C002_Attack3.anim"
+  },
+  {
+    "id": 3,
+    "type": 0,
+    "next": [
+      4
+    ],
+    "dmg": 1.4,
+    "range": [
+      0,
+      5
+    ],
+    "name": "普通4",
+    "anim": "Appearence/Player/C002/Anims/C002_Attack4.anim"
+  },
+  {
+    "id": 4,
+    "type": 0,
+    "next": [
+      5
+    ],
+    "dmg": 1.5,
+    "range": [
+      0,
+      5
+    ],
+    "name": "普通5",
+    "anim": "Appearence/Player/C002/Anims/C002_Attack5.anim"
+  },
+  {
+    "id": 5,
+    "type": 0,
+    "dmg": 1.6,
+    "range": [
+      0,
+      5
+    ],
+    "name": "普通6",
+    "anim": "Appearence/Player/C002/Anims/C002_Attack6.anim"
+  },
+  {
+    "id": 6,
+    "type": 1,
+    "dmg": 0.0,
+    "name": "后撤",
+    "anim": "Appearence/Player/C002/Anims/C002_Back.anim"
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "id": 0,
+    "name": "角色名1",
+    "roleId": 0,
+    "skeleton": "Appearence/Player/C002/Prefabs/C002_Skeleton.prefab",
+    "skin": "Appearence/Player/C002/Prefabs/C002_Skin.prefab",
+    "animDir": "Appearence/Player/C002/Anims"
+  }
+]
