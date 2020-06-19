@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine.Playables;
 
 namespace Game {
-    public static class UnityExtensions {
+    public static class Extension {
 
         public static void DestoryAllInput(this Playable owner) {
             var count = owner.GetInputCount();
@@ -18,6 +18,10 @@ namespace Game {
             }
             owner.SetInputCount(0);
 
+        }
+
+        public static string ToJson(this object obj) {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(obj);
         }
     }
 }

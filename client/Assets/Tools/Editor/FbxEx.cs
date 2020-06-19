@@ -53,9 +53,12 @@ namespace Tools {
             //skeleton
             GameObject.DestroyImmediate(smr.gameObject);
             var anim = go.GetComponent<Animator>();
-            if (anim != null) {
-                GameObject.DestroyImmediate(anim);
+            if (anim == null) {
+                anim = go.AddComponent<Animator>();
             }
+            anim.avatar = null;
+            anim.runtimeAnimatorController = null;
+            anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
             if (!PrefabUtility.SaveAsPrefabAsset(go, Path.Combine(prefabDir, name + "_Skeleton.prefab"))) {
                 Debug.LogError("Skeleton Prefab failed");
             }

@@ -139,47 +139,91 @@ namespace Base
         }
         #endregion
 
-        private Coroutine LoadAssetAsync(string assetName, System.Action<Object> callback, bool unloadBundle)
-        {
-            AsyncInfo info;
-            if (_cacheAssets.TryGetValue(assetName, out info)) {
-                if (info.State == AsyncState.Finish) {
-                    callback?.Invoke(info.Asset);
-                    return null;
-                }
-                else {
-                    info.Callback += callback;
-                    _cacheAssets[assetName] = info;
-                    return info.Coroutine;
-                }
-            }
-            BundleInfo entry;
-            if (!_asset2BundleInfoT.TryGetValue(assetName, out entry)) {
-                Debug.LogErrorFormat("Not Found Bundle for:{0}", assetName);
+        private Coroutine LoadAssetAsync(string[] assetNames, System.Action<Object[]> callback, bool unloadBundle) {
+            if (assetNames.Length == 0) {
                 return null;
             }
-            info = new AsyncInfo() {
-                State = AsyncState.Processing,
-                Callback = callback
-            };
-            _cacheAssets.Add(assetName, info);
-
-            var coroutine = MonoProxy.Instance.StartCoroutine(_loadAssetCoroutine(entry, assetName, unloadBundle));
-            if (coroutine != null) {
-                info.Coroutine = coroutine; // 记录下，在重复load时再次返回这个协程
-                _cacheAssets[assetName] = info;
+            if (!_asset2BundleInfoT.TryGetValue(assetNames[0], out BundleInfo entry)) {
+                Debug.LogErrorFormat("Not Found Bundle for:{0}", assetNames[0]);
+                return null;
             }
-            return coroutine;
+            return MonoProxy.Instance.StartCoroutine(_loadAssetCoroutine(entry, assetNames, unloadBundle, callback));
         }
 
-        private IEnumerator _loadAssetCoroutine(BundleInfo bundleEntry, string assetName, bool unloadBundle) {
+        private IEnumerator _loadAssetCoroutine(BundleInfo bundleEntry, string[] assetNames, bool unloadBundle, System.Action<Object[]> finishCb) {
             var coroutine = LoadBundleAsync(bundleEntry, null);
             if (coroutine != null) {
                 yield return coroutine;
             }
-            AsyncInfo info;
             AssetBundle bundle = null;
-            if (_cacheBundles.TryGetValue(bundleEntry.Name, out info)) {
+            if (_cacheBundles.TryGetValue(bundleEntry.Name, out AsyncInfo info)) {
+                if (info.State == AsyncState.Finish) {
+                    bundle = info.Asset as AssetBundle;
+                }
+            }
+            if (null == bundle) {
+                Debug.LogErrorFormat("Error AssetBundles not loaded:{0}", bundleEntry.Name);
+                yield break;
+            }
+            var count = assetNames.Length;
+            var assets = new Object[count];
+            for(var i = 0; i < count; ++i) {
+                var req = bundle.LoadAssetAsync(assetNames[i]);
+                yield return req;
+                assets[i] = req.asset;
+                if (req.asset == null) {
+                    Debug.LogErrorFormat("Failed to load asset:{0}", assetNames[i]);
+                }
+            }
+            if (unloadBundle) {
+                UnloadAssetBundle(bundleEntry.Name, false);
+            }
+            finishCb?.Invoke(assets);
+        }
+
+        // 同一时间并不会出现多次加载同一资源，如果出现了，消耗只是多个协程，这里去掉只能加载一个asset的限制
+        private Coroutine LoadAssetAsync(string assetName, System.Action<Object> callback, bool unloadBundle)
+        {
+            //AsyncInfo info;
+            //if (_cacheAssets.TryGetValue(assetName, out info)) {
+            //    if (info.State == AsyncState.Finish) {
+            //        callback?.Invoke(info.Asset);
+            //        return null;
+            //    }
+            //    else {
+            //        info.Callback += callback;
+            //        _cacheAssets[assetName] = info;
+            //        return info.Coroutine;
+            //    }
+            //}
+            //BundleInfo entry;
+            if (!_asset2BundleInfoT.TryGetValue(assetName, out BundleInfo entry)) {
+                Debug.LogErrorFormat("Not Found Bundle for:{0}", assetName);
+                return null;
+            }
+            //info = new AsyncInfo() {
+            //    State = AsyncState.Processing,
+            //    Callback = callback
+            //};
+            //_cacheAssets.Add(assetName, info);
+
+            return MonoProxy.Instance.StartCoroutine(_loadAssetCoroutine(entry, assetName, unloadBundle, callback));
+            
+            //if (coroutine != null) {
+            //    info.Coroutine = coroutine; // 记录下，在重复load时再次返回这个协程
+            //    _cacheAssets[assetName] = info;
+            //}
+            //return coroutine;
+        }
+
+        private IEnumerator _loadAssetCoroutine(BundleInfo bundleEntry, string assetName, bool unloadBundle, System.Action<Object> finishCb) {
+            var coroutine = LoadBundleAsync(bundleEntry, null);
+            if (coroutine != null) {
+                yield return coroutine;
+            }
+            //AsyncInfo info;
+            AssetBundle bundle = null;
+            if (_cacheBundles.TryGetValue(bundleEntry.Name, out AsyncInfo info)) {
                 if (info.State == AsyncState.Finish) {
                     bundle = info.Asset as AssetBundle;
                 }
@@ -194,22 +238,26 @@ namespace Base
             if (asset == null) {
                 Debug.LogErrorFormat("Failed to load asset:{0}", assetName);
             }
-            
-            if (_cacheAssets.TryGetValue(assetName, out info)) {
-                //_cacheAssets[assetName] = new AsyncInfo() {
-                //    State = AsyncState.Finish,
-                //    Asset = asset
-                //};
-                // AB中有Asset的引用，这里不需要缓存
-                _cacheAssets.Remove(assetName);
-                info.Callback?.Invoke(asset);
-                if (unloadBundle) {
-                    UnloadAssetBundle(bundleEntry.Name, false);
-                }
-            }
-            else {
+            if (unloadBundle) {
                 UnloadAssetBundle(bundleEntry.Name, false);
             }
+            finishCb?.Invoke(asset);
+
+            //if (_cacheAssets.TryGetValue(assetName, out info)) {
+            //    //_cacheAssets[assetName] = new AsyncInfo() {
+            //    //    State = AsyncState.Finish,
+            //    //    Asset = asset
+            //    //};
+            //    // AB中有Asset的引用，这里不需要缓存
+            //    _cacheAssets.Remove(assetName);
+            //    info.Callback?.Invoke(asset);
+            //    if (unloadBundle) {
+            //        UnloadAssetBundle(bundleEntry.Name, false);
+            //    }
+            //}
+            //else {
+            //    UnloadAssetBundle(bundleEntry.Name, false);
+            //}
         }
 
         public void UnloadByAssetName(string assetName) {
@@ -314,7 +362,6 @@ namespace Base
 
         private Coroutine LoadResourceAsync(string assetName, System.Action<Object> callback)
         {
-            //var assetName = assetName;
             AsyncInfo info;
             if (_cacheRes.TryGetValue(assetName, out info)) {
                 if (info.State == AsyncState.Finish) {
@@ -342,8 +389,8 @@ namespace Base
         {
             var req = Resources.LoadAsync(assetName);
             yield return req;
-            if (_cacheAssets.TryGetValue(assetName, out AsyncInfo info)) {
-                _cacheAssets[assetName] = new AsyncInfo() {
+            if (_cacheRes.TryGetValue(assetName, out AsyncInfo info)) {
+                _cacheRes[assetName] = new AsyncInfo() {
                     State = AsyncState.Finish,
                     Asset = req.asset
                 };
@@ -400,7 +447,7 @@ namespace Base
         }
 
         /// <summary>
-        /// 加载asset资源统一接口
+        /// 加载asset资源统一接口, 多个asset必须在同一个bundle内
         /// </summary>
         public void LoadAsync(string[] paths, System.Action<Object[]> handle, bool clear = false) {
 #if UNITY_EDITOR
@@ -425,7 +472,7 @@ namespace Base
                 }
             }
 #endif
-            return;// LoadAssetAsync(path, handle, clear);
+            LoadAssetAsync(paths, handle, clear);
         }
 
         public void Unload(string path) {

@@ -1,4 +1,5 @@
 ﻿using Base;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -25,20 +26,21 @@ namespace Game {
         private string mSkeletonPath;
         private string mSkinPath;
 
+        public bool isLoaded;
+
         public Transform transform => gameObject.transform;
 
-        public Avatar(Transform parent, string skeletonPath, string skinPath) {
+        public Avatar(Transform parent, string skeletonPath, string skinPath, System.Action finishCb) {
             gameObject = new GameObject();
             gameObject.transform.SetParent(parent, false);
             gameObject.transform.localPosition = Vector3.zero;
 
-            AnimCtrl = AnimationController.Create(gameObject);
-            AnimEventAdapter = gameObject.AddComponent<AnimationEventAdapter>();
+            
 
-            Load(skeletonPath, skinPath);
+            Load(skeletonPath, skinPath, finishCb);
         }
 
-        private void Load(string skeletonPath, string skinPath) {
+        private void Load(string skeletonPath, string skinPath, Action finishCb) {
             mSkeletonPath = skeletonPath;
             mSkinPath = skinPath;
             var waitForSkin = 2;
@@ -50,6 +52,8 @@ namespace Game {
                 --waitForSkin;
                 if (waitForSkin == 0) {
                     ResetSkinMeta();
+                    isLoaded = true;
+                    finishCb?.Invoke();
                 }
             });
             AssetMgr.Instance.LoadAsync(skinPath, (asset) => {
@@ -60,6 +64,8 @@ namespace Game {
                 --waitForSkin;
                 if (waitForSkin == 0) {
                     ResetSkinMeta();
+                    isLoaded = true;
+                    finishCb?.Invoke();
                 }
             });
         }
@@ -74,10 +80,11 @@ namespace Game {
         }
 
         private void AfterSkeletonLoaded() {
+            AnimCtrl = AnimationController.Create(mSkeleton.gameObject);
+            AnimEventAdapter = gameObject.AddComponent<AnimationEventAdapter>();
             if (mAttachPositions != null) {
                 InitAttachPositions();
             }
-            
         }
 
         public void Destory() {

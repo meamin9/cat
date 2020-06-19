@@ -11,7 +11,11 @@ namespace Game {
         public PlayableGraph Graph => mGraph;
 
         public static AnimationController Create(GameObject go) {
-            var animator = go.GetComponent<Animator>() ?? go.AddComponent<Animator>();
+            var animator = go.GetComponent<Animator>();
+            if (animator == null) {
+                animator = go.AddComponent<Animator>();
+                animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+            }
             var graph = PlayableGraph.Create("Action");
             var playable = ScriptPlayable<AnimationController>.Create(graph);
             var animOut = AnimationPlayableOutput.Create(graph, "Animation", animator);

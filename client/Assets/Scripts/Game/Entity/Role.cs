@@ -47,7 +47,7 @@ namespace Game
         public int guid;
         public tRole table;
         public int skinId;
-        public tSkin skinTable;
+        public tSkin skin;
 
         public Skill[] skills;
 
@@ -58,40 +58,50 @@ namespace Game
         public int level;
         public FightProperty fightProps;
 
-
-
         public Role(int id) {
             table = Table<tRole>.Find(id);
             Log.ErrorIf(table == null, $"找不到 RoleTable :{id}");
             this.id = id;
             guid = Funcs.NewGuid();
             skinId = table.skinIds[0];
-            var skin = Table<tSkin>.Find(skinId);
-            avatar = new Avatar(SceneManager.roleRoot, skin.skeleton, skin.skin);
+
+            skin = Table<tSkin>.Find(skinId);
+            avatar = new Avatar(SceneManager.roleRoot, skin.skeleton, skin.skin, AfterRoleLoadFinish);
+            avatar.gameObject.name = id + "_" + guid;
+
+            act = new ActController(this);
 
             move = new MoveController(avatar.gameObject.transform);
             move.onMoveFinished = OnMoveFinished;
             move.onMoveStart = OnMoveStart;
 
-            act = new ActController(this);
-            avatar.AnimEventAdapter.SetActListener(act);
-
             //加载动画
-            skinTable = skin;
-            var dir = skin.animDir;
-            AssetMgr.Instance.LoadAsync(dir + "/Stand.anim", (anim) => { animWalk = anim as AnimationClip; });
-            AssetMgr.Instance.LoadAsync(dir + "/Stand.anim", (anim) => { animStand = anim as AnimationClip; });
+            AssetMgr.Instance.LoadAsync(skin.animDir + "/Stand.anim", (anim) => {
+                animWalk = anim as AnimationClip;
+            });
+            AssetMgr.Instance.LoadAsync(skin.animDir + "/Stand.anim", (anim) => {
+                animStand = anim as AnimationClip;
+                AfterRoleLoadFinish();
+            });
             LoadAnimationClips(act.actCombos);
         }
 
         public void LoadAnimationClips(Act[] acts) {
-            var dir = skinTable.animDir;
+            var dir = skin.animDir;
             foreach (var act in acts) {
-                AssetMgr.Instance.LoadAsync(dir + act.anim, (anim) => act.anim = anim as AnimationClip);
+                AssetMgr.Instance.LoadAsync(dir + act.table.anim, (anim) => act.anim = anim as AnimationClip);
                 if (act.next != null) {
                     LoadAnimationClips(act.next);
                 }
             }
+        }
+
+        public void AfterRoleLoadFinish() {
+            if (animStand != null && avatar.isLoaded) {
+                avatar.AnimCtrl.PlayAnimation(animStand);
+                avatar.AnimEventAdapter.SetActListener(act);
+            }
+
         }
 
         public Skill GetSkill(int skillIndex) {
