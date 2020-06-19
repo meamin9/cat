@@ -44,8 +44,8 @@ namespace Game {
             if (_uiCache.TryGetValue(uitype, out ui)) {
                 _uiCache.Remove(uitype);
                 _uiList.Add(ui);
-                ui.gameObject.SetActive(true);
                 ui.gameObject.transform.SetAsLastSibling();
+                ui.gameObject.SetActive(true);
                 ui.OnShow();
                 callback?.Invoke(ui);
                 return;

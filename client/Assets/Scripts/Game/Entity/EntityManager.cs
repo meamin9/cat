@@ -9,7 +9,7 @@ namespace Game
 {
     public class EntityManager : Singleton<EntityManager>
     {
-        public static Role Player { get; private set; }
+        public static Role player { get; private set; }
 
 
         private Dictionary<int, Role> mRoles = new Dictionary<int, Role>();
@@ -18,6 +18,7 @@ namespace Game
         {
             var role = new Role(id);
             mRoles.Add(role.guid, role);
+            player = role;
             return role;
         }
 
