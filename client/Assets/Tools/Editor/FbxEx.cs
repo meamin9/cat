@@ -10,21 +10,55 @@ namespace Tools {
     public static class FbxHelper {
         [MenuItem("Assets/Create/Custom/FbxPrefabs")]
         public static void CreateFbxPrefabs() {
-            var obj = UnityEditor.Selection.activeObject;
-            if (obj == null) {
-                Debug.LogError("选中fbx");
-                return;
+            var objs = UnityEditor.Selection.objects;
+            foreach(var obj in objs) {
+                var path = AssetDatabase.GetAssetPath(obj);
+                CreateByFbx(path);
             }
-            var path = AssetDatabase.GetAssetPath(obj);
+            //if (obj == null) {
+            //    Debug.LogError("选中fbx");
+            //    return;
+            //}
+        }
+        public static void CreateByFbx(string path) { 
             var ext = Path.GetExtension(path);
             if (ext.ToLower() != ".fbx") {
-                Debug.LogError("选中fbx");
+                Debug.LogWarning($"not fbx {path}");
                 return;
             }
-            var name = Path.GetFileNameWithoutExtension(path).Replace("_Preview", ""); ;
+            var fbxName = Path.GetFileNameWithoutExtension(path).Replace("_Preview", "");
             var dir = Path.GetDirectoryName(path);
             var parentDir = Path.GetDirectoryName(dir);
+            var dirName = Path.GetFileName(parentDir);
 
+            //animation
+            var animDir = Path.Combine(Path.GetDirectoryName(dir), "Anims");
+            if (!Directory.Exists(animDir)) {
+                Directory.CreateDirectory(animDir);
+            }
+
+            var matDir = Path.Combine(Path.GetDirectoryName(dir), "Materials");
+            if (!Directory.Exists(matDir)) {
+                Directory.CreateDirectory(matDir);
+            }
+
+            var all = AssetDatabase.LoadAllAssetsAtPath(path);
+            foreach (var a in all) {
+                if (a.GetType() == typeof(AnimationClip) && !a.name.StartsWith("__preview__")) {
+                    var clip = GameObject.Instantiate(a as AnimationClip);
+                    var n = a.name.Replace(fbxName + "_", "");
+                    if (n.EndsWith(".com")) {
+                        n = fbxName;
+                    }
+                    AssetDatabase.CreateAsset(clip, Path.Combine(animDir, n + ".anim"));
+                }
+                else if (a.GetType() == typeof(Material)) {
+                    var mat = GameObject.Instantiate(a as Material);
+                    var n = a.name.Replace(fbxName, dirName);
+                    AssetDatabase.CreateAsset(mat, Path.Combine(matDir, n + ".mat"));
+                }
+            }
+            // prefabs
             var prefabDir = Path.Combine(parentDir, "Prefabs");
             if (!Directory.Exists(prefabDir)) {
                 Directory.CreateDirectory(prefabDir);
@@ -32,50 +66,45 @@ namespace Tools {
             var asset = AssetDatabase.LoadAssetAtPath<GameObject>(path);
             var go = GameObject.Instantiate<GameObject>(asset);
             //mesh skin
-            var smr = go.GetComponentInChildren<SkinnedMeshRenderer>();
-            if (smr != null) {
+            var smrs = go.GetComponentsInChildren<SkinnedMeshRenderer>();
+            foreach (var smr in smrs) {
                 GenSkinMeta(smr.gameObject);
                 var mesh = smr.sharedMesh;
                 var m = GameObject.Instantiate<Mesh>(mesh);
                 smr.sharedMesh = m;
-                AssetDatabase.CreateAsset(m, Path.Combine(prefabDir, name + ".mesh"));
-                var mat = AssetDatabase.LoadAssetAtPath<Material>(Path.Combine(parentDir, "Materials", name + ".mat"));
+                var skinName = smr.gameObject.name.Replace(fbxName, dirName);
+                AssetDatabase.CreateAsset(m, Path.Combine(prefabDir, skinName + ".mesh"));
+                var mat = AssetDatabase.LoadAssetAtPath<Material>(Path.Combine(matDir, skinName + ".mat"));
                 if (mat != null) {
                     smr.sharedMaterial = mat;
+                } else if (smr.sharedMaterial != null) {
+                    mat = AssetDatabase.LoadAssetAtPath<Material>(Path.Combine(matDir, smr.sharedMaterial.name + ".mat"));
+                    if (mat != null) {
+                        smr.sharedMaterial = mat;
+                    }
+                    else {
+                        Debug.LogWarning($"cant find material {smr.sharedMaterial.name}");
+                    }
                 }
-                else {
-                    Debug.LogError($"cant find material {smr.gameObject.name}");
-                }
-                if (!PrefabUtility.SaveAsPrefabAsset(smr.gameObject, Path.Combine(prefabDir, name + "_Skin.prefab"))) {
+                if (!PrefabUtility.SaveAsPrefabAsset(smr.gameObject, Path.Combine(prefabDir, skinName + "_Skin.prefab"))) {
                     Debug.LogError("Skin Prefab failed");
                 }
+                GameObject.DestroyImmediate(smr.gameObject);
             }
-            //skeleton
-            GameObject.DestroyImmediate(smr.gameObject);
-            var anim = go.GetComponent<Animator>();
-            if (anim == null) {
-                anim = go.AddComponent<Animator>();
-            }
-            anim.avatar = null;
-            anim.runtimeAnimatorController = null;
-            anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
-            if (!PrefabUtility.SaveAsPrefabAsset(go, Path.Combine(prefabDir, name + "_Skeleton.prefab"))) {
-                Debug.LogError("Skeleton Prefab failed");
-            }
-            GameObject.DestroyImmediate(go);
-            //animation
-            var animDir = Path.Combine(Path.GetDirectoryName(dir), "Anims");
-            if (!Directory.Exists(animDir)) {
-                Directory.CreateDirectory(animDir);
-            }
-            var all = AssetDatabase.LoadAllAssetsAtPath(path);
-            foreach (var a in all) {
-                if (a.GetType() == typeof(AnimationClip) && !a.name.StartsWith("__preview__")) {
-                    var clip = GameObject.Instantiate(a as AnimationClip);
-                    var n = a.name.Replace(name + "_", "");
-                    AssetDatabase.CreateAsset(clip, Path.Combine(animDir, n + ".anim"));
+            //skeleton, 没有mesh就不导skeleton了
+            if (smrs.Length > 0) {
+                var anim = go.GetComponent<Animator>();
+                if (anim == null) {
+                    anim = go.AddComponent<Animator>();
+                }
+                anim.avatar = null;
+                anim.runtimeAnimatorController = null;
+                anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+                if (!PrefabUtility.SaveAsPrefabAsset(go, Path.Combine(prefabDir, dirName + "_Skeleton.prefab"))) {
+                    Debug.LogError("Skeleton Prefab failed");
                 }
             }
+            GameObject.DestroyImmediate(go);
             AssetDatabase.Refresh();
         }
 
