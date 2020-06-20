@@ -30,73 +30,52 @@ namespace Game
 
     public class Log
     {
-
-        public static void Info(params object[] args)
+        public static void Info(string msg)
         {
-            UnityEngine.Debug.Log(args);
+            UnityEngine.Debug.Log(msg);
         }
 
-        public static void Info(string fmt, params object[] args)
-        {
-            UnityEngine.Debug.LogFormat(fmt, args);
-        }
-
-        public static void InfoIf(bool cond, params object[] args)
+        public static void InfoIf(bool cond, string msg)
         {
             if (cond) {
-                Info(args);
+                Info(msg);
             }
         }
 
-        public static void Warn(params object[] args)
+        public static void Warn(string msg)
         {
-            UnityEngine.Debug.Log(args);
+            UnityEngine.Debug.Log(msg);
         }
 
-        public static void Warn(string fmt, params object[] args)
-        {
-            UnityEngine.Debug.LogFormat(fmt, args);
-        }
-
-        public static void WarnIf(bool cond, params object[] args)
+        public static void WarnIf(bool cond, string msg)
         {
             if (cond) {
-                Warn(args);
+                Warn(msg);
             }
         }
 
-        public static void Error(string fmt, params object[] args)
+        public static void Error(string msg)
         {
-            UnityEngine.Debug.LogErrorFormat(fmt, args);
+            UnityEngine.Debug.LogError(msg);
         }
 
-        public static void Error(params object[] args)
-        {
-            UnityEngine.Debug.LogError(args);
-        }
-
-        public static void ErrorIf(bool cond, params object[] args)
+        public static void ErrorIf(bool cond, string msg)
         {
             if (cond) {
-                Error(args);
+                Error(msg);
             }
         }
 
-        public static void Fatal(string fmt, params object[] args)
+        public static void Fatal(string msg)
         {
-            Error(fmt, args);
-
-        }
-        public static void Fatal(params object[] args)
-        {
-            Error(args);
+            Error(msg);
         }
 
-        public static void FatalIf(bool cond, params object[] args)
+        public static void FatalIf(bool cond, string msg)
         {
             if (cond)
             {
-                Fatal(args);
+                Fatal(msg);
             }
         }
     }

@@ -33,11 +33,11 @@ namespace Game
         }
         public virtual void OnShow()
         {
-            Log.Info("on show: {0}", UIType);
+            Log.Info($"on show: {UIType}");
         }
         public virtual void OnHide()
         {
-            Log.Info("on hide: {0}", UIType);
+            Log.Info($"on hide: {UIType}");
         }
 
         public void Close()

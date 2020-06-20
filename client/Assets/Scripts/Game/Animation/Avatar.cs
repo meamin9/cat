@@ -43,7 +43,7 @@ namespace Game {
         private void Load(string skeletonPath, string skinPath, Action finishCb) {
             mSkeletonPath = skeletonPath;
             mSkinPath = skinPath;
-            var waitForSkin = 2;
+            var waitForSkin = skinPath == null ? 1 : 2;
             AssetMgr.Instance.LoadAsync(skeletonPath, (asset) => {
                 mSkeleton = GameObject.Instantiate((GameObject)asset).transform;
                 mSkeleton.SetParent(gameObject.transform, false);
@@ -56,20 +56,25 @@ namespace Game {
                     finishCb?.Invoke();
                 }
             });
-            AssetMgr.Instance.LoadAsync(skinPath, (asset) => {
-                mSkin = GameObject.Instantiate((GameObject)asset);
-                mSkin.transform.SetParent(gameObject.transform, false);
-                mSkin.transform.localPosition = Vector3.zero;
-                mSMR = mSkin.GetComponentInChildren<SkinnedMeshRenderer>();
-                --waitForSkin;
-                if (waitForSkin == 0) {
-                    ResetSkinMeta();
-                    isLoaded = true;
-                    finishCb?.Invoke();
-                }
-            });
+            if (skinPath != null) {
+                AssetMgr.Instance.LoadAsync(skinPath, (asset) => {
+                    mSkin = GameObject.Instantiate((GameObject)asset);
+                    mSkin.transform.SetParent(gameObject.transform, false);
+                    mSkin.transform.localPosition = Vector3.zero;
+                    mSMR = mSkin.GetComponentInChildren<SkinnedMeshRenderer>();
+                    --waitForSkin;
+                    if (waitForSkin == 0) {
+                        ResetSkinMeta();
+                        isLoaded = true;
+                        finishCb?.Invoke();
+                    }
+                });
+            }
         }
         private void ResetSkinMeta() {
+            if (mSkinPath == null) {
+                return;
+            }
             var meta = SkinMeta.GetMeta(mSkinPath, mSMR.gameObject);
             mSMR.rootBone = mSkeleton.Find(meta.rootBone);
             var bones = new Transform[meta.bones.Length];

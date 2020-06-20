@@ -1,7 +1,7 @@
 [
   {
     "id": 0,
-    "type": 0,
+    "type": 2,
     "next": [
       1
     ],
@@ -11,11 +11,11 @@
       5
     ],
     "name": "普通1",
-    "anim": "Appearence/Player/C002/Anims/C002_Attack1.anim"
+    "anim": "Attack1.anim"
   },
   {
     "id": 1,
-    "type": 0,
+    "type": 2,
     "next": [
       2
     ],
@@ -25,11 +25,11 @@
       5
     ],
     "name": "普通2",
-    "anim": "Appearence/Player/C002/Anims/C002_Attack2.anim"
+    "anim": "Attack2.anim"
   },
   {
     "id": 2,
-    "type": 0,
+    "type": 2,
     "next": [
       3
     ],
@@ -39,11 +39,11 @@
       5
     ],
     "name": "普通3",
-    "anim": "Appearence/Player/C002/Anims/C002_Attack3.anim"
+    "anim": "Attack3.anim"
   },
   {
     "id": 3,
-    "type": 0,
+    "type": 2,
     "next": [
       4
     ],
@@ -53,11 +53,11 @@
       5
     ],
     "name": "普通4",
-    "anim": "Appearence/Player/C002/Anims/C002_Attack4.anim"
+    "anim": "Attack4.anim"
   },
   {
     "id": 4,
-    "type": 0,
+    "type": 2,
     "next": [
       5
     ],
@@ -67,24 +67,63 @@
       5
     ],
     "name": "普通5",
-    "anim": "Appearence/Player/C002/Anims/C002_Attack5.anim"
+    "anim": "Attack5.anim"
   },
   {
     "id": 5,
-    "type": 0,
+    "type": 2,
     "dmg": 1.6,
     "range": [
       0,
       5
     ],
     "name": "普通6",
-    "anim": "Appearence/Player/C002/Anims/C002_Attack6.anim"
+    "anim": "Attack6.anim"
   },
   {
     "id": 6,
-    "type": 1,
+    "type": 3,
     "dmg": 0.0,
-    "name": "后撤",
-    "anim": "Appearence/Player/C002/Anims/C002_Back.anim"
+    "name": "闪避",
+    "anim": "Back.anim"
+  },
+  {
+    "id": 7,
+    "type": 2,
+    "next": [
+      8
+    ],
+    "dmg": 1.0,
+    "range": [
+      0,
+      5
+    ],
+    "name": "普通1",
+    "anim": "sword and shield slash.anim"
+  },
+  {
+    "id": 8,
+    "type": 2,
+    "next": [
+      9
+    ],
+    "dmg": 1.0,
+    "range": [
+      0,
+      5
+    ],
+    "name": "普通2",
+    "anim": "sword and shield slash (3).anim"
+  },
+  {
+    "id": 9,
+    "type": 2,
+    "dmg": 1.0,
+    "range": [
+      0,
+      5
+    ],
+    "name": "普通3",
+    "anim": "sword and shield slash (4).anim"
   }
 ]

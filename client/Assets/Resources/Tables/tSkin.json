@@ -6,5 +6,12 @@
     "skeleton": "Appearence/Player/C002/Prefabs/C002_Skeleton.prefab",
     "skin": "Appearence/Player/C002/Prefabs/C002_Skin.prefab",
     "animDir": "Appearence/Player/C002/Anims"
+  },
+  {
+    "id": 1,
+    "name": "角色名2",
+    "roleId": 0,
+    "skeleton": "Appearence/Player/Paladin/Prefabs/Paladin_Full.prefab",
+    "animDir": "Appearence/Player/Paladin/Anims"
   }
 ]

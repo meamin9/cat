@@ -149,7 +149,7 @@ namespace Game {
 
         public void PlayAct(ActType actType) {
             Act act = null;
-            if (curAct != null) {
+            if (curAct != null && curAct.next != null) {
                 foreach (var a in curAct.next) {
                     if (a.table.type == (int)actType) {
                         act = a;
@@ -170,6 +170,7 @@ namespace Game {
             if (role.move.IsMoving) {
                 role.move.StopMove();
             }
+            Log.ErrorIf(act.anim == null, $"Not Found Act anim {act.table.anim},{act}");
             role.avatar.AnimCtrl.PlayAnimation(act.anim, null);
         }
 

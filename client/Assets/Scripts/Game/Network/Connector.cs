@@ -42,10 +42,10 @@ namespace Game
 					}
 				}
 				catch (SocketException e) {
-					Log.Error("connect error:{}", e.ErrorCode);
+					Log.Error($"connect error:{e.ErrorCode}");
 				}
 				catch (Exception e){
-					Log.Error("connect other error{}", e);
+					Log.Error($"connect other error{e}");
 				}
 				if (_tcp != null) {
 					_tcp.Close();

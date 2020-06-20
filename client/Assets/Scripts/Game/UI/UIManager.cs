@@ -56,7 +56,7 @@ namespace Game {
                         UIType = uitype,
                         Callback = callback
                     };
-                    Log.Warn("UI is Loding...{0}", uitype);
+                    Log.Warn($"UI is Loding...{uitype}");
                     return;
                 }
             }

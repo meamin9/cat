@@ -36,14 +36,14 @@ namespace Game {
                                 cb(msg);
                                 continue;
                             } else {
-                                Log.Error("没有找到对应的协议回调:{0}", evt.MsgId);
+                                Log.Error($"没有找到对应的协议回调:{evt.MsgId}");
                             }
                         }
                         if (_notifyHandles.TryGetValue(evt.MsgId, out cb)) {
                             cb(msg);
                         }
                     } finally {
-                        Log.Error("协议处理出错：{0}", evt.MsgId);
+                        Log.Error($"协议处理出错：{evt.MsgId}");
                     }
                 }
                 _recvList.Clear();
@@ -61,7 +61,7 @@ namespace Game {
         public static void Send(UInt16 msgId, Proto.ISession msg, Action<object> callback) {
             msg.Session = ++_sid;
             if (_reqHandles.ContainsKey(msg.Session)) {
-                Log.Error("not get proto respond:msgId={0}", msgId);
+                Log.Error($"not get proto respond:msgId={msgId}");
             }
             _reqHandles[msg.Session] = callback;
             Send(msgId, msg);

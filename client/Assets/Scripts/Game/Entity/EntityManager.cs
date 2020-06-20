@@ -19,7 +19,27 @@ namespace Game
             var role = new Role(id);
             mRoles.Add(role.guid, role);
             player = role;
+            MonoProxy.Instance.Adapter.update += Update;
             return role;
+        }
+        public void Update() {
+            if (Input.GetMouseButtonDown(0)) {
+                var pos = Input.mousePosition;
+                var ray = Camera.main.ScreenPointToRay(pos);
+                if (Physics.Raycast(ray, out RaycastHit hit)) {
+                    player.move.MoveTo(hit.point);
+                }
+            }
+            if (Input.GetMouseButtonDown(1)) {
+                player.act.Attack();
+                //var pos = Input.mousePosition;
+                //var ray = Camera.main.ScreenPointToRay(pos);
+                //if (Physics.Raycast(ray, out RaycastHit hit)) {
+                //    player.move.MoveTo(hit.point);
+                //}
+            }
+            player.move.Update();
+
         }
 
         #region 搜索范围内实体

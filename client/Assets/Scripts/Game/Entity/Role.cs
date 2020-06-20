@@ -76,7 +76,7 @@ namespace Game
             move.onMoveStart = OnMoveStart;
 
             //加载动画
-            AssetMgr.Instance.LoadAsync(skin.animDir + "/Stand.anim", (anim) => {
+            AssetMgr.Instance.LoadAsync(skin.animDir + "/Walk.anim", (anim) => {
                 animWalk = anim as AnimationClip;
             });
             AssetMgr.Instance.LoadAsync(skin.animDir + "/Stand.anim", (anim) => {
@@ -89,7 +89,10 @@ namespace Game
         public void LoadAnimationClips(Act[] acts) {
             var dir = skin.animDir;
             foreach (var act in acts) {
-                AssetMgr.Instance.LoadAsync(dir + act.table.anim, (anim) => act.anim = anim as AnimationClip);
+                //var act = it;
+                AssetMgr.Instance.LoadAsync(dir + "/" + act.table.anim, (anim) => {
+                    act.anim = anim as AnimationClip;
+                });
                 if (act.next != null) {
                     LoadAnimationClips(act.next);
                 }
